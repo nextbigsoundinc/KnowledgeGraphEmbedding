@@ -259,7 +259,7 @@ def main(args):
     all_true_triples = train_triples + valid_triples + test_triples
 
 
-    if args.model in {'RotatE', 'pRotatE', 'TransE', 'ComplEx', 'DistMult'}:
+    if args.model in {'RotatE', 'pRotatE', 'TransE', 'ComplEx', 'DistMult', 'ConvE'}:
         kge_model = KGEModel(
         model_name=args.model,
         nentity=nentity,
@@ -268,17 +268,17 @@ def main(args):
         gamma=args.gamma,
         double_entity_embedding=args.double_entity_embedding,
         double_relation_embedding=args.double_relation_embedding)
-    elif args.model =='ConvE':
-        kge_model = ConvModel(
-        model_name=args.model,
-        nentity=nentity,
-        nrelation=nrelation,
-        hidden_dim=args.hidden_dim,
-        input_drop=.2,
-        hidden_drop=.3,
-        feat_drop=.2,
-        emb_dim1=20,
-        hidden_size=9728)
+    # elif args.model =='ConvE':
+    #     kge_model = ConvModel(
+    #     model_name=args.model,
+    #     nentity=nentity,
+    #     nrelation=nrelation,
+    #     hidden_dim=args.hidden_dim,
+    #     input_drop=.2,
+    #     hidden_drop=.3,
+    #     feat_drop=.2,
+    #     emb_dim1=20,
+    #     hidden_size=9728)
     elif args.model == 'CoCo':
         kge_model = CoCoModel(
         model_name=args.model,
