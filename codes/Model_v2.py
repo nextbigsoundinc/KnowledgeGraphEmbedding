@@ -62,7 +62,7 @@ class ConvELayer(nn.Module):
         print("head embedding=[", head.shape, "]")
         print("relationship=[",rel.shape,"]")
         print("tail embedding={", tail.shape, "]")
-        print("tail reshaped=[", tail.view(head.shape[0], -1).shape, "]")
+        tail_samples = tail.view(head.shape[0], -1).shape[1]
         print("batch size=[",batch_size,"]")
         print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
@@ -100,8 +100,10 @@ class ConvELayer(nn.Module):
         print("tail emb:[", tail_embedding.shape,"]")
         score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent                                                                                                                                            
         print("mm=[",score.shape,"]")
+        score = score.view(head_embedding.shape[0], tail_samples, -1)
         score = score.sum(dim=2)
-        print("score=[", score.shape, "]")
+        print("score shape=[", score.shape, "]")
+        print("score=[", score, "]")
         return score  # len * # ent      
 
 
