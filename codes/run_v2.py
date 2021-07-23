@@ -364,8 +364,8 @@ def main(args):
     else:
         logging.info('Ramdomly Initializing %s Model...' % args.model)
         init_step = 0
-        if args.model in {'ConvE', 'CoCo', 'CoCo2'}:
-            kge_model.init()
+        #if args.model in {'ConvE', 'CoCo', 'CoCo2'}:
+        #kge_model.init()
 
 
 

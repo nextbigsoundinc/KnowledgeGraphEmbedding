@@ -43,13 +43,14 @@ class ConvELayer(nn.Module):
         self.embedding_dim = self.entity_embedding.weight.shape[1]
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
-        self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
+        self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.mpool = nn.MaxPool2d(2, stride=2)
 
-        self.bn0 = torch.nn.BatchNorm2d(2)
+        self.bn0 = torch.nn.BatchNorm2d(1)
+        self.bn00 = torch.nn.BatchNorm2d(81886)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
-        self.fc = torch.nn.Linear(hidden_size, self.embedding_dim)
+        self.fc = torch.nn.Linear(6912, self.embedding_dim)
 
 
     def init(self):
@@ -57,33 +58,51 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
 
-    def forward(self, e1, rel, batch_size, negative_sample_size):
+    def forward(self, head, rel, tail, batch_size, negative_sample_size):
+        print("head embedding=[", head.shape, "]")
+        print("relationship=[",rel.shape,"]")
+        print("tail embedding={", tail.shape, "]")
+        print("tail reshaped=[", tail.view(head.shape[0], -1).shape, "]")
+        print("batch size=[",batch_size,"]")
+        print("sample size=[",negative_sample_size,"]")
+        head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
+        rel_embedding = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
+        tail_embedding = self.entity_embedding(tail).squeeze() 
+        stacks_of_embeddings = list()
+        for i in range(self.emb_dim1):
+            head_slice_embedding = head_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
+            rel_slice_embedding = rel_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
+            stacks_of_embeddings.append(head_slice_embedding)
+            stacks_of_embeddings.append(rel_slice_embedding)            
+            print("e1_slice_shape:[",head_slice_embedding.shape,"]")
 
-        e1_embedded = self.entity_embedding(e1).view(batch_size,
-                                                     negative_sample_size,
-                                                     self.emb_dim1,
-                                                     self.emb_dim2)           # len(e1) *  1 * 20 * 10
-        rel_embedded = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # len(rel) * 1 * 20 * 10       len(e1) = len(rel)
-
-        stacked_inputs = torch.cat([e1_embedded, rel_embedded], 1)                                  # len * 2 * 20 * 10
-
+        print("rel shape=[", rel_embedding.shape, "]")
+        stacked_inputs = torch.cat(stacks_of_embeddings, 2)                                  # len * 2 * 20 * 10
+        print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
-
+        print("after conv1=[", x.shape, "]")     
         x = self.mpool(x)                                           # len * 32 * 9 * 4
-
+        print("after maxpool=[", x.shape, "]")     
         x = self.bn1(x)
         x = F.relu(x)
         x = self.feature_map_drop(x)
-
+        print("after fm drop=[", x.shape, "]")     
         x = x.view(x.shape[0], -1)                                  # len * 1152
+        print("after reshape=[", x.shape, "]")     
         x = self.fc(x)                                              # len * 200
         x = self.hidden_drop(x)
         x = self.bn2(x)
         x = F.relu(x)  # bs * 200
-
-        return x
+        print("relu=[",x.shape,"]")
+        tail_embedding = self.inp_drop(tail_embedding)
+        print("tail emb:[", tail_embedding.shape,"]")
+        score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent                                                                                                                                            
+        print("mm=[",score.shape,"]")
+        score = score.sum(dim=2)
+        print("score=[", score.shape, "]")
+        return score  # len * # ent      
 
 
 class CoCoELayer(nn.Module):
@@ -100,7 +119,7 @@ class CoCoELayer(nn.Module):
         self.conve_layer_ir = ConvELayer(self.ent_img, self.rel_real, hidden_dim=hidden_dim)
         self.conve_layer_ii = ConvELayer(self.ent_img, self.rel_img, hidden_dim=hidden_dim)
 
-        self.last_fc = torch.nn.Linear
+        #self.last_fc = torch.nn.Linear
 
         '''
         self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
@@ -202,9 +221,10 @@ class KGEModel(nn.Module):
         if model_name in ['ConvE', 'CoCoE']:
             self.entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
             self.relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
-            self.conve_layer_rr = ConvELayer(self.entity_embedding, self.relation_embedding)
+            self.conve_layer = ConvELayer(self.entity_embedding, self.relation_embedding)
+            self.conve_layer.init()
             self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
-
+            self.drop_out = torch.nn.Dropout(0.357)
             if model_name == 'CoCoE':
                 self.img_entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
                 self.img_relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
@@ -212,6 +232,7 @@ class KGEModel(nn.Module):
                                               self.img_entity_embedding,
                                               self.relation_embedding,
                                               self.img_relation_embedding, hidden_dim)
+                self.cocoe_layer.init()
 
         else:
             self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
@@ -257,7 +278,7 @@ class KGEModel(nn.Module):
         negative_sample_size=0
 
         if self.model_name not in ['TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplEx']:
-            batch_size = sample.size(0)
+    
 
             if mode == 'single':
                 batch_size, negative_sample_size = sample.size(0), 1
@@ -269,6 +290,8 @@ class KGEModel(nn.Module):
                 tail_part, head_part = sample  # tail part: 1024 * 3 (1024 positive triples)
                 # head part: 1024 * 256 (each row represent neg sample ids of the corresponding positive triple)
                 # in other words, each positive triplet have 256 negetive triplets
+                #print("head part=[", head_part,"]")
+                #print("tail part=[", tail_part,"]")
                 batch_size, negative_sample_size = head_part.size(0), head_part.size(1)  # 1024 256
                 head = head_part.view(-1)
                 relation = tail_part[:, 1]
@@ -283,6 +306,8 @@ class KGEModel(nn.Module):
 
             else:
                 raise ValueError('mode %s not supported' % mode)
+
+            print("mode=[",mode,"]")
 
         else:
 
@@ -368,6 +393,7 @@ class KGEModel(nn.Module):
         }
         
         if self.model_name in model_func:
+            
             score = model_func[self.model_name](head, relation, tail, mode, batch_size, negative_sample_size)
         else:
             raise ValueError('model %s not supported' % self.model_name)
@@ -376,16 +402,17 @@ class KGEModel(nn.Module):
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
-        if mode=='head_batch':
-            x = self.conve_layer_rr(head, relation, batch_size, negative_sample_size)
+        if mode=='head-batch':
+            exit(1)
+            x = self.conve_layer(head, relation, tail, batch_size, negative_sample_size)
         else:
-            x = self.conve_layer_rr(head, relation, -1, 1)
-        x = torch.mm(x, self.entity_embedding(tail).weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-
-        x += self.b.expand_as(x)
-        score = x.sum(dim=2)
-        score = torch.sigmoid(score)
-
+            x = self.conve_layer(head, relation, tail, -1, 1)
+        tail_embedding = self.drop_out(self.entity_embedding(tail))
+        print("tail emb:[", tail_embedding.shape,"]")
+        score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        print("mm=[",score.shape,"]")
+        score = score.sum(dim=2)
+        print("score=[", score.shape, "]")
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
@@ -399,11 +426,8 @@ class KGEModel(nn.Module):
             tail_embedded_real = self.entity_embedding(tail).view(batch_size,negative_sample_size,-1).squeeze()
             tail_embedded_img = self.img_entity_embedding(tail).view(batch_size,negative_sample_size,-1).squeeze()
 
-
-
         tail_embedded_real = self.inp_drop(tail_embedded_real)
         tail_embedded_img = self.inp_drop(tail_embedded_img)
-
 
         rrr = torch.mm(rr, tail_embedded_real.weight.transpose(1, 0))  # rr: bs * 200, tail...': 200 * (1024*256) =>
         rii = torch.mm(ri, tail_embedded_img.weight.transpose(1, 0))
@@ -423,8 +447,9 @@ class KGEModel(nn.Module):
             score = head + (relation - tail)
         else:
             score = (head + relation) - tail
-
+        print(score.shape)
         score = self.gamma.item() - torch.norm(score, p=1, dim=2)
+        print(score.shape)
         return score
 
     def DistMult(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
