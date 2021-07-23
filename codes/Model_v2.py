@@ -60,7 +60,7 @@ class ConvELayer(nn.Module):
         print("relationship=[",rel.shape,"]")
         print("tail embedding={", tail.shape, "]")
         tail_samples = tail.view(rel.shape[0], -1).shape[1]
-        print("tail reshape:[", tail.view(head.shape[0], -1).shape, "]")
+        print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
         print("batch size=[",batch_size,"]")
         print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
