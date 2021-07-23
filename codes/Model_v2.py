@@ -56,17 +56,18 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
     def forward(self, head, rel, tail, batch_size, negative_sample_size):
-        print("head embedding=[", head.shape, "]")
+        print("head indices=[", head.shape, "]")
         if batch_size > 1:
             print("head reshape=[", head.view(batch_size, negative_sample_size, -1).shape, "]")
-        print("relationship=[",rel.shape,"]")
-        print("tail embedding={", tail.shape, "]")
+        print("rel indices=[",rel.shape,"]")
+        print("tail indices={", tail.shape, "]")
         tail_samples = tail.view(rel.shape[0], -1).shape[1]
         print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
         print("batch size=[",batch_size,"]")
         print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
-        rel_embedding = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
+        print("head embedding=[", head_embedding.shape, "]")
+        rel_embedding = self.relation_embedding(rel).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
         tail_embedding = self.entity_embedding(tail).squeeze() 
         stacks_of_embeddings = list()
         for i in range(self.emb_dim1):
