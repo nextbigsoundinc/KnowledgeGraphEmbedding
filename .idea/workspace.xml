@@ -37,14 +37,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="929" />
+          <entry key="py" value="1012" />
           <entry key="txt" value="117" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="117" />
-          <entry key="Python" value="929" />
+          <entry key="Python" value="1012" />
         </counts>
       </usages-collector>
     </session>
@@ -59,8 +59,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
+            <state relative-caret-position="438">
+              <caret line="415" column="74" selection-start-line="415" selection-start-column="74" selection-end-line="415" selection-end-column="74" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -405,7 +405,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627065127263</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="&#10;test">
+      <created>1627065268324</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1627065268324</updated>
+    </task>
+    <task id="LOCAL-00021" summary="&#10;test">
+      <created>1627065668427</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1627065668427</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -494,8 +508,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="111" lean-forward="true" selection-start-line="111" selection-end-line="111" />
+        <state relative-caret-position="438">
+          <caret line="415" column="74" selection-start-line="415" selection-start-column="74" selection-end-line="415" selection-end-column="74" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>

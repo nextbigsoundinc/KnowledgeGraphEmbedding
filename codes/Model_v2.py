@@ -104,8 +104,6 @@ class ConvELayer(nn.Module):
         #print("tail emb:[", tail_embedding.shape,"]")
         score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent                                                                                                                                            
         #print("mm=[",score.shape,"]")
-        score = score.view(head_embedding.shape[0], tail_samples, -1)
-        score = score.sum(dim=2)
         #print("score shape=[", score.shape, "]")
         #print("score=[", score, "]")
         return score  # len * # ent      
@@ -415,11 +413,13 @@ class KGEModel(nn.Module):
                 all_scores[i] = list(self.conve_layer(head[i:i+batch_size], relation, tail, -1, 1))
             for a_score in all_scores.values():
                 scores.extend(a_score)
-            score = torch.Tensor(scores).view(batch_size, negative_sample_size, -1)
+            score = torch.Tensor(scores).view(tail.shape[0], head.shape[0], -1)
             print(score.shape)
 
         else:
             score = self.conve_layer(head, relation, tail, -1, 1)
+            score = score.view(head.shape[0], tail.shape[0], -1)
+            score = score.sum(dim=2)
             print(score.shape)
         return score  # len * # ent
 
