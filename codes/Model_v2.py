@@ -71,16 +71,15 @@ class ConvELayer(nn.Module):
         tail_embedding = self.entity_embedding(tail).squeeze() 
         stacks_of_embeddings = list()
         for i in range(negative_sample_size):
-            for j in range(self.emb_dim1):
-                head_slice_embedding = head_embedding[:, i, j, :].view(-1, 1, 1, self.emb_dim2)
-                rel_slice_embedding = rel_embedding[:, :, j, :].view(-1, 1, 1, self.emb_dim2)
-                stacks_of_embeddings.append(head_slice_embedding)
-                stacks_of_embeddings.append(rel_slice_embedding)
-                print("head_slice_shape:[", head_slice_embedding.shape, "]")
-                print("rel_slice_shape:[", head_slice_embedding.shape, "]")
+            head_slice_embedding = head_embedding[:, i, :, :].view(-1, 1, 1, self.emb_dim2)
+            rel_slice_embedding = rel_embedding[:, i, : , :].view(-1, 1, 1, self.emb_dim2)
+            stacks_of_embeddings.append(head_slice_embedding)
+            stacks_of_embeddings.append(rel_slice_embedding)
+            print("head_slice_shape:[", head_slice_embedding.shape, "]")
+            print("rel_slice_shape:[", head_slice_embedding.shape, "]")
 
         print("rel shape=[", rel_embedding.shape, "]")
-        stacked_inputs = torch.cat(stacks_of_embeddings, 2)                                  # len * 2 * 20 * 10
+        stacked_inputs = torch.cat(stacks_of_embeddings, 1)                                  # len * 2 * 20 * 10
         print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
