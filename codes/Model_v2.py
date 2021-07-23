@@ -57,7 +57,6 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.entity_embedding.weight.data)
         xavier_normal_(self.relation_embedding.weight.data)
 
-
     def forward(self, head, rel, tail, batch_size, negative_sample_size):
         print("head embedding=[", head.shape, "]")
         print("relationship=[",rel.shape,"]")
@@ -73,7 +72,7 @@ class ConvELayer(nn.Module):
             head_slice_embedding = head_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
             rel_slice_embedding = rel_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
             stacks_of_embeddings.append(head_slice_embedding)
-            stacks_of_embeddings.append(rel_slice_embedding)            
+            stacks_of_embeddings.append(rel_slice_embedding)
             print("e1_slice_shape:[",head_slice_embedding.shape,"]")
 
         print("rel shape=[", rel_embedding.shape, "]")
@@ -405,16 +404,9 @@ class KGEModel(nn.Module):
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
         if mode=='head-batch':
-            exit(1)
-            x = self.conve_layer(head, relation, tail, batch_size, negative_sample_size)
+            score = self.conve_layer(head, relation, tail, batch_size, negative_sample_size)
         else:
-            x = self.conve_layer(head, relation, tail, -1, 1)
-        tail_embedding = self.drop_out(self.entity_embedding(tail))
-        print("tail emb:[", tail_embedding.shape,"]")
-        score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-        print("mm=[",score.shape,"]")
-        score = score.sum(dim=2)
-        print("score=[", score.shape, "]")
+            score = self.conve_layer(head, relation, tail, -1, 1)
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
