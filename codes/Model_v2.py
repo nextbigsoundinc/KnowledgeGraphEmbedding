@@ -410,8 +410,8 @@ class KGEModel(nn.Module):
 
         if mode=='head-batch':
             all_scores = dict()
-            for i in range(negative_sample_size):
-                all_scores[i] = self.conve_layer(head[i:batch_size], relation, tail, -1, 1)
+            for i in range(0, negative_sample_size, batch_size):
+                all_scores[i] = self.conve_layer(head[i:i+batch_size], relation, tail, -1, 1)
                 print(all_scores[i])
         else:
             score = self.conve_layer(head, relation, tail, -1, 1)
