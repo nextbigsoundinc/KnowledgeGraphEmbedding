@@ -67,15 +67,17 @@ class ConvELayer(nn.Module):
         print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
         print("head embedding=[", head_embedding.shape, "]")
-        rel_embedding = self.relation_embedding(rel).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
+        rel_embedding = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
         tail_embedding = self.entity_embedding(tail).squeeze() 
         stacks_of_embeddings = list()
-        for i in range(self.emb_dim1):
-            head_slice_embedding = head_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
-            rel_slice_embedding = rel_embedding[:,:,i,:].view(-1, 1, 1, self.emb_dim2)
-            stacks_of_embeddings.append(head_slice_embedding)
-            stacks_of_embeddings.append(rel_slice_embedding)
-            print("e1_slice_shape:[",head_slice_embedding.shape,"]")
+        for i in range(negative_sample_size):
+            for j in range(self.emb_dim1):
+                head_slice_embedding = head_embedding[:, i, j, :].view(-1, 1, 1, self.emb_dim2)
+                rel_slice_embedding = rel_embedding[:, :, j, :].view(-1, 1, 1, self.emb_dim2)
+                stacks_of_embeddings.append(head_slice_embedding)
+                stacks_of_embeddings.append(rel_slice_embedding)
+                print("head_slice_shape:[", head_slice_embedding.shape, "]")
+                print("rel_slice_shape:[", head_slice_embedding.shape, "]")
 
         print("rel shape=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat(stacks_of_embeddings, 2)                                  # len * 2 * 20 * 10
