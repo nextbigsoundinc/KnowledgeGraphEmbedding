@@ -415,12 +415,16 @@ class KGEModel(nn.Module):
                 scores.extend(a_score)
             score = torch.Tensor(scores).view(tail.shape[0], head.shape[0], -1)
             print(score.shape)
+            score = score.sum(dim=2)
+            print(score.shape)
 
         else:
             score = self.conve_layer(head, relation, tail, -1, 1)
             score = score.view(head.shape[0], tail.shape[0], -1)
+            print(score.shape)
             score = score.sum(dim=2)
             print(score.shape)
+
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
