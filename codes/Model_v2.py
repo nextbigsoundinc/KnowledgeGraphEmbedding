@@ -56,17 +56,17 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
     def forward(self, head, rel, tail, batch_size, negative_sample_size):
-        print("head indices=[", head.shape, "]")
-        if batch_size > 1:
-            print("head reshape=[", head.view(batch_size, negative_sample_size, -1).shape, "]")
-        print("rel indices=[",rel.shape,"]")
-        print("tail indices={", tail.shape, "]")
+        # print("head indices=[", head.shape, "]")
+        # if batch_size > 1:
+        #     print("head reshape=[", head.view(batch_size, negative_sample_size, -1).shape, "]")
+        # print("rel indices=[",rel.shape,"]")
+        # print("tail indices={", tail.shape, "]")
         tail_samples = tail.view(rel.shape[0], -1).shape[1]
-        print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
-        print("batch size=[",batch_size,"]")
-        print("sample size=[",negative_sample_size,"]")
+        # print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
+        # print("batch size=[",batch_size,"]")
+        # print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
-        print("head embedding=[", head_embedding.shape, "]")
+        # print("head embedding=[", head_embedding.shape, "]")
         rel_embedding = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
         tail_embedding = self.entity_embedding(tail).squeeze() 
         stacks_of_embeddings = list()
@@ -74,40 +74,40 @@ class ConvELayer(nn.Module):
             head_slice_embedding = head_embedding[:, i, :, :].view(-1, 1, self.emb_dim1, self.emb_dim2)
             stacks_of_embeddings.append(head_slice_embedding)
             stacks_of_embeddings.append(rel_embedding)
-            print("head_slice_shape:[", head_slice_embedding.shape, "]")
-            print("rel_slice_shape:[", rel_embedding.shape, "]")
-
-        print("rel shape=[", rel_embedding.shape, "]")
+        #     print("head_slice_shape:[", head_slice_embedding.shape, "]")
+        #     print("rel_slice_shape:[", rel_embedding.shape, "]")
+        #
+        # print("rel shape=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat(stacks_of_embeddings, 1)                                  # len * 2 * 20 * 10
-        print("stacked=[", stacked_inputs.shape, "]")
+        # print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
-        print("after conv1=[", x.shape, "]")     
+        #print("after conv1=[", x.shape, "]")
         x = self.mpool(x)                                           # len * 32 * 9 * 4
-        print("after maxpool=[", x.shape, "]")     
+        #print("after maxpool=[", x.shape, "]")
         x = self.bn1(x)
         x = F.relu(x)
         x = self.feature_map_drop(x)
-        print("after fm drop=[", x.shape, "]")     
+        #print("after fm drop=[", x.shape, "]")
         x = x.view(x.shape[0], -1)                                  # len * 1152
-        print("after reshape=[", x.shape, "]")     
+        #print("after reshape=[", x.shape, "]")
         x = self.fc(x)                   # len * 200
-        print("after fully connected=[", x.shape, "]")
+        #print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
-        print("after hidden_drop=[", x.shape, "]")
+        #print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
-        print("after bn2 connected=[", x.shape, "]")
+        #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        print("relu=[",x.shape,"]")
+        #print("relu=[",x.shape,"]")
         tail_embedding = self.inp_drop(tail_embedding)
-        print("tail emb:[", tail_embedding.shape,"]")
+        #print("tail emb:[", tail_embedding.shape,"]")
         score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent                                                                                                                                            
-        print("mm=[",score.shape,"]")
+        #print("mm=[",score.shape,"]")
         score = score.view(head_embedding.shape[0], tail_samples, -1)
         score = score.sum(dim=2)
-        print("score shape=[", score.shape, "]")
-        print("score=[", score, "]")
+        #print("score shape=[", score.shape, "]")
+        #print("score=[", score, "]")
         return score  # len * # ent      
 
 
