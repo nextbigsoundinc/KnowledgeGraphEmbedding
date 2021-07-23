@@ -410,9 +410,14 @@ class KGEModel(nn.Module):
 
         if mode=='head-batch':
             all_scores = dict()
+            scores = list()
             for i in range(0, (negative_sample_size * batch_size), batch_size):
-                all_scores[i] = self.conve_layer(head[i:i+batch_size], relation, tail, -1, 1)
-                print(all_scores[i])
+                all_scores[i] = list(self.conve_layer(head[i:i+batch_size], relation, tail, -1, 1))
+            for a_score in all_scores.values():
+                scores.extend(a_score)
+            score = torch.Tensor(scores).view(batch_size, negative_sample_size, -1)
+            print(score)
+
         else:
             score = self.conve_layer(head, relation, tail, -1, 1)
         return score  # len * # ent
