@@ -43,10 +43,10 @@ class ConvELayer(nn.Module):
         self.embedding_dim = self.entity_embedding.weight.shape[1]
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
-        self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
+        self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
         self.mpool = nn.MaxPool2d(2, stride=2)
 
-        self.bn0 = torch.nn.BatchNorm2d(1)
+        self.bn0 = torch.nn.BatchNorm2d(2)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(14592, self.embedding_dim)
