@@ -47,11 +47,9 @@ class ConvELayer(nn.Module):
         self.mpool = nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(1)
-        self.bn00 = torch.nn.BatchNorm2d(81886)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
-        self.fc = torch.nn.Linear(6912, self.embedding_dim)
-
+        self.fc = torch.nn.Linear(14592, self.embedding_dim)
 
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
@@ -62,6 +60,7 @@ class ConvELayer(nn.Module):
         print("relationship=[",rel.shape,"]")
         print("tail embedding={", tail.shape, "]")
         tail_samples = tail.view(head.shape[0], -1).shape[1]
+        print("tail reshape:[", tail.view(head.shape[0], -1).shape, "]")
         print("batch size=[",batch_size,"]")
         print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
@@ -90,9 +89,12 @@ class ConvELayer(nn.Module):
         print("after fm drop=[", x.shape, "]")     
         x = x.view(x.shape[0], -1)                                  # len * 1152
         print("after reshape=[", x.shape, "]")     
-        x = self.fc(x)                                              # len * 200
+        x = self.fc(x)                   # len * 200
+        print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
+        print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
+        print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
         print("relu=[",x.shape,"]")
         tail_embedding = self.inp_drop(tail_embedding)
