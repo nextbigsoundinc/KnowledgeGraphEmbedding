@@ -413,7 +413,7 @@ class KGEModel(nn.Module):
                 all_scores[i] = list(self.conve_layer(head[i:i+batch_size], relation, tail, -1, 1))
             for a_score in all_scores.values():
                 scores.extend(a_score)
-            score = torch.Tensor(scores).view(tail.shape[0], head.shape[0], -1)
+            score = torch.Tensor(scores).view(batch_size, negative_sample_size, -1)
             print(score.shape)
             score = score.sum(dim=2)
             print(score.shape)
