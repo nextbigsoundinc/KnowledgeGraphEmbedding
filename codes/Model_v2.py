@@ -407,7 +407,8 @@ class KGEModel(nn.Module):
             print(len(multi_head))
             while(len(multi_head) > 0):
                 a_head = multi_head.pop(0)
-                self.conve_layer(a_head, relation, tail, -1, 1, mode)
+                score = self.conve_layer(a_head, relation, tail, -1, 1, mode)
+                print(score)
                 del a_head
             del multi_head
             # print(scores[0].shape)
@@ -424,7 +425,8 @@ class KGEModel(nn.Module):
             print(len(multi_tail))
             while(len(multi_tail) > 0):
                 a_tail = multi_tail.pop(0)
-                scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
+                score = self.conve_layer(head, relation, a_tail, -1, 1, mode)
+                print(score)
                 del a_tail
             del multi_tail
             # print(scores[0].shape)
