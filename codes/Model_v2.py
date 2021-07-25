@@ -419,7 +419,7 @@ class KGEModel(nn.Module):
             # score = score.sum(dim=2)
             # print(score.shape)
 
-        elif mode == "tail-batch":
+        else:
             multi_tail = list(torch.tensor_split(tail, negative_sample_size))
             scores = list()
             print(len(multi_tail))
@@ -438,8 +438,6 @@ class KGEModel(nn.Module):
             # score = score.sum(dim=
             # print(score.shape)
             score = torch.zeros(512, 1024)
-        else:
-            score = self.conve_layer(head, relation, tail, -1, 1, mode)
 
         return score  # len * # ent
 
