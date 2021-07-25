@@ -44,7 +44,7 @@ class ConvELayer(nn.Module):
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
         self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
-        self.mpool = nn.MaxPool2d(2, stride=2)
+        self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(2)
         self.bn1 = torch.nn.BatchNorm2d(32)
@@ -70,38 +70,38 @@ class ConvELayer(nn.Module):
         tail_embedding = self.entity_embedding(tail).view(head.shape[0], self.embedding_dim)
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
-        print(head_embedding.shape)
-        print(rel_embedding.shape)
-        print(tail_embedding.shape)
+        #print(head_embedding.shape)
+        #print(rel_embedding.shape)
+        #print(tail_embedding.shape)
 
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
-        print("stacked=[", stacked_inputs.shape, "]")
+        #print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
-        print("after conv1=[", x.shape, "]")
-        x = self.mpool(x)                                           # len * 32 * 9 * 4
-        print("after maxpool=[", x.shape, "]")
+        #print("after conv1=[", x.shape, "]")
+        #x = self.mpool(x)                                           # len * 32 * 9 * 4
+        #print("after maxpool=[", x.shape, "]")
         x = self.bn1(x)
         x = F.relu(x)
         x = self.feature_map_drop(x)
-        print("after fm drop=[", x.shape, "]")
+        #print("after fm drop=[", x.shape, "]")
         x = x.view(x.shape[0], -1)                                  # len * 1152
-        print("after reshape=[", x.shape, "]")
+        #print("after reshape=[", x.shape, "]")
         x = self.fc(x)                   # len * 200
-        print("after fully connected=[", x.shape, "]")
+        #print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
-        print("after hidden_drop=[", x.shape, "]")
+        #print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
-        print("after bn2 connected=[", x.shape, "]")
+        #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        print("relu=[",x.shape,"]")
+        #print("relu=[",x.shape,"]")
         tail_embedding = self.inp_drop(tail_embedding)
-        print("tail emb:[", tail_embedding.shape,"]")
+        #print("tail emb:[", tail_embedding.shape,"]")
         score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-        print("mm=[",score.shape,"]")
-        print("score shape=[", score.shape, "]")
-        print("score=[", score, "]")
+        #print("mm=[",score.shape,"]")
+        #print("score shape=[", score.shape, "]")
+        #print("score=[", score, "]")
         return score  # len * # ent      
 
 
