@@ -60,8 +60,8 @@ class ConvELayer(nn.Module):
                                                           self.emb_dim1, self.emb_dim2)
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
-        print(head_embedding.shape)
-        print(rel_embedding.shape)
+        # print(head_embedding.shape)
+        # print(rel_embedding.shape)
 
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
