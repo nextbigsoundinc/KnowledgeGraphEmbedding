@@ -66,17 +66,19 @@ class ConvELayer(nn.Module):
         # print("batch size=[",batch_size,"]")
         # print("sample size=[",negative_sample_size,"]")
         if mode == 'head-batch':
-            head_embedding = self.entity_embedding(head).view(-1,
-                                                              1,
+            head_embedding = self.entity_embedding(head).view(batch_size,
+                                                              negative_sample_size,
                                                               self.emb_dim1,
                                                               self.emb_dim2) #bs * samp * 200
-            tail_embedding = self.entity_embedding(tail).view(-1,
+            tail_embedding = self.entity_embedding(tail).view(batch_size,
+                                                              negative_sample_size,
                                                               self.embedding_dim)
         else:
             head_embedding = self.entity_embedding(head).view(-1, 1, # batch_size, #sample per batch
                                                               self.emb_dim1,
                                                               self.emb_dim2)
             tail_embedding = self.entity_embedding(tail).view(head.shape[0],
+                                                              -1,
                                                               self.embedding_dim)
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
@@ -426,6 +428,7 @@ class KGEModel(nn.Module):
 
         if mode == 'head-batch':
             multi_head = torch.tensor_split(head, negative_sample_size)
+            print(len(multi_head))
             scores = list()
             for a_head in multi_head:
                 scores.append(self.conve_layer(a_head, relation, tail, -1, 1, mode))
@@ -439,7 +442,9 @@ class KGEModel(nn.Module):
         else:
             multi_tail = torch.tensor_split(tail, negative_sample_size)
             scores = list()
+            print(len(multi_tail))
             for a_tail in multi_tail:
+                print(a_tail.shape)
                 scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
             print(scores[0].shape)
             score = torch.cat(scores, dim=1)
