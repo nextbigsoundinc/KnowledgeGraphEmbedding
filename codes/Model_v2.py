@@ -409,9 +409,9 @@ class KGEModel(nn.Module):
         if mode=='head-batch':
             print(head.shape)
             multi_head = torch.tensor_split(head, batch_size)
-            print(multi_head.shape)
             scores = list()
             for a_head in multi_head:
+                print(a_head.shape)
                 scores.append(self.conve_layer(a_head, relation, tail, -1, 1))
             score = torch.Tensor(scores)
             score = score.view(tail.shape[0], negative_sample_size, -1)
