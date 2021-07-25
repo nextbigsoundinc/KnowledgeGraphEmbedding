@@ -55,7 +55,7 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.entity_embedding.weight.data)
         xavier_normal_(self.relation_embedding.weight.data)
 
-    def forward(self, head, rel, tail, batch_size, negative_sample_size):
+    def forward(self, head, rel, tail, batch_size, negative_sample_size, mode):
         # print("head indices=[", head.shape, "]")
         # if batch_size > 1:
         #     print("head reshape=[", head.view(batch_size, negative_sample_size, -1).shape, "]")
@@ -65,10 +65,27 @@ class ConvELayer(nn.Module):
         # print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
         # print("batch size=[",batch_size,"]")
         # print("sample size=[",negative_sample_size,"]")
-        head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2) #bs * samp * 200
+        if mode == 'head-batch':
+            head_embedding = self.entity_embedding(head).view(batch_size,
+                                                              negative_sample_size,
+                                                              self.embedding_dim) #bs * samp * 200
+            tail_embedding = self.entity_embedding(tail).view(-1, 1, self.embedding_dim)
+        else:
+            head_embedding = self.entity_embedding(head).view(-1,
+                                                              1,
+                                                              self.embedding_dim)
+            tail_embedding = self.entity_embedding(tail).view(batch_size,
+                                                              negative_sample_size,
+                                                              self.embedding_dim)
+        rel_embedding = self.relation_embedding(rel).view(-1, 1,
+                                                          self.embedding_dim)  # bs * 1 * 200       len(e1) = len(rel)
+        print(head_embedding.shape)
+        print(rel_embedding.shape)
+        print(tail_embedding.shape)
+
         # print("head embedding=[", head_embedding.shape, "]")
-        rel_embedding = self.relation_embedding(rel).view(-1, 1, self.emb_dim1, self.emb_dim2)       # bs * 1 * 200       len(e1) = len(rel)
-        tail_embedding = self.entity_embedding(tail).squeeze() 
+
+
         stacks_of_embeddings = list()
         for i in range(negative_sample_size):
             head_slice_embedding = head_embedding[:, i, :, :].view(-1, 1, self.emb_dim1, self.emb_dim2)
@@ -464,6 +481,7 @@ class KGEModel(nn.Module):
             score = (head + relation) - tail
         print(mode)
         print(head.shape)
+        print(relation.shape)
         print(tail.shape)
         print(score.shape)
         score = self.gamma.item() - torch.norm(score, p=1, dim=2)
