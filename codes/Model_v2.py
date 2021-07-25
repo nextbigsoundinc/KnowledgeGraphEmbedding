@@ -98,7 +98,7 @@ class ConvELayer(nn.Module):
         print("relu=[",x.shape,"]")
         tail_embedding = self.inp_drop(tail_embedding)
         print("tail emb:[", tail_embedding.shape,"]")
-        score = torch.mm(x, tail_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         print("mm=[",score.shape,"]")
         print("score shape=[", score.shape, "]")
         print("score=[", score, "]")
