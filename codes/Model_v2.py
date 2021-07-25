@@ -395,6 +395,12 @@ class KGEModel(nn.Module):
         else:
             scores = self.conve_layer(head, relation, -1, 1)
 
+        print(scores.shape)
+        score = scores[:, tail].view(batch_size, negative_sample_size, -1)
+        print(score.shape)
+        score = score.sum(dim=2)
+        print(score.shape)
+
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
