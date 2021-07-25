@@ -89,6 +89,7 @@ class ConvELayer(nn.Module):
         all_scores = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         print("all scores=[", all_scores.shape, "]")
         score = all_scores[:, tail]
+        score = score.sum(dim=1)
         print("tail score=[", score.shape, "]")
         print("score=[", score, "]")
         return score  # len * # ent      
