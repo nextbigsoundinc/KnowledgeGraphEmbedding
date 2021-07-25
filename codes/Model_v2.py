@@ -406,15 +406,13 @@ class KGEModel(nn.Module):
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
-        if mode=='head-batch':
-            print(head.shape)
+        if mode == 'head-batch':
             multi_head = torch.tensor_split(head, negative_sample_size)
             scores = list()
             for a_head in multi_head:
                 scores.append(self.conve_layer(a_head, relation, tail, -1, 1))
-            print(scores[0].shape)
-            score = torch.cat(scores, dim=1)
-            score = score.view(tail.shape[0], negative_sample_size, -1)
+            score = torch.cat(scores, dim=0)
+            score = score.view(tail.shape[0], (batch_size*negative_sample_size), -1)
             print(score.shape)
             score = score.sum(dim=2)
             print(score.shape)
@@ -436,8 +434,10 @@ class KGEModel(nn.Module):
             tail_embedded_img = self.img_entity_embedding(tail).squeeze()
         else:
             rr, ri, ir, ii = self.cocoe_layer(head, relation, -1, 1)
-            tail_embedded_real = self.entity_embedding(tail).view(batch_size,negative_sample_size,-1).squeeze()
-            tail_embedded_img = self.img_entity_embedding(tail).view(batch_size,negative_sample_size,-1).squeeze()
+            tail_embedded_real = self.entity_embedding(tail).view(batch_size,
+                                                                  negative_sample_size,
+                                                                  -1).squeeze()
+            tail_embedded_img = self.img_entity_embedding(tail).view(batch_size, negative_sample_size,-1).squeeze()
 
         tail_embedded_real = self.inp_drop(tail_embedded_real)
         tail_embedded_img = self.inp_drop(tail_embedded_img)
