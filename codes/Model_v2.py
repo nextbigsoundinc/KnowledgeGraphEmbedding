@@ -433,7 +433,8 @@ class KGEModel(nn.Module):
                 del scores
                 scores = list()
                 scores.append(score)
-                print(score)
+                print(score.shape)
+                print(len(scores))
                 del a_tail
             del multi_tail
             print(score.shape)
