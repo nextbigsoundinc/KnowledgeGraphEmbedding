@@ -298,7 +298,7 @@ class KGEModel(nn.Module):
             else:
                 raise ValueError('mode %s not supported' % mode)
 
-            print("mode=[",mode,"]")
+            # print("mode=[",mode,"]")
 
         else:
 
@@ -545,7 +545,7 @@ class KGEModel(nn.Module):
 
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
-        print(negative_sample.shape)
+        print(mode)
         if mode == 'head-batch': return None
         if args.cuda:
             positive_sample = positive_sample.cuda()
