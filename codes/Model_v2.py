@@ -394,9 +394,25 @@ class KGEModel(nn.Module):
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
         if mode == 'head-batch':
-            scores = self.conve_layer(head, relation, batch_size, negative_sample_size)
+            multi_head = list(torch.tensor_split(head, negative_sample_size))
+            a_head = multi_head.pop(0)
+            scores = list()
+            scores.append(self.conve_layer(a_head, relation, -1, 1))
+            del a_head
+            while (len(multi_head) > 0):
+                a_head = multi_head.pop(0)
+                score_single = self.conve_layer(a_head, relation, -1, 1)
+                scores.append(score_single)
+                score_stack = torch.cat(scores, dim=1)
+                del scores
+                scores = list()
+                scores.append(score_stack)
+                del a_head
+            del multi_head
+            score = torch.cat(scores, dim=1)
+            print(score.shape)
         else:
-            scores = self.conve_layer(head, relation, -1, 1)
+            score = self.conve_layer(head, relation, -1, 1)
 
         # print(scores.shape)
         score = scores[:, tail].view(batch_size, negative_sample_size, -1)
@@ -545,8 +561,6 @@ class KGEModel(nn.Module):
 
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
-        print(mode)
-        if mode == 'head-batch': return None
         if args.cuda:
             positive_sample = positive_sample.cuda()
             negative_sample = negative_sample.cuda()
