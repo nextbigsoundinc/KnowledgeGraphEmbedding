@@ -416,18 +416,18 @@ class KGEModel(nn.Module):
                     -1))
             print(scores[0].shape)
             score = torch.cat(scores, dim=0)
-            score = score.view(tail.shape[0], negative_sample_size, -1)
+            # score = score.view(tail.shape[0], negative_sample_size, -1)
             print(score.shape)
-            score = score.sum(dim=2)
-            print(score.shape)
+            # score = score.sum(dim=2)
+            # print(score.shape)
 
         else:
             score = self.conve_layer(head, relation, tail, -1, 1)
             print(score.shape)
-            score = score.view(head.shape[0], tail.shape[0], -1)
-            print(score.shape)
-            score = score.sum(dim=2)
-            print(score.shape)
+            # score = score.view(head.shape[0], tail.shape[0], -1)
+            # print(score.shape)
+            # score = score.sum(dim=
+            # print(score.shape)
 
         return score  # len * # ent
 
