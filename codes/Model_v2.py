@@ -58,13 +58,10 @@ class ConvELayer(nn.Module):
     def forward(self, head, rel, tail, batch_size, negative_sample_size, mode):
         head_embedding = self.entity_embedding(head).view(-1, 1, # batch_size, #sample per batch
                                                           self.emb_dim1, self.emb_dim2)
-        tail_embedding = self.entity_embedding(tail).squeeze()
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
         print(head_embedding.shape)
         print(rel_embedding.shape)
-        print(tail_embedding.shape)
-        self.entity_embedding = self.inp_drop(self.entity_embedding)
 
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
@@ -88,7 +85,6 @@ class ConvELayer(nn.Module):
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
         #print("relu=[",x.shape,"]")
-        tail_embedding = self.inp_drop(tail_embedding)
         #print("tail emb:[", tail_embedding.shape,"]")
         all_scores = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         print("all scores=[", all_scores.shape, "]")
