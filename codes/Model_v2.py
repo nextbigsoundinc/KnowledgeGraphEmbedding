@@ -411,10 +411,9 @@ class KGEModel(nn.Module):
             multi_head = torch.tensor_split(head, negative_sample_size)
             scores = list()
             for a_head in multi_head:
-                print(a_head.shape)
                 scores.append(self.conve_layer(a_head, relation, tail, -1, 1))
-            score = torch.Tensor(scores)
-            score = score.view(tail.shape[0], negative_sample_size, -1)
+            score = torch.cat(scores, dim=0)
+            # score = score.view(tail.shape[0], negative_sample_size, -1)
             print(score.shape)
             score = score.sum(dim=2)
             print(score.shape)
