@@ -64,6 +64,7 @@ class ConvELayer(nn.Module):
         print(head_embedding.shape)
         print(rel_embedding.shape)
         print(tail_embedding.shape)
+        self.entity_embedding = self.inp_drop(self.entity_embedding)
 
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
@@ -71,7 +72,7 @@ class ConvELayer(nn.Module):
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
         #print("after conv1=[", x.shape, "]")
-        #x = self.mpool(x)                                           # len * 32 * 9 * 4
+        x = self.mpool(x)                                           # len * 32 * 9 * 4
         #print("after maxpool=[", x.shape, "]")
         x = self.bn1(x)
         x = F.relu(x)
@@ -89,10 +90,11 @@ class ConvELayer(nn.Module):
         #print("relu=[",x.shape,"]")
         tail_embedding = self.inp_drop(tail_embedding)
         #print("tail emb:[", tail_embedding.shape,"]")
-        score = torch.mm(x, tail_embedding.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-        #print("mm=[",score.shape,"]")
-        #print("score shape=[", score.shape, "]")
-        #print("score=[", score, "]")
+        all_scores = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        print("all scores=[", all_scores.shape, "]")
+        score = all_scores[:, tail]
+        print("tail score=[", score.shape, "]")
+        print("score=[", score, "]")
         return score  # len * # ent      
 
 
