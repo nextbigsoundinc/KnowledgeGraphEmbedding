@@ -408,7 +408,7 @@ class KGEModel(nn.Module):
 
         if mode=='head-batch':
             print(head.shape)
-            multi_head = torch.tensor_split(head, batch_size)
+            multi_head = torch.tensor_split(head, (batch_size * negative_sample_size))
             scores = list()
             for a_head in multi_head:
                 print(a_head.shape)
