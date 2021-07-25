@@ -37,14 +37,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="3484" />
+          <entry key="py" value="3724" />
           <entry key="txt" value="117" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="117" />
-          <entry key="Python" value="3484" />
+          <entry key="Python" value="3724" />
         </counts>
       </usages-collector>
     </session>
@@ -54,8 +54,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/codes/run_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="394" column="31" selection-start-line="394" selection-start-column="31" selection-end-line="394" selection-end-column="31" />
+            <state relative-caret-position="609">
+              <caret line="375" column="33" lean-forward="true" selection-start-line="375" selection-start-column="33" selection-end-line="375" selection-end-column="33" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -75,8 +75,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="547" column="29" selection-start-line="547" selection-start-column="29" selection-end-line="547" selection-end-column="29" />
+            <state relative-caret-position="207">
+              <caret line="548" column="44" lean-forward="true" selection-start-line="548" selection-start-column="44" selection-end-line="548" selection-end-column="44" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -322,27 +322,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00035" summary="&#10;test">
-      <created>1627182171794</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1627182171794</updated>
-    </task>
-    <task id="LOCAL-00036" summary="&#10;test">
-      <created>1627194131267</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1627194131267</updated>
-    </task>
-    <task id="LOCAL-00037" summary="&#10;test">
-      <created>1627194255080</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1627194255080</updated>
     </task>
     <task id="LOCAL-00038" summary="&#10;test">
       <created>1627194389509</created>
@@ -666,7 +645,28 @@
       <option name="project" value="LOCAL" />
       <updated>1627229882736</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="&#10;test">
+      <created>1627230220048</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1627230220048</updated>
+    </task>
+    <task id="LOCAL-00085" summary="&#10;test">
+      <created>1627230428351</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1627230428351</updated>
+    </task>
+    <task id="LOCAL-00086" summary="&#10;test">
+      <created>1627234559179</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1627234559179</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -677,11 +677,11 @@
       <window_info id="DB Browser" />
       <window_info id="Job Explorer" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1864139" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1864139" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Console" />
       <window_info anchor="bottom" id="DB Execution Console" />
-      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.32970297" />
+      <window_info active="true" anchor="bottom" id="Version Control" visible="true" weight="0.32970297" />
       <window_info anchor="bottom" id="Python Console" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -785,8 +785,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/run_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="394" column="31" selection-start-line="394" selection-start-column="31" selection-end-line="394" selection-end-column="31" />
+        <state relative-caret-position="609">
+          <caret line="375" column="33" lean-forward="true" selection-start-line="375" selection-start-column="33" selection-end-line="375" selection-end-column="33" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
@@ -795,8 +795,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="547" column="29" selection-start-line="547" selection-start-column="29" selection-end-line="547" selection-end-column="29" />
+        <state relative-caret-position="207">
+          <caret line="548" column="44" lean-forward="true" selection-start-line="548" selection-start-column="44" selection-end-line="548" selection-end-column="44" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>

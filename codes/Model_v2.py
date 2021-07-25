@@ -546,104 +546,51 @@ class KGEModel(nn.Module):
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
         print(negative_sample.shape)
-        if mode == 'head-batch':
-            if args.cuda:
-                positive_sample = positive_sample.cuda()
-                negative_sample = negative_sample.cuda()
-                subsampling_weight = subsampling_weight.cuda()
+        if mode == 'head-batch': return None
+        if args.cuda:
+            positive_sample = positive_sample.cuda()
+            negative_sample = negative_sample.cuda()
+            subsampling_weight = subsampling_weight.cuda()
 
-            negative_score = model((positive_sample, negative_sample), mode=mode)
+        negative_score = model((positive_sample, negative_sample), mode=mode)
 
-            if args.negative_adversarial_sampling:
-                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-                negative_score = (
-                            F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                            * F.logsigmoid(-negative_score)).sum(dim=1)
-            else:
-                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-
-            positive_score = model(positive_sample)
-
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
-
-            if args.uni_weight:
-                positive_sample_loss = - positive_score.mean()
-                negative_sample_loss = - negative_score.mean()
-            else:
-                positive_sample_loss = - (
-                            subsampling_weight * positive_score).sum() / subsampling_weight.sum()
-                negative_sample_loss = - (
-                            subsampling_weight * negative_score).sum() / subsampling_weight.sum()
-
-            loss = (positive_sample_loss + negative_sample_loss) / 2
-
-            if args.regularization != 0.0:
-                # Use L3 regularization for ComplEx and DistMult
-                regularization = args.regularization * (
-                        model.entity_embedding.norm(p=3) ** 3 +
-                        model.relation_embedding.norm(p=3).norm(p=3) ** 3
-                )
-                loss = loss + regularization
-                regularization_log = {'regularization': regularization.item()}
-            else:
-                regularization_log = {}
-
-            loss.backward()
-
-            optimizer.step()
-
-            log = {
-                **regularization_log,
-                'positive_sample_loss': positive_sample_loss.item(),
-                'negative_sample_loss': negative_sample_loss.item(),
-                'loss': loss.item()
-            }
-
-            return log
-
+        if args.negative_adversarial_sampling:
+            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+            negative_score = (
+                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                        * F.logsigmoid(-negative_score)).sum(dim=1)
         else:
-            if args.cuda:
-                positive_sample = positive_sample.cuda()
-                negative_sample = negative_sample.cuda()
-                subsampling_weight = subsampling_weight.cuda()
+            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
 
+        positive_score = model(positive_sample)
 
-            negative_score = model((positive_sample, negative_sample), mode=mode)
+        positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
 
-            if args.negative_adversarial_sampling:
-                #In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-                negative_score = (F.softmax(negative_score * args.adversarial_temperature, dim = 1).detach()
-                                  * F.logsigmoid(-negative_score)).sum(dim = 1)
-            else:
-                negative_score = F.logsigmoid(-negative_score).mean(dim = 1)
+        if args.uni_weight:
+            positive_sample_loss = - positive_score.mean()
+            negative_sample_loss = - negative_score.mean()
+        else:
+            positive_sample_loss = - (
+                        subsampling_weight * positive_score).sum() / subsampling_weight.sum()
+            negative_sample_loss = - (
+                        subsampling_weight * negative_score).sum() / subsampling_weight.sum()
 
-            positive_score = model(positive_sample)
+        loss = (positive_sample_loss + negative_sample_loss) / 2
 
-            positive_score = F.logsigmoid(positive_score).squeeze(dim = 1)
+        if args.regularization != 0.0:
+            # Use L3 regularization for ComplEx and DistMult
+            regularization = args.regularization * (
+                    model.entity_embedding.norm(p=3) ** 3 +
+                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
+            )
+            loss = loss + regularization
+            regularization_log = {'regularization': regularization.item()}
+        else:
+            regularization_log = {}
 
-            if args.uni_weight:
-                positive_sample_loss = - positive_score.mean()
-                negative_sample_loss = - negative_score.mean()
-            else:
-                positive_sample_loss = - (subsampling_weight * positive_score).sum()/subsampling_weight.sum()
-                negative_sample_loss = - (subsampling_weight * negative_score).sum()/subsampling_weight.sum()
+        loss.backward()
 
-            loss = (positive_sample_loss + negative_sample_loss)/2
-
-            if args.regularization != 0.0:
-                #Use L3 regularization for ComplEx and DistMult
-                regularization = args.regularization * (
-                    model.entity_embedding.norm(p = 3)**3 +
-                    model.relation_embedding.norm(p = 3).norm(p = 3)**3
-                )
-                loss = loss + regularization
-                regularization_log = {'regularization': regularization.item()}
-            else:
-                regularization_log = {}
-
-            loss.backward()
-
-            optimizer.step()
+        optimizer.step()
 
         log = {
             **regularization_log,
@@ -653,6 +600,7 @@ class KGEModel(nn.Module):
         }
 
         return log
+
     
     @staticmethod
     def test_step(model, test_triples, all_true_triples, args):
