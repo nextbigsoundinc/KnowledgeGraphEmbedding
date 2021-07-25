@@ -394,20 +394,22 @@ class KGEModel(nn.Module):
 
         if mode == 'head-batch':
             multi_head = list(torch.tensor_split(head, negative_sample_size))
-            print(len(multi_head))
-            while(len(multi_head) > 0):
-                a_head = multi_head.pop(0)
-                score = self.conve_layer(a_head, relation, tail, -1, 1, mode)
-                print(score)
+            a_head = multi_head.pop(0)
+            scores = list()
+            scores.append(self.conve_layer(a_head, relation, tail, -1, 1, mode))
+            del a_head
+            while (len(multi_head) > 0):
+                a_tail = multi_head.pop(0)
+                score_single = self.conve_layer(head, relation, a_tail, -1, 1, mode)
+                scores.append(score_single)
+                score_stack = torch.cat(scores, dim=1)
+                del scores
+                scores = list()
+                scores.append(score_stack)
                 del a_head
             del multi_head
-            # print(scores[0].shape)
-            # score = torch.cat(scores, dim=1)
-            # score = score.view(tail.shape[0], negative_sample_size, -1)
-            #print(score.shape)
-            score = torch.zeros(8, 3200)
-            # score = score.sum(dim=2)
-            # print(score.shape)
+            score = torch.cat(scores, dim=1)
+            print(score.shape)
 
         else:
             multi_tail = list(torch.tensor_split(tail, negative_sample_size))
@@ -419,15 +421,14 @@ class KGEModel(nn.Module):
             while(len(multi_tail) > 0):
                 a_tail = multi_tail.pop(0)
                 score_single = self.conve_layer(head, relation, a_tail, -1, 1, mode)
-                print(score_single.shape)
-                score = torch.cat(scores, dim=1)
+                scores.append(score_single)
+                score_stack = torch.cat(scores, dim=1)
                 del scores
                 scores = list()
-                scores.append(score_single)
-                print(score.shape)
-                print(len(scores))
+                scores.append(score_stack)
                 del a_tail
             del multi_tail
+            score = torch.cat(scores, dim=1)
             print(score.shape)
 
             #score = self.conve_layer(head, relation, tail, -1, 1, mode)
@@ -436,7 +437,6 @@ class KGEModel(nn.Module):
             # print(score.shape)
             # score = score.sum(dim=
             # print(score.shape)
-            score = torch.zeros(512, 1024)
 
         return score  # len * # ent
 
