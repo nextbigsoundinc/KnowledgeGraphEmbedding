@@ -420,7 +420,6 @@ class KGEModel(nn.Module):
             scores = list()
             print(len(multi_tail))
             for a_tail in multi_tail:
-                print(a_tail.shape)
                 scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
             print(scores[0].shape)
             score = torch.cat(scores, dim=1)
