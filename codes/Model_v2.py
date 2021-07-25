@@ -55,14 +55,14 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.entity_embedding.weight.data)
         xavier_normal_(self.relation_embedding.weight.data)
 
-    def forward(self, head, rel, tail, batch_size, negative_sample_size, mode):
-        head_embedding = self.entity_embedding(head).view(-1, 1, # batch_size, #sample per batch
+    def forward(self, head, rel,  batch_size, negative_sample_size):
+        head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, # batch_size, #sample per batch
                                                           self.emb_dim1, self.emb_dim2)
-        rel_embedding = self.relation_embedding(rel).view(-1, 1,
-                                                          self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
-        # print(head_embedding.shape)
-        # print(rel_embedding.shape)
+        rel_embedding = torch.cat(negative_sample_size * [self.relation_embedding(rel)]).view(
+            batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
+        print("head embedding=[", head_embedding.shape, "]")
+        print("rel embedding=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
@@ -393,52 +393,9 @@ class KGEModel(nn.Module):
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
         if mode == 'head-batch':
-            multi_head = list(torch.tensor_split(head, negative_sample_size))
-            a_head = multi_head.pop(0)
-            scores = list()
-            scores.append(self.conve_layer(a_head, relation, tail, -1, 1, mode))
-            del a_head
-            while (len(multi_head) > 0):
-                a_tail = multi_head.pop(0)
-                score_single = self.conve_layer(head, relation, a_tail, -1, 1, mode)
-                scores.append(score_single)
-                score_stack = torch.cat(scores, dim=1)
-                del scores
-                scores = list()
-                scores.append(score_stack)
-                del a_head
-            del multi_head
-            score = torch.cat(scores, dim=1)
-            print(score.shape)
-
+            scores = self.conve_layer(head, relation, batch_size, negative_sample_size)
         else:
-            multi_tail = list(torch.tensor_split(tail, negative_sample_size))
-            scores = list()
-            print(len(multi_tail))
-            a_tail = multi_tail.pop(0)
-            scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
-            del a_tail
-            while(len(multi_tail) > 0):
-                a_tail = multi_tail.pop(0)
-                score_single = self.conve_layer(head, relation, a_tail, -1, 1, mode)
-                print(score_single.shape)
-                scores.append(score_single)
-                score_stack = torch.cat(scores, dim=1)
-                print(score_stack.shape)
-                del scores
-                scores = list()
-                scores.append(score_stack)
-                del a_tail
-            del multi_tail
-            score = torch.cat(scores, dim=1)
-            print(score.shape)
-
-            #score = self.conve_layer(head, relation, tail, -1, 1, mode)
-            # print(score.shape)
-            # score = score.view(head.shape[0], tail.shape[0], -1)
-            # print(score.shape)
-            # score = score.sum(dim=
-            # print(score.shape)
+            scores = self.conve_layer(head, relation, -1, 1)
 
         return score  # len * # ent
 
