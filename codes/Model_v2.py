@@ -75,7 +75,7 @@ class ConvELayer(nn.Module):
                                                               1,
                                                               self.embedding_dim)
             tail_embedding = self.entity_embedding(tail).view(head.shape[0],
-                                                              negative_sample_size,
+                                                              -1,
                                                               self.embedding_dim)
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.embedding_dim)  # bs * 1 * 200       len(e1) = len(rel)
