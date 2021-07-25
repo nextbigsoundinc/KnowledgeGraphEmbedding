@@ -428,11 +428,12 @@ class KGEModel(nn.Module):
             del a_tail
             while(len(multi_tail) > 0):
                 a_tail = multi_tail.pop(0)
-                scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
+                score_single = self.conve_layer(head, relation, a_tail, -1, 1, mode)
+                print(score_single.shape)
                 score = torch.cat(scores, dim=1)
                 del scores
                 scores = list()
-                scores.append(score)
+                scores.append(score_single)
                 print(score.shape)
                 print(len(scores))
                 del a_tail
