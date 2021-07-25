@@ -270,7 +270,6 @@ class KGEModel(nn.Module):
         negative_sample_size=0
 
         if self.model_name not in ['TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplEx']:
-    
 
             if mode == 'single':
                 batch_size, negative_sample_size = sample.size(0), 1
@@ -551,8 +550,7 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        print("train positive sample size=[", len(positive_sample), "]")
-        print("train negative sample size=[", len(negative_sample), "]")
+        print("train negative sample size=[",  positive_sample, "]")
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
