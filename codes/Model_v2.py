@@ -86,10 +86,8 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
-        all_scores = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        score = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         # print("all scores=[", all_scores.shape, "]")
-        score = all_scores[:, tail].view(all_scores.shape[0], -1, all_scores.shape[0])
-        score = score.sum(dim=2)
         # print("tail score=[", score.shape, "]")
         # print("score=[", score, "]")
         return score  # len * # ent      
