@@ -463,6 +463,8 @@ class KGEModel(nn.Module):
         else:
             score = (head + relation) - tail
         print(mode)
+        print(head.shape)
+        print(tail.shape)
         print(score.shape)
         score = self.gamma.item() - torch.norm(score, p=1, dim=2)
         print(score.shape)
