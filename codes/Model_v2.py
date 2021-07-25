@@ -423,14 +423,21 @@ class KGEModel(nn.Module):
             multi_tail = list(torch.tensor_split(tail, negative_sample_size))
             scores = list()
             print(len(multi_tail))
+            a_tail = multi_tail.pop(0)
+            scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
+            del a_tail
             while(len(multi_tail) > 0):
                 a_tail = multi_tail.pop(0)
-                score = self.conve_layer(head, relation, a_tail, -1, 1, mode)
+                scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
+                score = torch.cat(scores, dim=1)
+                del scores
+                scores = list()
+                scores.append(score)
                 print(score)
                 del a_tail
             del multi_tail
-            # print(scores[0].shape)
-            # score = torch.cat(scores, dim=1)
+            print(score.shape)
+
             #score = self.conve_layer(head, relation, tail, -1, 1, mode)
             # print(score.shape)
             # score = score.view(head.shape[0], tail.shape[0], -1)
