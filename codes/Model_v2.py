@@ -68,17 +68,18 @@ class ConvELayer(nn.Module):
         if mode == 'head-batch':
             head_embedding = self.entity_embedding(head).view(batch_size,
                                                               negative_sample_size,
-                                                              self.embedding_dim) #bs * samp * 200
-            tail_embedding = self.entity_embedding(tail).view(-1, 1, self.embedding_dim)
+                                                              self.emb_dim1,
+                                                              self.emb_dim2) #bs * samp * 200
+            tail_embedding = self.entity_embedding(tail).view(-1, 1,
+                                                              self.emb_dim1,
+                                                              self.emb_dim2)
         else:
-            head_embedding = self.entity_embedding(head).view(-1,
-                                                              1,
-                                                              self.embedding_dim)
-            tail_embedding = self.entity_embedding(tail).view(head.shape[0],
-                                                              -1,
-                                                              self.embedding_dim)
+            head_embedding = self.entity_embedding(head).view(-1, 1, # batch_size, #sample per batch
+                                                              self.emb_dim1, self.emb_dim2)
+            tail_embedding = self.entity_embedding(tail).view(head.shape[0], -1,
+                                                              self.emb_dim1, self.emb_dim2)
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
-                                                          self.embedding_dim)  # bs * 1 * 200       len(e1) = len(rel)
+                                                          self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
         print(head_embedding.shape)
         print(rel_embedding.shape)
         print(tail_embedding.shape)
