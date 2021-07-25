@@ -551,9 +551,8 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        if mode == 'head-batch':
-            print("train positive sample size=[", positive_sample.size(0), "]")
-            print("train negative sample size=[", negative_sample.size(0), "]")
+        print("train positive sample size=[", positive_sample.size(0), "]")
+        print("train negative sample size=[", negative_sample.size(0), "]")
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
