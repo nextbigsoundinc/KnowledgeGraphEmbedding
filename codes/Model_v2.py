@@ -56,23 +56,14 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
     def forward(self, head, rel, tail, batch_size, negative_sample_size, mode):
-        # print("head indices=[", head.shape, "]")
-        # if batch_size > 1:
-        #     print("head reshape=[", head.view(batch_size, negative_sample_size, -1).shape, "]")
-        # print("rel indices=[",rel.shape,"]")
-        # print("tail indices={", tail.shape, "]")
-        tail_samples = tail.view(rel.shape[0], -1).shape[1]
-        # print("tail reshape:[", tail.view(rel.shape[0], -1).shape, "]")
-        # print("batch size=[",batch_size,"]")
-        # print("sample size=[",negative_sample_size,"]")
         head_embedding = self.entity_embedding(head).view(-1, 1, # batch_size, #sample per batch
                                                           self.emb_dim1, self.emb_dim2)
-        tail_embedding = self.entity_embedding(tail).view(head.shape[0], self.embedding_dim)
+        tail_embedding = self.entity_embedding(tail).squeeze()
         rel_embedding = self.relation_embedding(rel).view(-1, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
-        #print(head_embedding.shape)
-        #print(rel_embedding.shape)
-        #print(tail_embedding.shape)
+        print(head_embedding.shape)
+        print(rel_embedding.shape)
+        print(tail_embedding.shape)
 
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
