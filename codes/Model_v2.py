@@ -408,6 +408,7 @@ class KGEModel(nn.Module):
                 scores = list()
                 scores.append(score_stack)
                 del a_head
+                print(len(multi_head))
             del multi_head
             score = torch.cat(scores, dim=1)
             print(score.shape)
@@ -416,9 +417,9 @@ class KGEModel(nn.Module):
 
         # print(scores.shape)
         score = score[:, tail].view(batch_size, negative_sample_size, -1)
-        # print(score.shape)
+        #print(score.shape)
         score = score.sum(dim=2)
-        # print(score.shape)
+        print(score.shape)
 
         return score  # len * # ent
 
