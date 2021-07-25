@@ -403,7 +403,7 @@ class KGEModel(nn.Module):
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
 
         if mode == 'head-batch':
-            multi_head = torch.tensor_split(head, negative_sample_size)
+            multi_head = list(torch.tensor_split(head, negative_sample_size))
             print(len(multi_head))
             scores = list()
             while(len(multi_head) > 0):
@@ -419,7 +419,7 @@ class KGEModel(nn.Module):
             # print(score.shape)
 
         else:
-            multi_tail = torch.tensor_split(tail, negative_sample_size)
+            multi_tail = list(torch.tensor_split(tail, negative_sample_size))
             scores = list()
             print(len(multi_tail))
             while(len(multi_tail) > 0):
