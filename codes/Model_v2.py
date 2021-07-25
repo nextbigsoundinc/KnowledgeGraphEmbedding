@@ -43,10 +43,10 @@ class ConvELayer(nn.Module):
         self.embedding_dim = self.entity_embedding.weight.shape[1]
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
-        self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
+        self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
-        self.bn0 = torch.nn.BatchNorm2d(2)
+        self.bn0 = torch.nn.BatchNorm2d(1)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(6912, self.embedding_dim)
@@ -63,7 +63,7 @@ class ConvELayer(nn.Module):
 
         print("head embedding=[", head_embedding.shape, "]")
         print("rel embedding=[", rel_embedding.shape, "]")
-        stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
+        stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
         stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
