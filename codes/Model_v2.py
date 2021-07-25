@@ -405,16 +405,16 @@ class KGEModel(nn.Module):
         if mode == 'head-batch':
             multi_head = list(torch.tensor_split(head, negative_sample_size))
             print(len(multi_head))
-            scores = list()
             while(len(multi_head) > 0):
                 a_head = multi_head.pop(0)
-                scores.append(self.conve_layer(a_head, relation, tail, -1, 1, mode))
+                self.conve_layer(a_head, relation, tail, -1, 1, mode)
                 del a_head
             del multi_head
-            print(scores[0].shape)
-            score = torch.cat(scores, dim=1)
+            # print(scores[0].shape)
+            # score = torch.cat(scores, dim=1)
             # score = score.view(tail.shape[0], negative_sample_size, -1)
-            print(score.shape)
+            #print(score.shape)
+            score = 0
             # score = score.sum(dim=2)
             # print(score.shape)
 
@@ -427,14 +427,15 @@ class KGEModel(nn.Module):
                 scores.append(self.conve_layer(head, relation, a_tail, -1, 1, mode))
                 del a_tail
             del multi_tail
-            print(scores[0].shape)
-            score = torch.cat(scores, dim=1)
+            # print(scores[0].shape)
+            # score = torch.cat(scores, dim=1)
             #score = self.conve_layer(head, relation, tail, -1, 1, mode)
-            print(score.shape)
+            # print(score.shape)
             # score = score.view(head.shape[0], tail.shape[0], -1)
             # print(score.shape)
             # score = score.sum(dim=
             # print(score.shape)
+            score = 0
 
         return score  # len * # ent
 
