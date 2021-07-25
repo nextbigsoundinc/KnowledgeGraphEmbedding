@@ -62,8 +62,8 @@ class ConvELayer(nn.Module):
         rel_embedding = torch.cat(negative_sample_size * [self.relation_embedding(rel)]).view(
             batch_size, negative_sample_size, self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
-        print("head embedding=[", head_embedding.shape, "]")
-        print("rel embedding=[", rel_embedding.shape, "]")
+        # print("head embedding=[", head_embedding.shape, "]")
+        # print("rel embedding=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
         if stacked_inputs.shape[1] == 1:
@@ -399,11 +399,11 @@ class KGEModel(nn.Module):
         else:
             scores = self.conve_layer(head, relation, -1, 1)
 
-        print(scores.shape)
+        # print(scores.shape)
         score = scores[:, tail].view(batch_size, negative_sample_size, -1)
-        print(score.shape)
+        # print(score.shape)
         score = score.sum(dim=2)
-        print(score.shape)
+        # print(score.shape)
 
         return score  # len * # ent
 
@@ -551,8 +551,8 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        print("train positive sample size=[", positive_sample.shape, "]")
-        print("train negative sample size=[", negative_sample.shape, "]")
+        print("train positive sample size=[", len(positive_sample), "]")
+        print("train negative sample size=[", len(negative_sample), "]")
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
 
