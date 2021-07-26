@@ -327,7 +327,7 @@ class KGEModel(nn.Module):
                 tail_part, head_part = sample           # tail part: 1024 * 3 (1024 positive triples)
                                                         # head part: 1024 * 256 (each row represent neg sample ids of the corresponding positive triple)
                                                         # in other words, each positive triplet have 256 negetive triplets
-                batch_size, negative_sample_size = head_part.size(0), 1     # 1024 256
+                batch_size, negative_sample_size = head_part.size(0), head_part.size(1)     # 1024 256
 
                 head = torch.index_select(
                     self.entity_embedding,
