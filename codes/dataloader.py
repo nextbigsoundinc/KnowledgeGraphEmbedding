@@ -1,4 +1,4 @@
-# !/usr/bin/python3
+#!/usr/bin/python3
 
 from __future__ import absolute_import
 from __future__ import division
@@ -38,14 +38,14 @@ class TrainDataset(Dataset):
 
         while negative_sample_size < self.negative_sample_size:
             negative_sample = np.random.randint(self.nentity, size=self.negative_sample_size * 2)
-            if self.mode == 'head-batch':  # corrupted head (h', r, t)
+            if self.mode == 'head-batch':
                 mask = np.in1d(
                     negative_sample,
                     self.true_head[(relation, tail)],
                     assume_unique=True,
                     invert=True
                 )
-            elif self.mode == 'tail-batch':  # corrupted tail  (h, r, t')
+            elif self.mode == 'tail-batch':
                 mask = np.in1d(
                     negative_sample,
                     self.true_tail[(head, relation)],
@@ -138,7 +138,6 @@ class TestDataset(Dataset):
             tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
                    else (-1, head) for rand_head in range(self.nentity)]
             tmp[head] = (0, head)
-            # e.g., (0,0), (0,1), (-1, 25), (-1,25), (0,4), (-1,25) ..., (-1,25), (0,25), (0,26)
         elif self.mode == 'tail-batch':
             tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
                    else (-1, tail) for rand_tail in range(self.nentity)]
@@ -185,3 +184,4 @@ class BidirectionalOneShotIterator(object):
         while True:
             for data in dataloader:
                 yield data
+
