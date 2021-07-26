@@ -56,6 +56,8 @@ class TrainDataset(Dataset):
             negative_sample = negative_sample[mask]
             negative_sample_list.append(negative_sample)
             negative_sample_size += negative_sample.size
+            print("negative sample size local=[", negative_sample_size, "]")
+            print("negative sample size global=[", self.negative_sample_size, "]")
         
         negative_sample = np.concatenate(negative_sample_list)[:self.negative_sample_size]
 
