@@ -167,8 +167,8 @@ class TestDataset(Dataset):
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)
 
-        tmp = torch.LongTensor(tmp.values())
-        filter_bias = tmp.values()[:, 0].float()
+        # tmp = torch.LongTensor(tmp.keys())
+        filter_bias = tmp.values()[:, 0]
         negative_sample = tmp.values()[:, 1]
 
         positive_sample = torch.LongTensor((head, relation, tail))
