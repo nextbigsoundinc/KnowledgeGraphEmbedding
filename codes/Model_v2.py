@@ -404,7 +404,7 @@ class KGEModel(nn.Module):
                 score_single = self.conve_layer(a_head, relation, -1, 1)
                 scores.append(score_single)
                 score_stack = torch.cat(scores, dim=1)
-                print(scores_stack.shape)
+                print(score_stack.shape)
                 del scores
                 scores = list()
                 scores.append(score_stack)
