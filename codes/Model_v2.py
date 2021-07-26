@@ -401,9 +401,10 @@ class KGEModel(nn.Module):
             del a_head
             while (len(multi_head) > 0):
                 a_head = multi_head.pop(0)
-                single_score = self.conve_layer(a_head, relation, -1, 1)
-                print("single_score=[", single_score.shape, "]")
-                scores.append(single_score)
+                single_score_all = self.conve_layer(a_head, relation, -1, 1)
+                single_score_score_tail = single_score_all[:, tail].view(batch_size, 1, -1)
+                print("single_score=[", single_score_score_tail.shape, "]")
+                scores.append(single_score_score_tail)
                 score_stack = torch.cat(scores, dim=1)
                 print("score_stack=[", score_stack.shape, "]")
                 del scores
@@ -415,9 +416,10 @@ class KGEModel(nn.Module):
             print("score=[", score.shape, "]")
         else:
             score = self.conve_layer(head, relation, -1, 1)
+            score = score[:, tail].view(batch_size, negative_sample_size, -1)
 
         # print(scores.shape)
-        score = score[:, tail].view(batch_size, negative_sample_size, -1)
+
         #print(score.shape)
         score = score.sum(dim=2)
         print(score.shape)
