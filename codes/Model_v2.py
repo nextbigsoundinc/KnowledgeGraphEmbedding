@@ -403,7 +403,7 @@ class KGEModel(nn.Module):
                 a_head = multi_head.pop(0)
                 single_score_all = self.conve_layer(a_head, relation, -1, 1)
                 single_score_tail = single_score_all[:, tail]
-                # single_score_tail = single_score_tail.sum(dim=1)
+                single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
                 print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
