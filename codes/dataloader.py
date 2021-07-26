@@ -147,28 +147,9 @@ class TestDataset(Dataset):
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)
 
-        # negative_sample = np.random.randint(self.nentity, size=1024)
-        # tmp = dict()
-        #
-        # if self.mode == 'head-batch':
-        #     for i, rand_head in enumerate(negative_sample):
-        #         if (rand_head, relation, tail) not in self.triple_set:
-        #             tmp[i] = (0, rand_head)
-        #         else:
-        #             tmp[i] = (0, head)
-        #     # e.g., (0,0), (0,1), (-1, 25), (-1,25), (0,4), (-1,25) ..., (-1,25), (0,25), (0,26)
-        # elif self.mode == 'tail-batch':
-        #     for j, rand_tail in enumerate(negative_sample):
-        #         if (head, relation, rand_tail) not in self.triple_set:
-        #             tmp[j] = (0, rand_tail)
-        #         else:
-        #             tmp[j] = (0, tail)
-        # else:
-        #     raise ValueError('negative batch mode %s not supported' % self.mode)
-
         tmp = torch.LongTensor(tmp)
-        filter_bias = torch.LongTensor(tmp)[:, 0]
-        negative_sample = torch.LongTensor(tmp)[:, 1]
+        filter_bias = tmp[:, 0].float()
+        negative_sample = tmp[:, 1]
 
         positive_sample = torch.LongTensor((head, relation, tail))
             
