@@ -449,7 +449,9 @@ class KGEModel(nn.Module):
 
         else:
             score = self.conve_layer(head, relation, -1, 1)
+            print("score=[", score.shape, "]")
             score = score[:, tail].view(batch_size, negative_sample_size, -1)
+            print("score=[", score.shape, "]")
 
         # print(scores.shape)
 
