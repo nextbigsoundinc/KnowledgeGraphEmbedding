@@ -439,7 +439,7 @@ class KGEModel(nn.Module):
                 #print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
-                print("score_stack=[", score_stack.shape, "]")
+                #print("score_stack=[", score_stack.shape, "]")
                 del single_score_all
                 del single_score_tail
                 del scores
