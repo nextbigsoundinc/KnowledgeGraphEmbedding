@@ -149,21 +149,26 @@ class TestDataset(Dataset):
 
         negative_sample = np.random.randint(self.nentity, size=1024)
         tmp = dict()
+
         if self.mode == 'head-batch':
-            for rand_head in negative_sample:
+            last = 0
+            for i, rand_head in enumerate(negative_sample):
                 if (rand_head, relation, tail) not in self.triple_set:
-                    tmp[rand_head] = (0, rand_head)
+                    tmp[i] = (0, rand_head)
                 else:
-                    tmp[head] = (-1, head)
-            tmp[head] = (0, head)
+                    tmp[i] = (-1, head)
+                last = i
+            tmp[last + 1] = (0, head)
             # e.g., (0,0), (0,1), (-1, 25), (-1,25), (0,4), (-1,25) ..., (-1,25), (0,25), (0,26)
         elif self.mode == 'tail-batch':
-            for rand_tail in negative_sample:
+            last = 0
+            for j, rand_tail in enumerate(negative_sample):
                 if (head, relation, rand_tail) not in self.triple_set:
-                    tmp[rand_tail] = (0, rand_tail)
+                    tmp[j] = (0, rand_tail)
                 else:
-                    tmp[tail] = (-1, tail)
-            tmp[tail] = (0, tail)
+                    tmp[j] = (-1, tail)
+                last = j
+            tmp[last + 1] = (0, tail)
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)
 
