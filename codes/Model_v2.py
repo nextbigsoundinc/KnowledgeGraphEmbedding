@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+import gc
 import logging
 
 import numpy as np
@@ -436,16 +436,18 @@ class KGEModel(nn.Module):
                 single_score_all = self.conve_layer(a_head, relation, -1, 1)
                 single_score_tail = single_score_all[:, tail]
                 single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-                print("single_score=[", single_score_tail.shape, "]")
+                #print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
-                print("score_stack=[", score_stack.shape, "]")
+                #print("score_stack=[", score_stack.shape, "]")
                 del single_score_all
                 del single_score_tail
                 del scores
                 scores = list()
                 scores.append(score_stack)
                 del a_head
+                torch.cuda.empty_cache()
+                gc.collect()
             del multi_head
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
