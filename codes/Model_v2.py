@@ -446,8 +446,9 @@ class KGEModel(nn.Module):
                 scores = list()
                 scores.append(score_stack)
                 del a_head
-                torch.cuda.empty_cache()
-                gc.collect()
+                if (len(multi_head) % 1000) == 0:
+                    torch.cuda.empty_cache()
+                    gc.collect()
             del multi_head
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
