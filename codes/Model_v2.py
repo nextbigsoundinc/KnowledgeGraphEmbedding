@@ -402,7 +402,7 @@ class KGEModel(nn.Module):
             while (len(multi_head) > 0):
                 a_head = multi_head.pop(0)
                 single_score_all = self.conve_layer(a_head, relation, -1, 1)
-                single_score_tail = single_score_all[:, tail].view(batch_size, -1)
+                single_score_tail = single_score_all[:, tail]
                 # single_score_tail = single_score_tail.sum(dim=1)
                 print("single_score=[", single_score_tail, "]")
                 scores.append(single_score_tail)
