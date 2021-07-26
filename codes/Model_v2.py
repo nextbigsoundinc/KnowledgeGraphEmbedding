@@ -414,8 +414,9 @@ class KGEModel(nn.Module):
                 del a_head
             del multi_head
             score = torch.cat(scores, dim=1)
-            score = score.view(batch_size, negative_sample_size, -1)
             print("score=[", score.shape, "]")
+            score = score.view(batch_size, negative_sample_size, -1)
+
         else:
             score = self.conve_layer(head, relation, -1, 1)
             score = score[:, tail].view(batch_size, negative_sample_size, -1)
