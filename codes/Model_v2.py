@@ -392,6 +392,35 @@ class KGEModel(nn.Module):
         return score
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
+        # TransE
+        print(mode)
+        print(head.shape)
+        print(relation.shape)
+        print(tail.shape)
+
+        #       mode:       single
+        #       head.shape: torch.Size([512, 1, 1000])
+        #   relation.shape: torch.Size([512, 1, 1000])
+        #       tail.shape: torch.Size([1, 1000])
+        #      score.shape: torch.Size([512, 1, 1000])
+        # score.sum(dim=2): torch.Size([512, 1])
+        #
+        #
+        #             mode: tail-batch
+        #       head.shape: torch.Size([512, 1, 1000])
+        #   relation.shape: torch.Size([512, 1, 1000])
+        #       tail.shape: torch.Size([512, 1024, 1000])
+        #      score.shape: torch.Size([512, 1024, 1000])
+        # score.sum(dim=2): torch.Size([512, 1024)
+        #
+        #
+        #             mode: head-batch
+        #       head.shape: torch.Size([8, 40943, 1000])
+        #   relation.shape: torch.Size([8, 1, 1000])
+        #       tail.shape: torch.Size([8, 1, 1000])
+        #      score.shape: torch.Size([8, 40943, 1000])
+        # score.sum(dim=2): torch.Size([8, 40943])
+        #
 
         if mode == 'head-batch':
             multi_head = list(torch.tensor_split(head, negative_sample_size))
@@ -412,6 +441,7 @@ class KGEModel(nn.Module):
                 scores = list()
                 scores.append(score_stack)
                 del a_head
+                exit(1)
             del multi_head
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
