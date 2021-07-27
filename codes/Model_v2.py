@@ -458,11 +458,11 @@ class KGEModel(nn.Module):
                 single_score_all = torch.mm(head_rel_embeddings,
                                             self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
                 single_score_tail = single_score_all[:, tail]
-                single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-                #print("single_score=[", single_score_tail.shape, "]")
+                single_score_tail = single_score_tail.view(batch_size, -1)
+                print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
-                #print("score_stack=[", score_stack.shape, "]")
+                print("score_stack=[", score_stack.shape, "]")
                 del head_rel_embeddings
                 del single_score_all
                 del single_score_tail
