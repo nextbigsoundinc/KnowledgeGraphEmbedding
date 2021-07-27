@@ -62,7 +62,7 @@ class ConvELayer(nn.Module):
         head_embedding = self.entity_embedding(head).view(batch_size,
                                                           negative_sample_size,
                                                           self.embedding_dim)
-        head_embedding = torch.mean(head_embedding, 2)
+        head_embedding = torch.mean(head_embedding, axis=1)
         rel_embedding = self.relation_embedding(rel).view(batch_size, negative_sample_size,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
