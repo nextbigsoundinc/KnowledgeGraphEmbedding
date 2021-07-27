@@ -90,15 +90,15 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
-        score = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+
         # print("all scores=[", all_scores.shape, "]")
         # print("tail score=[", score.shape, "]")
         # print("score=[", score, "]")
-        return score  # len * # ent      
+        return x  # len * # ent
 
 
 class CoCoELayer(nn.Module):
-    def __init__(self, ent_real, ent_img, rel_real, rel_img, hidden_dim):
+    def __init__(self, ent_real, ent_img, rel_real, rel_img, negative_sample_size):
         super(CoCoELayer, self).__init__()
 
         self.ent_real = ent_real
@@ -106,10 +106,10 @@ class CoCoELayer(nn.Module):
         self.rel_real = rel_real
         self.rel_img = rel_img
 
-        self.conve_layer_rr = ConvELayer(self.ent_real, self.rel_real, hidden_dim=hidden_dim)
-        self.conve_layer_ri = ConvELayer(self.ent_real, self.rel_img, hidden_dim=hidden_dim)
-        self.conve_layer_ir = ConvELayer(self.ent_img, self.rel_real, hidden_dim=hidden_dim)
-        self.conve_layer_ii = ConvELayer(self.ent_img, self.rel_img, hidden_dim=hidden_dim)
+        self.conve_layer_rr = ConvELayer(self.ent_real, self.rel_real)
+        self.conve_layer_ri = ConvELayer(self.ent_real, self.rel_img)
+        self.conve_layer_ir = ConvELayer(self.ent_img, self.rel_real)
+        self.conve_layer_ii = ConvELayer(self.ent_img, self.rel_img)
 
         #self.last_fc = torch.nn.Linear
 
@@ -173,12 +173,18 @@ class CoCoELayer(nn.Module):
 
         '''
 
-        rr = self.drop_layer(self.conv_layer_rr(e1, rel, batch_size, negative_sample_size)) # bs * 200
-        ri = self.drop_layer(self.conv_layer_ri(e1, rel, batch_size, negative_sample_size))
-        ir = self.drop_layer(self.conv_layer_ir(e1, rel, batch_size, negative_sample_size))
-        ii = self.drop_layer(self.conv_layer_ii(e1, rel, batch_size, negative_sample_size))
+        rr = self.conv_layer_rr(e1, rel, batch_size, negative_sample_size) # bs * nentity
+        ri = self.conv_layer_ri(e1, rel, batch_size, negative_sample_size) # bs * nentity
+        ir = self.conv_layer_ir(e1, rel, batch_size, negative_sample_size) # bs * nentity
+        ii = self.conv_layer_ii(e1, rel, batch_size, negative_sample_size) # bs * nentity
 
-        return rr, ri, ir, ii
+        rrr = torch.mm(rr, self.conv_layer_rr.entity_embedding.weight.transpose(1, 0))  # rr: bs * 200, tail...': 200 * (1024*256) =>
+        rii = torch.mm(ri, self.conv_layer_ii.entity_embedding.weight.transpose(1, 0))
+        iri = torch.mm(ir, self.conv_layer_ri.entity_embedding.weight.transpose(1, 0))
+        iir = torch.mm(ii, self.conv_layer_ir.entity_embedding.weight.transpose(1, 0))
+        score = rrr + rii + iri - iir
+
+        return score
 
 
 
@@ -426,7 +432,54 @@ class KGEModel(nn.Module):
             multi_head = list(torch.tensor_split(head, negative_sample_size))
             a_head = multi_head.pop(0)
             scores = list()
-            single_score_all = self.conve_layer(a_head, relation, -1, 1)
+            head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
+            single_score_all = torch.mm(head_rel_embeddings,
+                                        self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            single_score_tail = single_score_all[:, tail]
+            single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
+            scores.append(single_score_tail)
+            del a_head
+            while (len(multi_head) > 0):
+                a_head = multi_head.pop(0)
+                head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
+                single_score_all = torch.mm(head_rel_embeddings,
+                                            self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+                single_score_tail = single_score_all[:, tail]
+                single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
+                #print("single_score=[", single_score_tail.shape, "]")
+                scores.append(single_score_tail)
+                score_stack = torch.cat(scores, dim=1)
+                #print("score_stack=[", score_stack.shape, "]")
+                del head_rel_embeddings
+                del single_score_all
+                del single_score_tail
+                del scores
+                del a_head
+                scores = list()
+                scores.append(score_stack)
+                if (len(multi_head) % 1000) == 0:
+                    torch.cuda.empty_cache()
+                    gc.collect()
+            del multi_head
+            score = torch.cat(scores, dim=1)
+            print("score=[", score.shape, "]")
+        else:
+            score = self.conve_layer(head, relation, -1, 1)
+            print("score=[", score.shape, "]")
+            score = score[:, tail]
+            print("score=[", score.shape, "]")
+
+        # print(scores.shape)
+        print(score.shape)
+
+        return score  # len * # ent
+
+    def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
+        if mode == 'head-batch':
+            multi_head = list(torch.tensor_split(head, negative_sample_size))
+            a_head = multi_head.pop(0)
+            scores = list()
+            single_score_all = self.cocoe_layer(a_head, relation, -1, 1)
             single_score_tail = single_score_all[:, tail]
             single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
             scores.append(single_score_tail)
@@ -436,10 +489,10 @@ class KGEModel(nn.Module):
                 single_score_all = self.conve_layer(a_head, relation, -1, 1)
                 single_score_tail = single_score_all[:, tail]
                 single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-                #print("single_score=[", single_score_tail.shape, "]")
+                # print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
-                #print("score_stack=[", score_stack.shape, "]")
+                # print("score_stack=[", score_stack.shape, "]")
                 del single_score_all
                 del single_score_tail
                 del scores
@@ -453,45 +506,11 @@ class KGEModel(nn.Module):
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
         else:
-            score = self.conve_layer(head, relation, -1, 1)
+            score = self.concoe_layer(head, relation, -1, 1)
             print("score=[", score.shape, "]")
             score = score[:, tail]
             score = score.sum(dim=1).view(batch_size, -1)
             print("score=[", score.shape, "]")
-
-        # print(scores.shape)
-        print(score.shape)
-
-        return score  # len * # ent
-
-    def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
-
-        if mode=='head_batch':
-            rr, ri, ir, ii = self.cocoe_layer(head, relation, batch_size, negative_sample_size) # head: 1024 * 256, relation: 1024
-            tail_embedded_real = self.entity_embedding(tail).squeeze()  # (1024) * 200
-            tail_embedded_img = self.img_entity_embedding(tail).squeeze()
-        else:
-            rr, ri, ir, ii = self.cocoe_layer(head, relation, -1, 1)
-            tail_embedded_real = self.entity_embedding(tail).view(batch_size,
-                                                                  negative_sample_size,
-                                                                  -1).squeeze()
-            tail_embedded_img = self.img_entity_embedding(tail).view(batch_size, negative_sample_size,-1).squeeze()
-
-        tail_embedded_real = self.inp_drop(tail_embedded_real)
-        tail_embedded_img = self.inp_drop(tail_embedded_img)
-
-        rrr = torch.mm(rr, tail_embedded_real.weight.transpose(1, 0))  # rr: bs * 200, tail...': 200 * (1024*256) =>
-        rii = torch.mm(ri, tail_embedded_img.weight.transpose(1, 0))
-        iri = torch.mm(rr, tail_embedded_real.weight.transpose(1, 0))
-        iir = torch.mm(ri, tail_embedded_img.weight.transpose(1, 0))
-
-        '''
-        er * rr = > Conv 
-        '''
-        score = rrr + rii + iri - iir
-        score = score.sum(dim=2)
-        score = torch.sigmoid(score)
-        return score  # len * # ent
 
     def TransE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
         print(mode)
