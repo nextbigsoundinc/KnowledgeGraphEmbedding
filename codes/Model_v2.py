@@ -53,6 +53,7 @@ class ConvELayer(nn.Module):
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(14592, self.embedding_dim)
+        self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
 
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
@@ -64,7 +65,7 @@ class ConvELayer(nn.Module):
         rel_embedding = self.relation_embedding(rel).view(batch_size, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
-        rel_embedding = torch.cat(negative_sample_size * [rel_embedding.shape], dim=1)
+        rel_embedding = torch.cat(negative_sample_size * [rel_embedding], dim=1)
 
         print("head embedding=[", head_embedding.shape, "]")
         print("rel embedding=[", rel_embedding.shape, "]")
