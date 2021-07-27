@@ -82,9 +82,6 @@ class ConvModel(nn.Module):
         return pred         # len * # ent
 
 
-
-
-
     @staticmethod
     def train_step( model, optimizer, train_iterator, args):
         '''
