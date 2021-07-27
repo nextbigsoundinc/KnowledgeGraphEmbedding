@@ -27,6 +27,8 @@ class ConvELayer(nn.Module):
                  input_drop=0.2, hidden_drop=0.3,
                  feat_drop=0.2,
                  emb_dim1=20,
+                 test_batch_size1=512,
+                 test_batch_size2=8,
                  hidden_size=9728):
 
         super(ConvELayer, self).__init__()
@@ -43,11 +45,11 @@ class ConvELayer(nn.Module):
         self.embedding_dim = self.entity_embedding.weight.shape[1]
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
+        self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(1)
-        self.bn00 = torch.nn.BatchNorm2d(40943)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(14592, self.embedding_dim)
@@ -57,13 +59,15 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
     def forward(self, head, rel,  batch_size, negative_sample_size):
-        head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size, # batch_size, #sample per batch
-                                                          self.emb_dim1, self.emb_dim2)
+        head_embedding = self.entity_embedding(head).view(batch_size,
+                                                          negative_sample_size,
+                                                          self.embedding_dim)
+        head_embedding = torch.mean(head_embedding, 2)
         rel_embedding = self.relation_embedding(rel).view(batch_size, negative_sample_size,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
-        # print("head embedding=[", head_embedding.shape, "]")
-        # print("rel embedding=[", rel_embedding.shape, "]")
+        print("head embedding=[", head_embedding.shape, "]")
+        print("rel embedding=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
         if stacked_inputs.shape[1] == 1:
@@ -429,45 +433,51 @@ class KGEModel(nn.Module):
         #
 
         if mode == 'head-batch':
-            multi_head = list(torch.tensor_split(head, negative_sample_size))
-            a_head = multi_head.pop(0)
-            scores = list()
-            head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
-            single_score_all = torch.mm(head_rel_embeddings,
-                                        self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-            single_score_tail = single_score_all[:, tail]
-            single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-            scores.append(single_score_tail)
-            del a_head
-            while (len(multi_head) > 0):
-                a_head = multi_head.pop(0)
-                head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
-                single_score_all = torch.mm(head_rel_embeddings,
-                                            self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-                single_score_tail = single_score_all[:, tail]
-                single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-                #print("single_score=[", single_score_tail.shape, "]")
-                scores.append(single_score_tail)
-                score_stack = torch.cat(scores, dim=1)
-                #print("score_stack=[", score_stack.shape, "]")
-                del head_rel_embeddings
-                del single_score_all
-                del single_score_tail
-                del scores
-                del a_head
-                scores = list()
-                scores.append(score_stack)
-                if (len(multi_head) % 1000) == 0:
-                    torch.cuda.empty_cache()
-                    gc.collect()
-            del multi_head
-            score = torch.cat(scores, dim=1)
-            print("score=[", score.shape, "]")
-        else:
-            score = self.conve_layer(head, relation, -1, 1)
-            print("score=[", score.shape, "]")
+            head_rel_embeddings = self.conve_layer(head, relation, batch_size, negative_sample_size)
+            score = torch.mm(head_rel_embeddings,
+                             self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
             score = score[:, tail]
-            print("score=[", score.shape, "]")
+            score = score.sum(dim=1).view(batch_size, -1)
+            # multi_head = list(torch.tensor_split(head, negative_sample_size))
+            # a_head = multi_head.pop(0)
+            # scores = list()
+            # head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
+            # single_score_all = torch.mm(head_rel_embeddings,
+            #                             self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            # single_score_tail = single_score_all[:, tail]
+            # single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
+            # scores.append(single_score_tail)
+            # del a_head
+            # while (len(multi_head) > 0):
+            #     a_head = multi_head.pop(0)
+            #     head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
+            #     single_score_all = torch.mm(head_rel_embeddings,
+            #                                 self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            #     single_score_tail = single_score_all[:, tail]
+            #     single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
+            #     #print("single_score=[", single_score_tail.shape, "]")
+            #     scores.append(single_score_tail)
+            #     score_stack = torch.cat(scores, dim=1)
+            #     #print("score_stack=[", score_stack.shape, "]")
+            #     del head_rel_embeddings
+            #     del single_score_all
+            #     del single_score_tail
+            #     del scores
+            #     del a_head
+            #     scores = list()
+            #     scores.append(score_stack)
+            #     if (len(multi_head) % 1000) == 0:
+            #         torch.cuda.empty_cache()
+            #         gc.collect()
+            # del multi_head
+            # score = torch.cat(scores, dim=1)
+            # print("score=[", score.shape, "]")
+        else:
+            head_rel_embeddings = self.conve_layer(head, relation, -1, 1)
+            score = torch.mm(head_rel_embeddings,
+                             self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            score = score[:, tail]
+            score = score.sum(dim=1).view(batch_size, -1)
 
         # print(scores.shape)
         print(score.shape)
