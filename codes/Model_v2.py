@@ -47,6 +47,7 @@ class ConvELayer(nn.Module):
 
         self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
+        self.conv10 = torch.nn.Conv2d(1, 32, (3, 3), 40943, 0, bias=True)
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(1)
@@ -78,7 +79,11 @@ class ConvELayer(nn.Module):
         else:
             stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
-        x = self.conv1(x)                                           # len * 32 * 18 * 8
+        if negative_sample_size > 1:
+            x = self.conv10(x)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
+        else:
+            x = self.conv1(x)
+        # x = self.conv1(x)                                           # len * 32 * 18 * 8
         #print("after conv1=[", x.shape, "]")
         x = self.mpool(x)                                           # len * 32 * 9 * 4
         #print("after maxpool=[", x.shape, "]")
