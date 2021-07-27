@@ -446,7 +446,7 @@ class KGEModel(nn.Module):
                              self.conve_layer.entity_embedding.weight.transpose(1,
                                                                                 0))  # len * 200  @ (200 * # ent)  => len *  # ent
             score = score[:, tail]
-            score = score.sum(dim=1).view(batch_size, -1)
+            # score = score.sum(dim=1).view(batch_size, -1)
             # multi_head = list(torch.tensor_split(head, negative_sample_size))
             # a_head = multi_head.pop(0)
             # scores = list()
