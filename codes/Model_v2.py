@@ -59,16 +59,13 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.relation_embedding.weight.data)
 
     def forward(self, head, rel,  batch_size, negative_sample_size):
-        head_embedding = self.entity_embedding(head).view(batch_size,
-                                                          negative_sample_size,
-                                                          self.embedding_dim)
-        head_embedding = torch.mean(head_embedding, axis=1).view(batch_size, 1,
+        head_embedding = self.entity_embedding(head).view(batch_size, 1,
                                                           self.emb_dim1, self.emb_dim2)
         rel_embedding = self.relation_embedding(rel).view(batch_size, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
-        print("head embedding=[", head_embedding.shape, "]")
-        print("rel embedding=[", rel_embedding.shape, "]")
+        # print("head embedding=[", head_embedding.shape, "]")
+        # print("rel embedding=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
 
