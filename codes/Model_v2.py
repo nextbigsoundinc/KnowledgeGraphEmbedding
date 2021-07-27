@@ -91,7 +91,7 @@ class ConvELayer(nn.Module):
         x = self.bn2(x)
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        torch.cat(negative_sample_size * [x], 1)
+        x = torch.cat(negative_sample_size * [x], 1)
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
 
