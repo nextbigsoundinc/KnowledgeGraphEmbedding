@@ -74,9 +74,9 @@ class ConvELayer(nn.Module):
         print("stacked=[", stacked_inputs.shape, "]")
 
         if negative_sample_size > 1:
-            stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
+            stacked_inputs = self.bn00(stacked_inputs)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
         else:
-            stacked_inputs = self.bn00(stacked_inputs)
+            stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
         #print("after conv1=[", x.shape, "]")
