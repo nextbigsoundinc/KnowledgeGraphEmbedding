@@ -47,7 +47,7 @@ class ConvELayer(nn.Module):
 
         self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
-        self.conv10 = torch.nn.Conv2d(1, 32, (3, 3), 40943, 0, bias=True)
+        self.conv10 = torch.nn.Conv2d(40943, 32, (3, 3), 1, 0, bias=True)
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(1)
