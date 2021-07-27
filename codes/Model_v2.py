@@ -95,6 +95,8 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
+        x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        x += self.b.expand_as(x)
 
         # print("all scores=[", all_scores.shape, "]")
         # print("tail score=[", score.shape, "]")
@@ -445,9 +447,7 @@ class KGEModel(nn.Module):
             multi_head = list(torch.tensor_split(head, negative_sample_size))
             a_head = multi_head.pop(0)
             scores = list()
-            head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
-            single_score_all = torch.mm(head_rel_embeddings,
-                                        self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            single_score_all = self.conve_layer(a_head, relation, -1, 1)
             single_score_tail = single_score_all[:, tail]
             single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
             scores.append(single_score_tail)
@@ -477,9 +477,7 @@ class KGEModel(nn.Module):
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
         else:
-            head_rel_embeddings = self.conve_layer(head, relation, -1, 1)
-            score = torch.mm(head_rel_embeddings,
-                             self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+            score = self.conve_layer(head, relation, -1, 1)
             score = score[:, tail]
             score = score.sum(dim=1).view(batch_size, -1)
 

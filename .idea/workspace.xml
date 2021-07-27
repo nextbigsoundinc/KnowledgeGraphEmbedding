@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="revert">
+    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
@@ -46,7 +46,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="6" />
-          <entry key="py" value="5822" />
+          <entry key="py" value="5824" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -56,7 +56,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="6" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="5822" />
+          <entry key="Python" value="5824" />
         </counts>
       </usages-collector>
     </session>
@@ -100,8 +100,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
+            <state relative-caret-position="618">
+              <caret line="613" column="42" lean-forward="true" selection-start-line="613" selection-start-column="42" selection-end-line="613" selection-end-column="42" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -130,8 +130,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/codes/ConvE.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="439">
-              <caret line="48" column="77" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="77" />
+            <state relative-caret-position="629">
+              <caret line="78" column="32" lean-forward="true" selection-start-line="77" selection-start-column="8" selection-end-line="78" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -404,20 +404,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00106" summary="&#10;test">
-      <created>1627313889171</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1627313889171</updated>
-    </task>
-    <task id="LOCAL-00107" summary="&#10;test">
-      <created>1627314338959</created>
-      <option name="number" value="00107" />
-      <option name="presentableId" value="LOCAL-00107" />
-      <option name="project" value="LOCAL" />
-      <updated>1627314338959</updated>
     </task>
     <task id="LOCAL-00108" summary="&#10;test">
       <created>1627314656739</created>
@@ -748,7 +734,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627417243320</updated>
     </task>
-    <option name="localTasksCounter" value="155" />
+    <task id="LOCAL-00155" summary="revert">
+      <created>1627417329377</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1627417329377</updated>
+    </task>
+    <task id="LOCAL-00156" summary="revert">
+      <created>1627417487936</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1627417487936</updated>
+    </task>
+    <option name="localTasksCounter" value="157" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -884,11 +884,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/codes/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3798" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/codes/play.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -938,17 +933,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/codes/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3798" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/codes/ConvE.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="48" column="77" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="77" />
+        <state relative-caret-position="629">
+          <caret line="78" column="32" lean-forward="true" selection-start-line="77" selection-start-column="8" selection-end-line="78" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
+        <state relative-caret-position="618">
+          <caret line="613" column="42" lean-forward="true" selection-start-line="613" selection-start-column="42" selection-end-line="613" selection-end-column="42" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
