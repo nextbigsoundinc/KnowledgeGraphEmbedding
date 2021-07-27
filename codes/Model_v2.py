@@ -91,7 +91,6 @@ class ConvELayer(nn.Module):
         x = self.bn2(x)
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        x = torch.cat(negative_sample_size * [x], 0)
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
 
@@ -437,6 +436,7 @@ class KGEModel(nn.Module):
             score = torch.mm(head_rel_embeddings,
                              self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
             score = score[:, tail]
+            score = torch.cat(negative_sample_size * [score], dim=1)
             print(score.shape)
             #score = score.sum(dim=1).view(batch_size, -1)
             # multi_head = list(torch.tensor_split(head, negative_sample_size))
