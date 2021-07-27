@@ -50,6 +50,7 @@ class ConvELayer(nn.Module):
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(1)
+        self.bn00 = torch.nn.BatchNorm2d(40943)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(14592, self.embedding_dim)
@@ -72,7 +73,10 @@ class ConvELayer(nn.Module):
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         print("stacked=[", stacked_inputs.shape, "]")
 
-        stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
+        if negative_sample_size > 1:
+            stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
+        else:
+            stacked_inputs = self.bn00(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
         #print("after conv1=[", x.shape, "]")
