@@ -71,10 +71,8 @@ class ConvELayer(nn.Module):
         print("rel embedding=[", rel_embedding.shape, "]")
         stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         #print("stacked=[", stacked_inputs.shape, "]")
-        if stacked_inputs.shape[1] == 1:
-            stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 10
-        else:
-            stacked_inputs = self.bn00(stacked_inputs)                   # len * 2 * 20 * 10
+
+        stacked_inputs = self.bn0(stacked_inputs)                   # len * 2 * 20 * 1                   # len * 2 * 20 * 10
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)                                           # len * 32 * 18 * 8
         #print("after conv1=[", x.shape, "]")
@@ -93,6 +91,7 @@ class ConvELayer(nn.Module):
         x = self.bn2(x)
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
+        torch.cat(negative_sample_size * [x], 1)
         #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
 
