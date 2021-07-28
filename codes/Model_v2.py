@@ -52,7 +52,7 @@ class ConvELayer(nn.Module):
         self.bn0 = torch.nn.BatchNorm2d(2)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
-        self.fc = torch.nn.Linear(14592, self.embedding_dim)
+        self.fc = torch.nn.Linear(6912, self.embedding_dim)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
 
     def init(self):
