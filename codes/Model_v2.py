@@ -699,6 +699,7 @@ class KGEModel(nn.Module):
                 targets = targets.cuda()
 
             loss = model.loss(inputs, targets)
+            loss.backward()
 
         optimizer.step()
 
