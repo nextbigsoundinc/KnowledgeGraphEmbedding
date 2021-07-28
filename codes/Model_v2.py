@@ -518,26 +518,26 @@ class KGEModel(nn.Module):
                     gc.collect()
             del multi_head
             score = torch.cat(scores, dim=1)
-            print("score=[", score.shape, "]")
+            #print("score=[", score.shape, "]")
         else:
             score = self.concoe_layer(head, relation, -1, 1)
-            print("score=[", score.shape, "]")
+            #print("score=[", score.shape, "]")
             score = score[:, tail]
             score = score.sum(dim=1).view(batch_size, -1)
-            print("score=[", score.shape, "]")
+            #print("score=[", score.shape, "]")
 
     def TransE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
-        print(mode)
-        print(head.shape)
-        print(relation.shape)
-        print(tail.shape)
+        #print(mode)
+        #print(head.shape)
+        #print(relation.shape)
+        #print(tail.shape)
         if mode == 'head-batch':
             score = head + (relation - tail)
         else:
             score = (head + relation) - tail
-        print(score.shape)
+        #print(score.shape)
         score = self.gamma.item() - torch.norm(score, p=1, dim=2)
-        print(score.shape)
+        #print(score.shape)
         return score
 
     def DistMult(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
@@ -796,7 +796,7 @@ class KGEModel(nn.Module):
                             #Notice that argsort is not ranking
 
                             ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                            print(argsort[i, :])
+                            #print(argsort[i, :])
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
