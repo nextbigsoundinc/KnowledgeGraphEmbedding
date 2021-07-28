@@ -83,15 +83,15 @@ class ConvELayer(nn.Module):
         x = self.feature_map_drop(x)
         #print("after fm drop=[", x.shape, "]")
         x = x.view(x.shape[0], -1)                                  # len * 1152
-        print("after reshape=[", x.shape, "]")
+        #print("after reshape=[", x.shape, "]")
         x = self.fc(x)                   # len * 200
-        print("after fully connected=[", x.shape, "]")
+        #print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
-        print("after hidden_drop=[", x.shape, "]")
+        #print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        print("relu=[",x.shape,"]")
+        #print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
@@ -101,7 +101,7 @@ class ConvELayer(nn.Module):
         # print("all scores=[", all_scores.shape, "]")
         # print("tail score=[", score.shape, "]")
         # print("score=[", score, "]")
-        return pred  # len * # ent
+        # return pred  # len * # ent
 
 
 class CoCoELayer(nn.Module):
@@ -475,16 +475,7 @@ class KGEModel(nn.Module):
 
             # print("score=[", score.shape, "]")
         else:
-            # print('tail shape=[{}]'.format(tail.shape))
-            score_all = self.conve_layer(head, relation, -1, 1).view(-1)
-            # print("all scores shape =[", score_all.shape, "]")
-            score = torch.index_select(input=score_all, dim=0, index=tail)
-            # print("tail scores flat=[", score.shape, "]")
-            score = score.view(batch_size, negative_sample_size)
-            # print("tail scores=[{}]".format(score.shape))
-
-        # print("tail scores=[{}]".format(score.shape))
-        # print(score.shape)
+            score = self.conve_layer(head, relation, -1, 1)
 
         return score  # len * # ent
 
@@ -640,10 +631,10 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        negative_score = model((positive_sample, negative_sample), mode=mode)
-        positive_score = model(positive_sample)
-
         if model.model_name not in ['ConvE', 'CoCoE']:
+            negative_score = model((positive_sample, negative_sample), mode=mode)
+            positive_score = model(positive_sample)
+
             if args.negative_adversarial_sampling:
                 # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
                 negative_score = (
@@ -685,25 +676,17 @@ class KGEModel(nn.Module):
             }
 
         else:
-
-            batch_size = positive_score.size(0)  # e.g., 1024
-            negative_score_size = negative_score.size(1)  # e.g., 256
-            positive_score_size = 1
-            positive_targets = torch.ones((batch_size, positive_score_size)).view(-1)
-            negative_targets = torch.zeros((batch_size, negative_score_size)).view(-1)
-            positive_input = positive_score.view(-1)
-            negative_input = negative_score.view(-1)
-            targets = torch.cat([positive_targets, negative_targets], dim=0)
-            inputs = torch.cat([positive_input, negative_input], dim=0)
-
-            # print('inputs=[{}]'.format(inputs))
-            # print('targets=[{}]'.format(targets))
+            pred = model(positive_sample)
+            batch_size = pred.size(0)  # e.g., 1024
+            targets = torch.zeros(batch_size, pred.size(1))
+            for batch in range(batch_size):
+                targets[batch][positive_sample[batch][2]] = 1.0
 
             if args.cuda:
-                inputs = inputs.cuda()
+                pred = pred.cuda()
                 targets = targets.cuda()
 
-            loss = model.loss(inputs, targets)
+            loss = model.loss(pred, targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
@@ -797,47 +780,84 @@ class KGEModel(nn.Module):
 
                         batch_size = positive_sample.size(0)
 
-                        score = model((positive_sample, negative_sample), mode)
-                        #print("score=[{}]".format(score))
-                        score += filter_bias
-                        #print("score+filter bias=[{}]".format(score))
+                        if model.model_name not in ['ConvE', 'CoCoE']:
 
-                        # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
+                            score = model((positive_sample, negative_sample), mode)
+                            #print("score=[{}]".format(score))
+                            score += filter_bias
+                            #print("score+filter bias=[{}]".format(score))
 
-
-                        #Explicitly sort all the entities to ensure that there is no test exposure bias
-                        argsort = torch.argsort(score, dim = 1, descending=True)
+                            # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
 
 
-                        if mode == 'head-batch':
-                            positive_arg = positive_sample[:, 0]
-                        elif mode == 'tail-batch':
-                            positive_arg = positive_sample[:, 2]
+                            #Explicitly sort all the entities to ensure that there is no test exposure bias
+                            argsort = torch.argsort(score, dim = 1, descending=True)
+
+
+                            if mode == 'head-batch':
+                                positive_arg = positive_sample[:, 0]
+                            elif mode == 'tail-batch':
+                                positive_arg = positive_sample[:, 2]
+                            else:
+                                raise ValueError('mode %s not supported' % mode)
+
+
+                            for i in range(batch_size):
+                                #print("negative sample shape=[{}]".format(negative_sample.shape))
+                                #Notice that argsort is not ranking
+
+                                ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                                #print(argsort[i, :])
+                                assert ranking.size(0) == 1
+                                print('ranking=[{}]'.format(ranking))
+                                #ranking + 1 is the true ranking used in evaluation metrics
+                                ranking = 1 + ranking.item()
+                                logs.append({
+                                    'MRR': 1.0/ranking,
+                                    'MR': float(ranking),
+                                    'HITS@1': 1.0 if ranking <= 1 else 0.0,
+                                    'HITS@3': 1.0 if ranking <= 3 else 0.0,
+                                    'HITS@10': 1.0 if ranking <= 10 else 0.0,
+                                    'HITS@1000': 1.0 if ranking <= 1000 else 0.0
+                                })
+
+                            if step % args.test_log_steps == 0:
+                                logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
                         else:
-                            raise ValueError('mode %s not supported' % mode)
+                            score = model(positive_sample, mode)
 
+                            # Explicitly sort all the entities to ensure that there is no test exposure bias
+                            argsort = torch.argsort(score, dim=1, descending=True)
 
-                        for i in range(batch_size):
-                            #print("negative sample shape=[{}]".format(negative_sample.shape))
-                            #Notice that argsort is not ranking
+                            if mode == 'head-batch':
+                                positive_arg = positive_sample[:, 0]
+                            elif mode == 'tail-batch':
+                                positive_arg = positive_sample[:, 2]
+                            else:
+                                raise ValueError('mode %s not supported' % mode)
 
-                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                            #print(argsort[i, :])
-                            assert ranking.size(0) == 1
-                            print('ranking=[{}]'.format(ranking))
-                            #ranking + 1 is the true ranking used in evaluation metrics
-                            ranking = 1 + ranking.item()
-                            logs.append({
-                                'MRR': 1.0/ranking,
-                                'MR': float(ranking),
-                                'HITS@1': 1.0 if ranking <= 1 else 0.0,
-                                'HITS@3': 1.0 if ranking <= 3 else 0.0,
-                                'HITS@10': 1.0 if ranking <= 10 else 0.0,
-                                'HITS@1000': 1.0 if ranking <= 1000 else 0.0
-                            })
+                            for i in range(batch_size):
+                                # print("negative sample shape=[{}]".format(negative_sample.shape))
+                                # Notice that argsort is not ranking
 
-                        if step % args.test_log_steps == 0:
-                            logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
+                                ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                                # print(argsort[i, :])
+                                assert ranking.size(0) == 1
+                                print('ranking=[{}]'.format(ranking))
+                                # ranking + 1 is the true ranking used in evaluation metrics
+                                ranking = 1 + ranking.item()
+                                logs.append({
+                                    'MRR': 1.0 / ranking,
+                                    'MR': float(ranking),
+                                    'HITS@1': 1.0 if ranking <= 1 else 0.0,
+                                    'HITS@3': 1.0 if ranking <= 3 else 0.0,
+                                    'HITS@10': 1.0 if ranking <= 10 else 0.0,
+                                    'HITS@1000': 1.0 if ranking <= 1000 else 0.0
+                                })
+
+                            if step % args.test_log_steps == 0:
+                                logging.info(
+                                    'Evaluating the model... (%d/%d)' % (step, total_steps))
 
                         step += 1
 

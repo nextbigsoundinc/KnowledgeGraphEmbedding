@@ -55,7 +55,6 @@ class ConvLayer(nn.Module):
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
         self.fc = torch.nn.Linear(hidden_size, self.embedding_dim)
 
-
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
         xavier_normal_(self.relation_embedding.weight.data)
