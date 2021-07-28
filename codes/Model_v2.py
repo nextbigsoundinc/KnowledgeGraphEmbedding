@@ -64,7 +64,7 @@ class ConvELayer(nn.Module):
     def forward(self, head, rel,  batch_size, negative_sample_size):
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size,
                                                           self.emb_dim1, self.emb_dim2)
-        rel_embedding = self.relation_embedding(rel).view(batch_size, 1,
+        rel_embedding = self.relation_embedding(rel).view(batch_size, 2,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
         # print("head embedding=[", head_embedding.shape, "]")
@@ -97,11 +97,13 @@ class ConvELayer(nn.Module):
         #print("tail emb:[", tail_embedding.shape,"]")
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
+        pred = torch.sigmoid(x)
+        return pred
 
         # print("all scores=[", all_scores.shape, "]")
         # print("tail score=[", score.shape, "]")
         # print("score=[", score, "]")
-        return x  # len * # ent
+        return pred  # len * # ent
 
 
 class CoCoELayer(nn.Module):
@@ -228,8 +230,7 @@ class KGEModel(nn.Module):
             self.relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
             self.conve_layer = ConvELayer(self.entity_embedding, self.relation_embedding)
             self.conve_layer.init()
-            self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
-            self.drop_out = torch.nn.Dropout(0.357)
+            self.loss = torch.nn.BCELoss()
             if model_name == 'CoCoE':
                 self.img_entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
                 self.img_relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
@@ -652,31 +653,48 @@ class KGEModel(nn.Module):
 
         positive_score = model(positive_sample)
 
-        positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+        if model.model_name not in ['ConvE', 'CoCoE']:
 
-        if args.uni_weight:
-            positive_sample_loss = - positive_score.mean()
-            negative_sample_loss = - negative_score.mean()
+            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+
+            if args.uni_weight:
+                positive_sample_loss = - positive_score.mean()
+                negative_sample_loss = - negative_score.mean()
+            else:
+                positive_sample_loss = - (
+                            subsampling_weight * positive_score).sum() / subsampling_weight.sum()
+                negative_sample_loss = - (
+                            subsampling_weight * negative_score).sum() / subsampling_weight.sum()
+
+            loss = (positive_sample_loss + negative_sample_loss) / 2
+
+            if args.regularization != 0.0:
+                # Use L3 regularization for ComplEx and DistMult
+                regularization = args.regularization * (
+                        model.entity_embedding.norm(p=3) ** 3 +
+                        model.relation_embedding.norm(p=3).norm(p=3) ** 3
+                )
+                loss = loss + regularization
+                regularization_log = {'regularization': regularization.item()}
+            else:
+                regularization_log = {}
+
+            loss.backward()
         else:
-            positive_sample_loss = - (
-                        subsampling_weight * positive_score).sum() / subsampling_weight.sum()
-            negative_sample_loss = - (
-                        subsampling_weight * negative_score).sum() / subsampling_weight.sum()
+            batch_size = positive_sample.size(0)  # e.g., 1024
+            negative_sample_size = negative_sample.size(1)  # e.g., 256
+            positive_input = torch.ones((batch_size, 1)).view(-1)
+            negative_input = torch.zeros((batch_size, negative_sample_size)).view(-1)
+            positive_scores = positive_score.view(-1)
+            negative_scores = negative_score.view(-1)
+            inputs = torch.cat([positive_input, negative_input], dim=0)
+            targets = torch.cat([positive_scores, negative_scores], dim=0)
 
-        loss = (positive_sample_loss + negative_sample_loss) / 2
+            if args.cuda:
+                inputs = inputs.cuda()
+                targets = targets.cuda()
 
-        if args.regularization != 0.0:
-            # Use L3 regularization for ComplEx and DistMult
-            regularization = args.regularization * (
-                    model.entity_embedding.norm(p=3) ** 3 +
-                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
-            )
-            loss = loss + regularization
-            regularization_log = {'regularization': regularization.item()}
-        else:
-            regularization_log = {}
-
-        loss.backward()
+            loss = model.loss(inputs, targets)
 
         optimizer.step()
 
