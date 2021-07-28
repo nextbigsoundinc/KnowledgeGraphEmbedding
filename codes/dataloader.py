@@ -134,16 +134,22 @@ class TestDataset(Dataset):
     def __getitem__(self, idx):
         head, relation, tail = self.triples[idx]
 
-        negative_sample = np.random.randint(self.nentity, size=1024)
+        negative_sample = np.random.randint(self.nentity, size=1023)
 
         if self.mode == 'head-batch':
             tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
                    else (-1, head) for rand_head in negative_sample]
-            tmp.append((0, head))
+            if (-1, head) not in tmp:
+                tmp.append((-1, head))
+            else:
+                tmp.append((0, head))
         elif self.mode == 'tail-batch':
             tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
                    else (-1, tail) for rand_tail in negative_sample]
-            tmp.append((0, tail))
+            if (-1, tail) not in tmp:
+                tmp.append((-1, tail))
+            else:
+                tmp.append((0, tail))
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)
 
