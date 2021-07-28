@@ -684,7 +684,7 @@ class KGEModel(nn.Module):
             print('negative_sample shape=[{}]'.format(negative_sample.shape))
             print('positive_score shape=[{}]'.format(positive_score.shape))
             batch_size = positive_score.size(0)  # e.g., 1024
-            negative_score_size = negative_sample.view(batch_size, -1)  # e.g., 256
+            negative_score_size = negative_score.size(1)  # e.g., 256
             positive_score_size = 1
             positive_input = torch.ones((batch_size, positive_score_size)).view(-1)
             negative_input = torch.zeros((batch_size, negative_score_size)).view(-1)
