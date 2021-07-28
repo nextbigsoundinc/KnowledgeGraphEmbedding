@@ -824,7 +824,8 @@ class KGEModel(nn.Module):
                             if step % args.test_log_steps == 0:
                                 logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
                         else:
-                            score = model(positive_sample, mode)
+                            score = model((positive_sample, negative_sample), mode)
+                            print("score test=[{}]".format(score.shape))
 
                             # Explicitly sort all the entities to ensure that there is no test exposure bias
                             argsort = torch.argsort(score, dim=1, descending=True)
