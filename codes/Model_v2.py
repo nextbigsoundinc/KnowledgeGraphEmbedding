@@ -406,7 +406,7 @@ class KGEModel(nn.Module):
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
         # TransE
-        print(mode)
+        #print(mode)
         # print(head.shape)
         # print(relation.shape)
         # print(tail.shape)
