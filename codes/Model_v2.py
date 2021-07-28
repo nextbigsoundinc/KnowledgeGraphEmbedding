@@ -725,18 +725,18 @@ class KGEModel(nn.Module):
         else:
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
-            test_dataloader_head = DataLoader(
-                TestDataset(
-                    test_triples, 
-                    all_true_triples, 
-                    args.nentity, 
-                    args.nrelation, 
-                    'head-batch'
-                ), 
-                batch_size=args.test_batch_size,
-                num_workers=max(1, args.cpu_num//2), 
-                collate_fn=TestDataset.collate_fn
-            )
+            # test_dataloader_head = DataLoader(
+            #     TestDataset(
+            #         test_triples,
+            #         all_true_triples,
+            #         args.nentity,
+            #         args.nrelation,
+            #         'head-batch'
+            #     ),
+            #     batch_size=args.test_batch_size,
+            #     num_workers=max(1, args.cpu_num//2),
+            #     collate_fn=TestDataset.collate_fn
+            # )
 
             test_dataloader_tail = DataLoader(
                 TestDataset(
@@ -751,7 +751,8 @@ class KGEModel(nn.Module):
                 collate_fn=TestDataset.collate_fn
             )
             
-            test_dataset_list = [test_dataloader_head, test_dataloader_tail]
+            # test_dataset_list = [test_dataloader_head, test_dataloader_tail]
+            test_dataset_list = [test_dataloader_tail]
             
             logs = []
 
@@ -771,16 +772,16 @@ class KGEModel(nn.Module):
                         batch_size = positive_sample.size(0)
 
                         score = model((positive_sample, negative_sample), mode)
-                        print("score=[{}]".format(score))
+                        #print("score=[{}]".format(score))
                         score += filter_bias
-                        print("score+filter bias=[{}]".format(score))
+                        #print("score+filter bias=[{}]".format(score))
 
                         # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
 
 
                         #Explicitly sort all the entities to ensure that there is no test exposure bias
                         argsort = torch.argsort(score, dim = 1, descending=True)
-                        print(argsort)
+
 
                         if mode == 'head-batch':
                             positive_arg = positive_sample[:, 0]
@@ -789,31 +790,13 @@ class KGEModel(nn.Module):
                         else:
                             raise ValueError('mode %s not supported' % mode)
 
-                        #print("positive_args=[{}]".format(positive_arg))
+
                         for i in range(batch_size):
                             #print("negative sample shape=[{}]".format(negative_sample.shape))
                             #Notice that argsort is not ranking
-                            positive_indices = torch.where(negative_sample[i] == positive_arg[i], 1.0, 0.0).nonzero()
-                            #print("positive indices=[{}]".format(positive_indices))
-                            max_index = positive_indices[0][0]
-                            #print("max index=[{}]".format(max_index))
-                            max_score = score[i, max_index]
-                            #print("max score=[{}]".format(max_score))
-                            #print("ps")
-                            #print("positive_indices.shape=[{}]".format(positive_indices.shape))
-                            for j in range(positive_indices.shape[0]):
-                                #print("j=[{}]".format(j))
-                                if max_score < score[i, positive_indices[j][0]]:
-                                    max_index = positive_indices[j][0]
-                                    max_score = score[i, positive_indices[j][0]]
-                                    #print("max index=[{}]".format(max_index))
-                                    #print("max score=[{}]".format(max_score))
-                            #print("max index=[{}]".format(max_index))
-                            #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                            ranking = (argsort[i, :] == max_index).nonzero()
 
+                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             print(argsort[i, :])
-                            #print("ranking=[{}]".format(ranking))
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics

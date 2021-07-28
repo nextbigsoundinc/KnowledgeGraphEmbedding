@@ -134,46 +134,27 @@ class TestDataset(Dataset):
     def __getitem__(self, idx):
         head, relation, tail = self.triples[idx]
 
-        negative_sample = np.random.choice(self.nentity, size=1022, replace=False)
-
-        if self.mode == 'head-batch':
-            if head not in negative_sample:
-                negative_sample = np.append(negative_sample, head)
-            else:
-                negative_sample = np.append(negative_sample, tail)
-
-            tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
-                   else (-1, head) for rand_head in negative_sample]
-
-            tmp.append((0, head))
-        elif self.mode == 'tail-batch':
-            if tail not in negative_sample:
-                negative_sample = np.append(negative_sample, tail)
-            else:
-                negative_sample = np.append(negative_sample, head)
-            tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
-                   else (-1, tail) for rand_tail in negative_sample]
-
-            tmp.append((0, tail))
-        else:
-            raise ValueError('negative batch mode %s not supported' % self.mode)
-
-        tmp = torch.LongTensor(tmp)
-        filter_bias = tmp[:, 0].float()
-        negative_sample = tmp[:, 1]
-
-        positive_sample = torch.LongTensor((head, relation, tail))
-
-        return positive_sample, negative_sample, filter_bias, self.mode
-
+        # negative_sample = np.random.choice(self.nentity, size=1022, replace=False)
+        #
         # if self.mode == 'head-batch':
+        #     if head not in negative_sample:
+        #         negative_sample = np.append(negative_sample, head)
+        #     else:
+        #         negative_sample = np.append(negative_sample, tail)
+        #
         #     tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
-        #            else (-1, head) for rand_head in range(self.nentity)]
-        #     tmp[head] = (0, head)
+        #            else (-1, head) for rand_head in negative_sample]
+        #
+        #     tmp.append((0, head))
         # elif self.mode == 'tail-batch':
+        #     if tail not in negative_sample:
+        #         negative_sample = np.append(negative_sample, tail)
+        #     else:
+        #         negative_sample = np.append(negative_sample, head)
         #     tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
-        #            else (-1, tail) for rand_tail in range(self.nentity)]
-        #     tmp[tail] = (0, tail)
+        #            else (-1, tail) for rand_tail in negative_sample]
+        #
+        #     tmp.append((0, tail))
         # else:
         #     raise ValueError('negative batch mode %s not supported' % self.mode)
         #
@@ -184,6 +165,25 @@ class TestDataset(Dataset):
         # positive_sample = torch.LongTensor((head, relation, tail))
         #
         # return positive_sample, negative_sample, filter_bias, self.mode
+
+        if self.mode == 'head-batch':
+            tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
+                   else (-1, head) for rand_head in range(self.nentity)]
+            tmp[head] = (0, head)
+        elif self.mode == 'tail-batch':
+            tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
+                   else (-1, tail) for rand_tail in range(self.nentity)]
+            tmp[tail] = (0, tail)
+        else:
+            raise ValueError('negative batch mode %s not supported' % self.mode)
+
+        tmp = torch.LongTensor(tmp)
+        filter_bias = tmp[:, 0].float()
+        negative_sample = tmp[:, 1]
+
+        positive_sample = torch.LongTensor((head, relation, tail))
+
+        return positive_sample, negative_sample, filter_bias, self.mode
 
     @staticmethod
     def collate_fn(data):
@@ -202,10 +202,10 @@ class BidirectionalOneShotIterator(object):
 
     def __next__(self):
         self.step += 1
-        if self.step % 2 == 0:
-            data = next(self.iterator_head)
-        else:
-            data = next(self.iterator_tail)
+        # if self.step % 2 == 0:
+        #     data = next(self.iterator_head)
+        # else:
+        data = next(self.iterator_tail)
         return data
 
     @staticmethod
