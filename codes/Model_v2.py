@@ -47,11 +47,9 @@ class ConvELayer(nn.Module):
 
         self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
-        self.conv10 = torch.nn.Conv2d(40943, 32, (3, 3), 1, 0, bias=True)
         self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
         self.bn0 = torch.nn.BatchNorm2d(2)
-        self.bn00 = torch.nn.BatchNorm2d(40943)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
         self.fc = torch.nn.Linear(14592, self.embedding_dim)
@@ -85,15 +83,15 @@ class ConvELayer(nn.Module):
         x = self.feature_map_drop(x)
         #print("after fm drop=[", x.shape, "]")
         x = x.view(x.shape[0], -1)                                  # len * 1152
-        #print("after reshape=[", x.shape, "]")
+        print("after reshape=[", x.shape, "]")
         x = self.fc(x)                   # len * 200
-        #print("after fully connected=[", x.shape, "]")
+        print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
-        #print("after hidden_drop=[", x.shape, "]")
+        print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
         #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        #print("relu=[",x.shape,"]")
+        print("relu=[",x.shape,"]")
         #print("tail emb:[", tail_embedding.shape,"]")
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
