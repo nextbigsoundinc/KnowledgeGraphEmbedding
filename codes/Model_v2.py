@@ -782,16 +782,19 @@ class KGEModel(nn.Module):
 
                         if mode == 'head-batch':
                             positive_arg = positive_sample[:, 0]
+                            positive_index = np.where(negative_sample == positive_arg)
                         elif mode == 'tail-batch':
                             positive_arg = positive_sample[:, 2]
+                            positive_index = np.where(negative_sample == positive_arg)
                         else:
                             raise ValueError('mode %s not supported' % mode)
 
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                            #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                            ranking = (argsort[i, :] == positive_index).nonzero()
                             print(argsort[i, :])
-                            print(positive_arg[i])
+                            print(positive_index)
                             print(ranking)
                             assert ranking.size(0) == 1
 
