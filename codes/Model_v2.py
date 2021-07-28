@@ -688,8 +688,8 @@ class KGEModel(nn.Module):
             negative_input = torch.zeros((batch_size, negative_score_size)).view(-1)
             positive_scores = positive_score.view(-1)
             negative_scores = negative_score.view(-1)
-            inputs = torch.cat([positive_input, negative_input], dim=0)
-            targets = torch.cat([positive_scores, negative_scores], dim=0)
+            targets = torch.cat([positive_input, negative_input], dim=0)
+            inputs = torch.cat([positive_scores, negative_scores], dim=0)
 
             print('inputs=[{}]'.format(inputs))
             print('targets=[{}]'.format(targets))
