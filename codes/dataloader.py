@@ -134,7 +134,8 @@ class TestDataset(Dataset):
     def __getitem__(self, idx):
         head, relation, tail = self.triples[idx]
 
-        negative_sample = np.random.randint(self.nentity, size=1022)
+        rng = np.random.default_rng()
+        negative_sample = rng.choice(self.nentity, size=1022, replace=False)
 
         if self.mode == 'head-batch':
             if head not in negative_sample:
