@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +45,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="6" />
-          <entry key="py" value="7855" />
+          <entry key="py" value="7992" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -56,7 +55,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="6" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="7855" />
+          <entry key="Python" value="7992" />
         </counts>
       </usages-collector>
     </session>
@@ -97,8 +96,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="743">
-              <caret line="682" column="13" lean-forward="true" selection-start-line="682" selection-start-column="13" selection-end-line="682" selection-end-column="13" />
+            <state relative-caret-position="799">
+              <caret line="684" column="69" selection-start-line="684" selection-start-column="69" selection-end-line="684" selection-end-column="69" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -405,20 +404,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00157" summary="revert">
-      <created>1627417899129</created>
-      <option name="number" value="00157" />
-      <option name="presentableId" value="LOCAL-00157" />
-      <option name="project" value="LOCAL" />
-      <updated>1627417899129</updated>
-    </task>
-    <task id="LOCAL-00158" summary="revert">
-      <created>1627417922617</created>
-      <option name="number" value="00158" />
-      <option name="presentableId" value="LOCAL-00158" />
-      <option name="project" value="LOCAL" />
-      <updated>1627417922617</updated>
     </task>
     <task id="LOCAL-00159" summary="revert">
       <created>1627430744468</created>
@@ -749,7 +734,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627488783378</updated>
     </task>
-    <option name="localTasksCounter" value="206" />
+    <task id="LOCAL-00206" summary="revert">
+      <created>1627489300571</created>
+      <option name="number" value="00206" />
+      <option name="presentableId" value="LOCAL-00206" />
+      <option name="project" value="LOCAL" />
+      <updated>1627489300571</updated>
+    </task>
+    <task id="LOCAL-00207" summary="revert">
+      <created>1627489409771</created>
+      <option name="number" value="00207" />
+      <option name="presentableId" value="LOCAL-00207" />
+      <option name="project" value="LOCAL" />
+      <updated>1627489409771</updated>
+    </task>
+    <option name="localTasksCounter" value="208" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -970,8 +969,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="743">
-          <caret line="682" column="13" lean-forward="true" selection-start-line="682" selection-start-column="13" selection-end-line="682" selection-end-column="13" />
+        <state relative-caret-position="799">
+          <caret line="684" column="69" selection-start-line="684" selection-start-column="69" selection-end-line="684" selection-end-column="69" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
