@@ -794,11 +794,11 @@ class KGEModel(nn.Module):
                             positive_indices = torch.where(negative_sample[i] == positive_arg[i], 1.0, 0.0).nonzero()
                             print("positive indices=[{}]".format(positive_indices))
                             max_index = positive_indices[0][0]
-                            max_score = score[max_index]
+                            max_score = score[i, max_index]
                             for j in range(positive_indices.shape[1]):
                                 if max_score < score[positive_indices[0][j]]:
                                     max_index = positive_indices[0][j]
-                                    max_score = score[positive_indices[0][j]]
+                                    max_score = score[i, positive_indices[0][j]]
 
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             ranking = (argsort[i, :] == max_index).nonzero()
