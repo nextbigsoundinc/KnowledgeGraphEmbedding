@@ -801,19 +801,17 @@ class KGEModel(nn.Module):
                             print("positive_indices.shape=[{}]".format(positive_indices.shape))
                             for j in range(positive_indices.shape[0]):
                                 print("j=[{}]".format(j))
-                                if max_score < score[i, positive_indices[0][j]]:
-                                    max_index = positive_indices[0][j]
-                                    max_score = score[i, positive_indices[0][j]]
+                                if max_score < score[i, positive_indices[j][0]]:
+                                    max_index = positive_indices[j][0]
+                                    max_score = score[i, positive_indices[j][0]]
                                     print("max index=[{}]".format(max_index))
                                     print("max score=[{}]".format(max_score))
                             print("max index=[{}]".format(max_index))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                            ranking = (argsort[i, :] == 1022).nonzero()
-                            ranking1 = (argsort[i, :] == 1023).nonzero()
+                            ranking = (argsort[i, :] == max_index).nonzero()
 
                             print(argsort[i, :])
                             print("ranking=[{}]".format(ranking))
-                            print("ranking1=[{}]".format(ranking1))
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
