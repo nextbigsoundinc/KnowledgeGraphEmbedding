@@ -479,7 +479,6 @@ class KGEModel(nn.Module):
         else:
             score = self.conve_layer(head, relation, -1, 1)
             score = score[:, tail]
-            score = score.sum(dim=1).view(batch_size, -1)
 
         # print(scores.shape)
         print(score.shape)
@@ -689,7 +688,7 @@ class KGEModel(nn.Module):
 
     
     @staticmethod
-    def test_step(model, test_triples, all_true_triples, args):
+    def dtest_step(model, test_triples, all_true_triples, args):
         '''
         Evaluate the model on test or valid datasets
         '''
@@ -787,31 +786,31 @@ class KGEModel(nn.Module):
                         else:
                             raise ValueError('mode %s not supported' % mode)
 
-                        print("positive_args=[{}]".format(positive_arg))
+                        #print("positive_args=[{}]".format(positive_arg))
                         for i in range(batch_size):
-                            print("negative sample shape=[{}]".format(negative_sample.shape))
+                            #print("negative sample shape=[{}]".format(negative_sample.shape))
                             #Notice that argsort is not ranking
                             positive_indices = torch.where(negative_sample[i] == positive_arg[i], 1.0, 0.0).nonzero()
-                            print("positive indices=[{}]".format(positive_indices))
+                            #print("positive indices=[{}]".format(positive_indices))
                             max_index = positive_indices[0][0]
-                            print("max index=[{}]".format(max_index))
+                            #print("max index=[{}]".format(max_index))
                             max_score = score[i, max_index]
-                            print("max score=[{}]".format(max_score))
-                            print("ps")
-                            print("positive_indices.shape=[{}]".format(positive_indices.shape))
+                            #print("max score=[{}]".format(max_score))
+                            #print("ps")
+                            #print("positive_indices.shape=[{}]".format(positive_indices.shape))
                             for j in range(positive_indices.shape[0]):
-                                print("j=[{}]".format(j))
+                                #print("j=[{}]".format(j))
                                 if max_score < score[i, positive_indices[j][0]]:
                                     max_index = positive_indices[j][0]
                                     max_score = score[i, positive_indices[j][0]]
-                                    print("max index=[{}]".format(max_index))
-                                    print("max score=[{}]".format(max_score))
-                            print("max index=[{}]".format(max_index))
+                                    #print("max index=[{}]".format(max_index))
+                                    #print("max score=[{}]".format(max_score))
+                            #print("max index=[{}]".format(max_index))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             ranking = (argsort[i, :] == max_index).nonzero()
 
                             print(argsort[i, :])
-                            print("ranking=[{}]".format(ranking))
+                            #print("ranking=[{}]".format(ranking))
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
