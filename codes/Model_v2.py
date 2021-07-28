@@ -477,7 +477,7 @@ class KGEModel(nn.Module):
             score = torch.index_select(input=score, dim=1, index=tail)
             print("tail score=[", score.shape, "]")
         # print(scores.shape)
-        print(score.shape)
+        # print(score.shape)
 
         return score  # len * # ent
 
