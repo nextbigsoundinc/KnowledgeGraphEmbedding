@@ -448,22 +448,17 @@ class KGEModel(nn.Module):
             a_head = multi_head.pop(0)
             scores = list()
             single_score_all = self.conve_layer(a_head, relation, -1, 1)
-            single_score_tail = single_score_all[:, tail]
-            single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
+            single_score_tail = torch.index_select(input=single_score_all, dim=1, index=tail)
             scores.append(single_score_tail)
             del a_head
             while (len(multi_head) > 0):
                 a_head = multi_head.pop(0)
-                head_rel_embeddings = self.conve_layer(a_head, relation, -1, 1)
-                single_score_all = torch.mm(head_rel_embeddings,
-                                            self.conve_layer.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
-                single_score_tail = single_score_all[:, tail]
-                single_score_tail = single_score_tail.view(batch_size, -1)
+                single_score_all = self.conve_layer(a_head, relation, -1, 1)
+                single_score_tail = torch.index_select(input=single_score_all, dim=1, index=tail)
                 # print("single_score=[", single_score_tail.shape, "]")
                 scores.append(single_score_tail)
                 score_stack = torch.cat(scores, dim=1)
                 # print("score_stack=[", score_stack.shape, "]")
-                del head_rel_embeddings
                 del single_score_all
                 del single_score_tail
                 del scores
@@ -479,7 +474,7 @@ class KGEModel(nn.Module):
         else:
             score = self.conve_layer(head, relation, -1, 1)
             print("all scores shape =[", score.shape, "]")
-            score = score[:, tail]
+            score = torch.index_select(input=score, dim=1, index=tail)
             print("tail score=[", score.shape, "]")
         # print(scores.shape)
         print(score.shape)
