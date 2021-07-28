@@ -787,7 +787,9 @@ class KGEModel(nn.Module):
                         else:
                             raise ValueError('mode %s not supported' % mode)
 
+                        print("positive_args=[{}]".format(positive_arg))
                         for i in range(batch_size):
+                            print("negative sample shape=[{}]".format(negative_sample.shape))
                             #Notice that argsort is not ranking
                             positive_indices = torch.where(negative_sample[i] == positive_arg[i], 1.0, 0.0).nonzero()
                             print("positive indices=[{}]".format(positive_indices))
