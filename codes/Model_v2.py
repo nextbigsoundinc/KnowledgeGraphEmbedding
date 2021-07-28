@@ -485,6 +485,7 @@ class KGEModel(nn.Module):
             score = score.view(batch_size, negative_sample_size)
             print("tail scores=[{}]".format(score.shape))
 
+        print("tail scores=[{}]".format(score.shape))
         # print(score.shape)
 
         return score  # len * # ent
@@ -642,18 +643,16 @@ class KGEModel(nn.Module):
             subsampling_weight = subsampling_weight.cuda()
 
         negative_score = model((positive_sample, negative_sample), mode=mode)
-
-        if args.negative_adversarial_sampling:
-            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-            negative_score = (
-                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                        * F.logsigmoid(-negative_score)).sum(dim=1)
-        else:
-            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-
         positive_score = model(positive_sample)
 
         if model.model_name not in ['ConvE', 'CoCoE']:
+            if args.negative_adversarial_sampling:
+                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+                negative_score = (
+                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                        * F.logsigmoid(-negative_score)).sum(dim=1)
+            else:
+                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
 
             positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
 
