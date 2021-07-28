@@ -842,19 +842,22 @@ class KGEModel(nn.Module):
                                 # Notice that argsort is not ranking
 
                                 ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                                #print(argsort[i, :])
+                                print(argsort[i, :])
                                 assert ranking.size(0) == 1
-                                #print('ranking=[{}]'.format(ranking))
+                                print('ranking=[{}]'.format(ranking))
                                 # ranking + 1 is the true ranking used in evaluation metrics
                                 ranking = 1 + ranking.item()
-                                logs.append({
+
+                                stats_dict = {
                                     'MRR': 1.0 / ranking,
                                     'MR': float(ranking),
                                     'HITS@1': 1.0 if ranking <= 1 else 0.0,
                                     'HITS@3': 1.0 if ranking <= 3 else 0.0,
                                     'HITS@10': 1.0 if ranking <= 10 else 0.0,
                                     'HITS@1000': 1.0 if ranking <= 1000 else 0.0
-                                })
+                                }
+                                print(stats_dict)
+                                logs.append(stats_dict)
 
                             if step % args.test_log_steps == 0:
                                 logging.info(
