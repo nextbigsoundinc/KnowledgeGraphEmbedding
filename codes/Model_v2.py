@@ -478,8 +478,9 @@ class KGEModel(nn.Module):
             print("score=[", score.shape, "]")
         else:
             score = self.conve_layer(head, relation, -1, 1)
+            print("all scores shape =[", score.shape, "]")
             score = score[:, tail]
-
+            print("tail score=[", score.shape, "]")
         # print(scores.shape)
         print(score.shape)
 
@@ -688,7 +689,7 @@ class KGEModel(nn.Module):
 
     
     @staticmethod
-    def dtest_step(model, test_triples, all_true_triples, args):
+    def test_step(model, test_triples, all_true_triples, args):
         '''
         Evaluate the model on test or valid datasets
         '''
