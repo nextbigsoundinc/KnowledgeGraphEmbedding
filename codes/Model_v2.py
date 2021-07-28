@@ -64,7 +64,7 @@ class ConvELayer(nn.Module):
     def forward(self, head, rel,  batch_size, negative_sample_size):
         head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size,
                                                           self.emb_dim1, self.emb_dim2)
-        rel_embedding = self.relation_embedding(rel).view(batch_size, 2,
+        rel_embedding = self.relation_embedding(rel).view(batch_size, 1,
                                                           self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
 
         # print("head embedding=[", head_embedding.shape, "]")
