@@ -46,7 +46,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="6" />
-          <entry key="py" value="8494" />
+          <entry key="py" value="8498" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -56,7 +56,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="6" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="8494" />
+          <entry key="Python" value="8498" />
         </counts>
       </usages-collector>
     </session>
@@ -75,8 +75,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="826" column="42" lean-forward="true" selection-start-line="826" selection-start-column="42" selection-end-line="826" selection-end-column="42" />
+            <state relative-caret-position="912">
+              <caret line="811" column="33" selection-start-line="811" selection-start-column="33" selection-end-line="811" selection-end-column="33" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -405,27 +405,6 @@
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
     </task>
-    <task id="LOCAL-00173" summary="revert">
-      <created>1627437018520</created>
-      <option name="number" value="00173" />
-      <option name="presentableId" value="LOCAL-00173" />
-      <option name="project" value="LOCAL" />
-      <updated>1627437018520</updated>
-    </task>
-    <task id="LOCAL-00174" summary="revert">
-      <created>1627437228875</created>
-      <option name="number" value="00174" />
-      <option name="presentableId" value="LOCAL-00174" />
-      <option name="project" value="LOCAL" />
-      <updated>1627437228875</updated>
-    </task>
-    <task id="LOCAL-00175" summary="revert">
-      <created>1627437391914</created>
-      <option name="number" value="00175" />
-      <option name="presentableId" value="LOCAL-00175" />
-      <option name="project" value="LOCAL" />
-      <updated>1627437391914</updated>
-    </task>
     <task id="LOCAL-00176" summary="revert">
       <created>1627437975651</created>
       <option name="number" value="00176" />
@@ -748,7 +727,28 @@
       <option name="project" value="LOCAL" />
       <updated>1627501538744</updated>
     </task>
-    <option name="localTasksCounter" value="222" />
+    <task id="LOCAL-00222" summary="revert">
+      <created>1627501936081</created>
+      <option name="number" value="00222" />
+      <option name="presentableId" value="LOCAL-00222" />
+      <option name="project" value="LOCAL" />
+      <updated>1627501936081</updated>
+    </task>
+    <task id="LOCAL-00223" summary="revert">
+      <created>1627502144262</created>
+      <option name="number" value="00223" />
+      <option name="presentableId" value="LOCAL-00223" />
+      <option name="project" value="LOCAL" />
+      <updated>1627502144262</updated>
+    </task>
+    <task id="LOCAL-00224" summary="revert">
+      <created>1627502156504</created>
+      <option name="number" value="00224" />
+      <option name="presentableId" value="LOCAL-00224" />
+      <option name="project" value="LOCAL" />
+      <updated>1627502156504</updated>
+    </task>
+    <option name="localTasksCounter" value="225" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -985,8 +985,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="826" column="42" lean-forward="true" selection-start-line="826" selection-start-column="42" selection-end-line="826" selection-end-column="42" />
+        <state relative-caret-position="912">
+          <caret line="811" column="33" selection-start-line="811" selection-start-column="33" selection-end-line="811" selection-end-column="33" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
