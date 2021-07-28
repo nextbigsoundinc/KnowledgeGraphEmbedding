@@ -795,7 +795,7 @@ class KGEModel(nn.Module):
                             ranking = (argsort[i, :] == positive_indices[i]).nonzero()
 
                             print(argsort[i, :])
-                            print(ranking)
+                            print("ranking=[{}]".format(ranking))
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
