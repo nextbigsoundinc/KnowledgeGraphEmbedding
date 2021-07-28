@@ -787,6 +787,8 @@ class KGEModel(nn.Module):
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
                             ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                            print(argsort[i, :])
+                            print(positive_arg[i])
                             print(ranking)
                             assert ranking.size(0) == 1
 
