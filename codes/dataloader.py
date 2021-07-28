@@ -137,19 +137,17 @@ class TestDataset(Dataset):
         negative_sample = np.random.randint(self.nentity, size=1023)
 
         if self.mode == 'head-batch':
+            negative_sample.append(head)
             tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
                    else (-1, head) for rand_head in negative_sample]
-            if (-1, head) not in tmp:
-                tmp.append((-1, head))
-            else:
-                tmp.append((0, head))
+
+            tmp.append((0, head))
         elif self.mode == 'tail-batch':
+            negative_sample.append(tail)
             tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
                    else (-1, tail) for rand_tail in negative_sample]
-            if (-1, tail) not in tmp:
-                tmp.append((-1, tail))
-            else:
-                tmp.append((0, tail))
+
+            tmp.append((0, tail))
         else:
             raise ValueError('negative batch mode %s not supported' % self.mode)
 
