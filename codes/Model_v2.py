@@ -789,7 +789,7 @@ class KGEModel(nn.Module):
 
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                            positive_indices = (negative_sample[i, :] == positive_arg[i]).nonzero()
+                            positive_indices = torch.where(negative_sample[i, :] == positive_arg[i], 1.0, 0.0).nonzero()
                             print("positive indices=[{}]".format(positive_indices))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             ranking = (argsort[i, :] == positive_indices[i]).nonzero()
