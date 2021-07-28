@@ -796,7 +796,7 @@ class KGEModel(nn.Module):
                             max_index = positive_indices[0][0]
                             max_score = score[i, max_index]
                             for j in range(positive_indices.shape[1]):
-                                if max_score < score[positive_indices[0][j]]:
+                                if max_score < score[i, positive_indices[0][j]]:
                                     max_index = positive_indices[0][j]
                                     max_score = score[i, positive_indices[0][j]]
 
