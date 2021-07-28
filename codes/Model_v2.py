@@ -681,6 +681,8 @@ class KGEModel(nn.Module):
 
             loss.backward()
         else:
+            print('negative_score shape=[{}]'.format(negative_score.shape))
+            print('positive_score shape=[{}]'.format(positive_score.shape))
             batch_size = positive_score.size(0)  # e.g., 1024
             negative_score_size = negative_score.size(1)  # e.g., 256
             positive_score_size = 1
