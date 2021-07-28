@@ -799,12 +799,14 @@ class KGEModel(nn.Module):
                                 if max_score < score[i, positive_indices[0][j]]:
                                     max_index = positive_indices[0][j]
                                     max_score = score[i, positive_indices[0][j]]
-
+                            print("max index=[{}]".format(max_index))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                            ranking = (argsort[i, :] == max_index).nonzero()
+                            ranking = (argsort[i, :] == 1022).nonzero()
+                            ranking1 = (argsort[i, :] == 1023).nonzero()
 
                             print(argsort[i, :])
                             print("ranking=[{}]".format(ranking))
+                            print("ranking1=[{}]".format(ranking1))
                             assert ranking.size(0) == 1
 
                             #ranking + 1 is the true ranking used in evaluation metrics
