@@ -680,9 +680,7 @@ class KGEModel(nn.Module):
 
             loss.backward()
         else:
-            print('negative_score shape=[{}]'.format(negative_score.shape))
-            print('negative_sample shape=[{}]'.format(negative_sample.shape))
-            print('positive_score shape=[{}]'.format(positive_score.shape))
+
             batch_size = positive_score.size(0)  # e.g., 1024
             negative_score_size = negative_score.size(1)  # e.g., 256
             positive_score_size = 1
@@ -692,6 +690,9 @@ class KGEModel(nn.Module):
             negative_scores = negative_score.view(-1)
             inputs = torch.cat([positive_input, negative_input], dim=0)
             targets = torch.cat([positive_scores, negative_scores], dim=0)
+
+            print('inputs=[{}]'.format(inputs))
+            print('targets=[{}]'.format(targets))
 
             if args.cuda:
                 inputs = inputs.cuda()
