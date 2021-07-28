@@ -769,9 +769,9 @@ class KGEModel(nn.Module):
                         batch_size = positive_sample.size(0)
 
                         score = model((positive_sample, negative_sample), mode)
-                        print(score)
+                        print("score=[{}]".format(score))
                         score += filter_bias
-                        print(score)
+                        print("score+filter bias=[{}]".format(score))
 
                         # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
 
@@ -789,7 +789,7 @@ class KGEModel(nn.Module):
 
                         for i in range(batch_size):
                             #Notice that argsort is not ranking
-                            positive_indices = torch.where(negative_sample[i, :] == positive_arg[i], 1.0, 0.0).nonzero()
+                            positive_indices = torch.where(negative_sample[i] == positive_arg[i], 1.0, 0.0).nonzero()
                             print("positive indices=[{}]".format(positive_indices))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             ranking = (argsort[i, :] == positive_indices).nonzero()
