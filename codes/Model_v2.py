@@ -681,10 +681,11 @@ class KGEModel(nn.Module):
 
             loss.backward()
         else:
-            batch_size = positive_sample.size(0)  # e.g., 1024
-            negative_sample_size = negative_sample.size(1)  # e.g., 256
-            positive_input = torch.ones((batch_size, 1)).view(-1)
-            negative_input = torch.zeros((batch_size, negative_sample_size)).view(-1)
+            batch_size = positive_score.size(0)  # e.g., 1024
+            negative_score_size = negative_score.size(1)  # e.g., 256
+            positive_score_size = 1
+            positive_input = torch.ones((batch_size, positive_score_size)).view(-1)
+            negative_input = torch.zeros((batch_size, negative_score_size)).view(-1)
             positive_scores = positive_score.view(-1)
             negative_scores = negative_score.view(-1)
             inputs = torch.cat([positive_input, negative_input], dim=0)

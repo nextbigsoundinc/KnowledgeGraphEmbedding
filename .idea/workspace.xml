@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="revert">
+    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
@@ -46,7 +46,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="6" />
-          <entry key="py" value="7824" />
+          <entry key="py" value="7855" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -56,7 +56,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="6" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="7824" />
+          <entry key="Python" value="7855" />
         </counts>
       </usages-collector>
     </session>
@@ -97,8 +97,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="231" column="35" selection-start-line="231" selection-start-column="35" selection-end-line="231" selection-end-column="35" />
+            <state relative-caret-position="743">
+              <caret line="682" column="13" lean-forward="true" selection-start-line="682" selection-start-column="13" selection-end-line="682" selection-end-column="13" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -405,20 +405,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00155" summary="revert">
-      <created>1627417329377</created>
-      <option name="number" value="00155" />
-      <option name="presentableId" value="LOCAL-00155" />
-      <option name="project" value="LOCAL" />
-      <updated>1627417329377</updated>
-    </task>
-    <task id="LOCAL-00156" summary="revert">
-      <created>1627417487936</created>
-      <option name="number" value="00156" />
-      <option name="presentableId" value="LOCAL-00156" />
-      <option name="project" value="LOCAL" />
-      <updated>1627417487936</updated>
     </task>
     <task id="LOCAL-00157" summary="revert">
       <created>1627417899129</created>
@@ -749,7 +735,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627484244189</updated>
     </task>
-    <option name="localTasksCounter" value="204" />
+    <task id="LOCAL-00204" summary="revert">
+      <created>1627488606196</created>
+      <option name="number" value="00204" />
+      <option name="presentableId" value="LOCAL-00204" />
+      <option name="project" value="LOCAL" />
+      <updated>1627488606196</updated>
+    </task>
+    <task id="LOCAL-00205" summary="revert">
+      <created>1627488783378</created>
+      <option name="number" value="00205" />
+      <option name="presentableId" value="LOCAL-00205" />
+      <option name="project" value="LOCAL" />
+      <updated>1627488783378</updated>
+    </task>
+    <option name="localTasksCounter" value="206" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -970,8 +970,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="231" column="35" selection-start-line="231" selection-start-column="35" selection-end-line="231" selection-end-column="35" />
+        <state relative-caret-position="743">
+          <caret line="682" column="13" lean-forward="true" selection-start-line="682" selection-start-column="13" selection-end-line="682" selection-end-column="13" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
