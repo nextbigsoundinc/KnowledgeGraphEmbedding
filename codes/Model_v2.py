@@ -799,7 +799,7 @@ class KGEModel(nn.Module):
                             print("max score=[{}]".format(max_score))
                             print("ps")
                             print("positive_indices.shape=[{}]".format(positive_indices.shape))
-                            for j in range(positive_indices.shape[1]):
+                            for j in range(positive_indices.shape[0]):
                                 print("j=[{}]".format(j))
                                 if max_score < score[i, positive_indices[0][j]]:
                                     max_index = positive_indices[0][j]
