@@ -679,17 +679,24 @@ class KGEModel(nn.Module):
                 regularization_log = {}
 
             loss.backward()
+            log = {
+                **regularization_log,
+                'positive_sample_loss': positive_sample_loss.item(),
+                'negative_sample_loss': negative_sample_loss.item(),
+                'loss': loss.item()
+            }
+
         else:
 
             batch_size = positive_score.size(0)  # e.g., 1024
             negative_score_size = negative_score.size(1)  # e.g., 256
             positive_score_size = 1
-            positive_input = torch.ones((batch_size, positive_score_size)).view(-1)
-            negative_input = torch.zeros((batch_size, negative_score_size)).view(-1)
-            positive_scores = positive_score.view(-1)
-            negative_scores = negative_score.view(-1)
-            targets = torch.cat([positive_input, negative_input], dim=0)
-            inputs = torch.cat([positive_scores, negative_scores], dim=0)
+            positive_targets = torch.ones((batch_size, positive_score_size)).view(-1)
+            negative_targets = torch.zeros((batch_size, negative_score_size)).view(-1)
+            positive_input = positive_score.view(-1)
+            negative_input = negative_score.view(-1)
+            targets = torch.cat([positive_targets, negative_targets], dim=0)
+            inputs = torch.cat([positive_input, negative_input], dim=0)
 
             print('inputs=[{}]'.format(inputs))
             print('targets=[{}]'.format(targets))
@@ -700,15 +707,13 @@ class KGEModel(nn.Module):
 
             loss = model.loss(inputs, targets)
             loss.backward()
+            log = {
+                'positive_sample_loss': 0,
+                'negative_sample_loss': 0,
+                'loss': loss.item()
+            }
 
         optimizer.step()
-
-        log = {
-            **regularization_log,
-            'positive_sample_loss': positive_sample_loss.item(),
-            'negative_sample_loss': negative_sample_loss.item(),
-            'loss': loss.item()
-        }
 
         return log
 
