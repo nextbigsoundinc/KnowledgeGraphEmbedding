@@ -46,7 +46,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="6" />
-          <entry key="py" value="6529" />
+          <entry key="py" value="6805" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -56,7 +56,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="6" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="6529" />
+          <entry key="Python" value="6805" />
         </counts>
       </usages-collector>
     </session>
@@ -100,8 +100,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="798" column="55" lean-forward="true" selection-start-line="798" selection-start-column="55" selection-end-line="798" selection-end-column="55" />
+            <state relative-caret-position="720">
+              <caret line="801" column="36" lean-forward="true" selection-start-line="801" selection-start-column="36" selection-end-line="801" selection-end-column="36" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
               </folding>
@@ -150,7 +150,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/codes/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3798" />
+            <state relative-caret-position="512">
+              <caret line="419" column="40" selection-start-line="419" selection-start-column="28" selection-end-line="419" selection-end-column="40" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -404,20 +406,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00128" summary="revert">
-      <created>1627325807705</created>
-      <option name="number" value="00128" />
-      <option name="presentableId" value="LOCAL-00128" />
-      <option name="project" value="LOCAL" />
-      <updated>1627325807705</updated>
-    </task>
-    <task id="LOCAL-00129" summary="revert">
-      <created>1627325940264</created>
-      <option name="number" value="00129" />
-      <option name="presentableId" value="LOCAL-00129" />
-      <option name="project" value="LOCAL" />
-      <updated>1627325940264</updated>
     </task>
     <task id="LOCAL-00130" summary="revert">
       <created>1627326143125</created>
@@ -748,7 +736,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627437975652</updated>
     </task>
-    <option name="localTasksCounter" value="177" />
+    <task id="LOCAL-00177" summary="revert">
+      <created>1627438512111</created>
+      <option name="number" value="00177" />
+      <option name="presentableId" value="LOCAL-00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1627438512111</updated>
+    </task>
+    <task id="LOCAL-00178" summary="revert">
+      <created>1627438817229</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1627438817229</updated>
+    </task>
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -929,11 +931,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/codes/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3798" />
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2018.2/python_stubs/110722537/numpy/random/mtrand.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -952,10 +949,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/codes/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="419" column="40" selection-start-line="419" selection-start-column="28" selection-end-line="419" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="798" column="55" lean-forward="true" selection-start-line="798" selection-start-column="55" selection-end-line="798" selection-end-column="55" />
+        <state relative-caret-position="720">
+          <caret line="801" column="36" lean-forward="true" selection-start-line="801" selection-start-column="36" selection-end-line="801" selection-end-column="36" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
           </folding>
