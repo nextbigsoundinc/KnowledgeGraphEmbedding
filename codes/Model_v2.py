@@ -477,7 +477,7 @@ class KGEModel(nn.Module):
             score = torch.cat(scores, dim=1)
             print("score=[", score.shape, "]")
         else:
-            score = self.conve_layer(head, relation, -1, 1).view(head.shape[0], negative_sample_size, -1 )
+            score = self.conve_layer(head, relation, -1, 1)
             print("all scores shape =[", score.shape, "]")
             score = score[:, tail]
             print("tail score=[", score.shape, "]")
