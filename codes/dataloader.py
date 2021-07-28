@@ -138,18 +138,19 @@ class TestDataset(Dataset):
 
         if self.mode == 'head-batch':
             if head not in negative_sample:
-                negative_sample.append(head)
+                negative_sample = np.append(negative_sample, head)
             else:
-                negative_sample.append(tail)
+                negative_sample = np.append(negative_sample, tail)
+
             tmp = [(0, rand_head) if (rand_head, relation, tail) not in self.triple_set
                    else (-1, head) for rand_head in negative_sample]
 
             tmp.append((0, head))
         elif self.mode == 'tail-batch':
             if tail not in negative_sample:
-                negative_sample.append(tail)
+                negative_sample = np.append(negative_sample, tail)
             else:
-                negative_sample.append(head)
+                negative_sample = np.append(negative_sample, head)
             tmp = [(0, rand_tail) if (head, relation, rand_tail) not in self.triple_set
                    else (-1, tail) for rand_tail in negative_sample]
 
