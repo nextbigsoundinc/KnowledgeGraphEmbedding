@@ -477,15 +477,15 @@ class KGEModel(nn.Module):
 
             # print("score=[", score.shape, "]")
         else:
-            print('tail shape=[{}]'.format(tail.shape))
+            # print('tail shape=[{}]'.format(tail.shape))
             score_all = self.conve_layer(head, relation, -1, 1).view(-1)
-            print("all scores shape =[", score_all.shape, "]")
+            # print("all scores shape =[", score_all.shape, "]")
             score = torch.index_select(input=score_all, dim=0, index=tail)
-            print("tail scores flat=[", score.shape, "]")
+            # print("tail scores flat=[", score.shape, "]")
             score = score.view(batch_size, negative_sample_size)
-            print("tail scores=[{}]".format(score.shape))
+            # print("tail scores=[{}]".format(score.shape))
 
-        print("tail scores=[{}]".format(score.shape))
+        # print("tail scores=[{}]".format(score.shape))
         # print(score.shape)
 
         return score  # len * # ent
@@ -698,8 +698,8 @@ class KGEModel(nn.Module):
             targets = torch.cat([positive_targets, negative_targets], dim=0)
             inputs = torch.cat([positive_input, negative_input], dim=0)
 
-            print('inputs=[{}]'.format(inputs))
-            print('targets=[{}]'.format(targets))
+            # print('inputs=[{}]'.format(inputs))
+            # print('targets=[{}]'.format(targets))
 
             if args.cuda:
                 inputs = inputs.cuda()
