@@ -796,10 +796,13 @@ class KGEModel(nn.Module):
                             max_index = positive_indices[0][0]
                             print("max index=[{}]".format(max_index))
                             max_score = score[i, max_index]
+                            print("max score=[{}]".format(max_score))
                             for j in range(positive_indices.shape[1]):
                                 if max_score < score[i, positive_indices[0][j]]:
                                     max_index = positive_indices[0][j]
-                                    max_score = score[i, positive_indices[0][j]]
+                                    max_scoremax_score = score[i, positive_indices[0][j]]
+                                    print("max index=[{}]".format(max_index))
+                                    print("max score=[{}]".format(max_score))
                             print("max index=[{}]".format(max_index))
                             #ranking = (argsort[i, :] == positive_arg[i]).nonzero()
                             ranking = (argsort[i, :] == 1022).nonzero()
