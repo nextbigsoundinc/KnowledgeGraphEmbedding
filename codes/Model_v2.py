@@ -475,7 +475,7 @@ class KGEModel(nn.Module):
             print('tail shape=[{}]'.format(tail.shape))
             score_all = self.conve_layer(head, relation, -1, 1).view(-1)
             print("all scores shape =[", score_all.shape, "]")
-            score = torch.index_select(input=score_all, dim=1, index=tail)
+            score = torch.index_select(input=score_all, dim=0, index=tail)
             print("tail scores flat=[", score.shape, "]")
             score = score.view(batch_size, negative_sample_size)
             print("tail scores=[{}]".format(score.shape))
