@@ -23,7 +23,9 @@ from torch.nn.init import xavier_normal_, xavier_uniform_
 
 class ConvELayer(nn.Module):
 
-    def __init__(self, number_of_entities,
+    def __init__(self,
+                 number_of_entities,
+                 number_of_relations,
                  entity_dimension,
                  input_drop=0.2, hidden_drop=0.3,
                  feat_drop=0.2,
@@ -33,8 +35,9 @@ class ConvELayer(nn.Module):
         super(ConvELayer, self).__init__()
         self.nentity = number_of_entities
         self.entity_dim = entity_dimension
+        self.nrelation = number_of_relations
         self.entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
-        self.relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
+        self.relation_embedding = nn.Embedding(self.nrelation, self.entity_dim, padding_idx=0)
 
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
@@ -207,7 +210,7 @@ class KGEModel(nn.Module):
         self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
         if model_name in ['ConvE', 'CoCoE']:
-            self.conve_layer = ConvELayer(self.nentity, self.entity_dim)
+            self.conve_layer = ConvELayer(self.nentity, self.nrelation, self.entity_dim)
             self.conve_layer.init()
             if model_name == 'CoCoE':
                 self.img_entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
