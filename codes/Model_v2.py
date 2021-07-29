@@ -624,13 +624,13 @@ class KGEModel(nn.Module):
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
         label_shape = torch.Size((true_labels.size(0), classes))
-        print("true_labels=[{}]".format(true_labels.data.unsqueeze(1).shape))
-        print("true_labels 2=[{}]".format(true_labels.data.shape))
+        # print("true_labels=[{}]".format(true_labels.data.unsqueeze(1).shape))
+        # print("true_labels 2=[{}]".format(true_labels.data.shape))
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape)
-            print("true_dist=[{}]".format(true_dist.shape))
+            # print("true_dist=[{}]".format(true_dist.shape))
             true_dist.fill_(smoothing / (classes - 1))
-            true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
+            true_dist.scatter_(1, true_labels.data, confidence)
         return true_dist
 
 
@@ -702,9 +702,9 @@ class KGEModel(nn.Module):
             batch_size = pred.size(0)  # e.g., 1024
             targets = torch.zeros(batch_size, pred.size(1))
             for batch in range(batch_size):
-                print("positive index = {}".format(positive_sample[batch][2]))
+                # print("positive index = {}".format(positive_sample[batch][2]))
                 targets[batch][positive_sample[batch][2]] = 1
-            print('targets shape= {}'.format(targets.shape))
+            # print('targets shape= {}'.format(targets.shape))
             smooth_targets = KGEModel.smooth_one_hot(targets.long(), pred.size(1), 0.1)
 
 
