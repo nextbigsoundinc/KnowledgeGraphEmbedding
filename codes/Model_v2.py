@@ -701,7 +701,7 @@ class KGEModel(nn.Module):
             targets = torch.zeros(batch_size, pred.size(1))
             smooth_targets = torch.zeros(batch_size, pred.size(1))
             for batch in range(batch_size):
-                targets[batch][positive_sample[batch][2]] = 1.0
+                targets[batch][positive_sample[batch][2]] = 1
                 smooth_targets[batch] = KGEModel.smooth_one_hot(targets[batch], pred.size(1), 0.1)
 
             if args.cuda:
