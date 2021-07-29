@@ -38,30 +38,6 @@ import torch
 import torch.nn as nn
 
 
-class LabelSmoothing(nn.Module):
-    """
-    NLL loss with label smoothing.
-    """
-
-    def __init__(self, smoothing=0.0):
-        """
-        Constructor for the LabelSmoothing module.
-        :param smoothing: label smoothing factor
-        """
-        super(LabelSmoothing, self).__init__()
-        self.confidence = 1.0 - smoothing
-        self.smoothing = smoothing
-
-    def forward(self, x, target):
-        logprobs = torch.nn.functional.log_softmax(x, dim=-1)
-
-        nll_loss = -logprobs.gather(dim=-1, index=target.unsqueeze(1))
-        nll_loss = nll_loss.squeeze(1)
-        smooth_loss = -logprobs.mean(dim=-1)
-        loss = self.confidence * nll_loss + self.smoothing * smooth_loss
-        return loss.mean()
-
-
 class ConvELayer(nn.Module):
 
     def __init__(self,
@@ -637,7 +613,24 @@ class KGEModel(nn.Module):
 
         score = self.gamma.item() - score.sum(dim = 2) * self.modulus
         return score
-    
+
+    @staticmethod
+    def smooth_one_hot(true_labels: torch.Tensor, classes: int, smoothing=0.0):
+        """
+        if smoothing == 0, it's one-hot method
+        if 0 < smoothing < 1, it's smooth method
+
+        """
+        assert 0 <= smoothing < 1
+        confidence = 1.0 - smoothing
+        label_shape = torch.Size((true_labels.size(0), classes))
+        with torch.no_grad():
+            true_dist = torch.empty(size=label_shape, device=true_labels.device)
+            true_dist.fill_(smoothing / (classes - 1))
+            true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
+        return true_dist
+
+
     @staticmethod
     def train_step(model, optimizer, train_iterator, args):
         '''
@@ -711,12 +704,8 @@ class KGEModel(nn.Module):
             if args.cuda:
                 pred = pred.cuda()
                 targets = targets.cuda()
-
-            probs = model.conve_layer.loss(pred, targets)
-            bce_loss = probs.gather(dim=-1, index=targets)
-            bce_loss = bce_loss.squeeze(1)
-            smooth_loss = probs.mean(dim=-1)
-            loss = confidence * bce_loss + smoothing * smooth_loss
+            smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
+            loss = model.conve_layer.loss(pred, smooth_targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
@@ -727,6 +716,7 @@ class KGEModel(nn.Module):
         optimizer.step()
 
         return log
+
 
     
     @staticmethod
