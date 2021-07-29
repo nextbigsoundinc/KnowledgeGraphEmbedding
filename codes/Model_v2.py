@@ -867,9 +867,9 @@ class KGEModel(nn.Module):
                                 # Notice that argsort is not ranking
 
                                 ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                                print("entity_id sort=[{}]".format(argsort[i, :]))
                                 assert ranking.size(0) == 1
-                                print("true tail id=[{}]".format(positive_arg[i]))
+                                print("true tail score=[{}]".format(score[i][positive_arg[i]]))
+                                print("high tail score=[{}]".format(score[i][argsort[i][0]]))
                                 # ranking + 1 is the true ranking used in evaluation metrics
                                 ranking = 1 + ranking.item()
 
