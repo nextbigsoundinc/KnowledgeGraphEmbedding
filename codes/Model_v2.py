@@ -104,7 +104,7 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
-        pred = torch.softmax(x, self.nentity)
+        pred = torch.sigmoid(x)
         return pred
 
 class CoCoELayer(nn.Module):
