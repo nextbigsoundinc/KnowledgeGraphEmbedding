@@ -628,7 +628,7 @@ class KGEModel(nn.Module):
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             true_dist.fill_(smoothing / (classes - 1))
-            true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
+            true_dist.scatter_(dim=1, index=true_labels.data.unsqueeze(1), src=confidence)
         return true_dist
 
 
@@ -702,7 +702,7 @@ class KGEModel(nn.Module):
             smooth_targets = torch.zeros(batch_size, pred.size(1))
             for batch in range(batch_size):
                 targets[batch][positive_sample[batch][2]] = 1
-                smooth_targets[batch] = KGEModel.smooth_one_hot(targets[batch].int(), pred.size(1), 0.1)
+                smooth_targets[batch] = KGEModel.smooth_one_hot(targets[batch].long(), pred.size(1), 0.1)
 
             if args.cuda:
                 pred = pred.cuda()
