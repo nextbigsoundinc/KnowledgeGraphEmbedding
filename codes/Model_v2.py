@@ -699,18 +699,11 @@ class KGEModel(nn.Module):
             pred = model(positive_sample)
             batch_size = pred.size(0)  # e.g., 1024
             targets = torch.zeros(batch_size, pred.size(1))
-            smooth_targets_list = list()
-            targets[0][positive_sample[0][2]] = 1
-            smooth_target = KGEModel.smooth_one_hot(targets[0].long(), pred.size(1), 0.1)
-            smooth_targets_list.append(smooth_target)
             for batch in range(1, batch_size):
                 targets[batch][positive_sample[batch][2]] = 1
-                smooth_target = KGEModel.smooth_one_hot(targets[batch].long(), pred.size(1), 0.1)
-                smooth_targets_list.append(smooth_target)
-                smooth_targets = torch.cat(smooth_targets_list, 0)
-                smooth_targets_list = list()
-                smooth_targets_list.append(smooth_targets)
-                del smooth_target
+
+            smooth_targets = KGEModel.smooth_one_hot(targets.long(), pred.size(1), 0.1)
+
 
             if args.cuda:
                 pred = pred.cuda()
