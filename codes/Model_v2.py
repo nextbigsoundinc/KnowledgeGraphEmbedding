@@ -21,6 +21,47 @@ from dataloader import TestDataset
 from torch.nn.init import xavier_normal_, xavier_uniform_
 
 
+# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+#
+# Licensed under the BSD 3-Clause License  (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://opensource.org/licenses/BSD-3-Clause
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import torch
+import torch.nn as nn
+
+
+class LabelSmoothing(nn.Module):
+    """
+    NLL loss with label smoothing.
+    """
+
+    def __init__(self, smoothing=0.0):
+        """
+        Constructor for the LabelSmoothing module.
+        :param smoothing: label smoothing factor
+        """
+        super(LabelSmoothing, self).__init__()
+        self.confidence = 1.0 - smoothing
+        self.smoothing = smoothing
+
+    def forward(self, x, target):
+        logprobs = torch.nn.functional.log_softmax(x, dim=-1)
+
+        nll_loss = -logprobs.gather(dim=-1, index=target.unsqueeze(1))
+        nll_loss = nll_loss.squeeze(1)
+        smooth_loss = -logprobs.mean(dim=-1)
+        loss = self.confidence * nll_loss + self.smoothing * smooth_loss
+        return loss.mean()
+
+
 class ConvELayer(nn.Module):
 
     def __init__(self,
@@ -659,6 +700,8 @@ class KGEModel(nn.Module):
             }
 
         else:
+            smoothing = 0.1
+            confidence = 1.0 - smoothing
             pred = model(positive_sample)
             batch_size = pred.size(0)  # e.g., 1024
             targets = torch.zeros(batch_size, pred.size(1))
@@ -669,7 +712,11 @@ class KGEModel(nn.Module):
                 pred = pred.cuda()
                 targets = targets.cuda()
 
-            loss = model.conve_layer.loss(pred, targets)
+            probs = model.conve_layer.loss(pred, targets)
+            bce_loss = probs.gather(dim=-1, index=targets)
+            bce_loss = bce_loss.squeeze(1)
+            smooth_loss = probs.mean(dim=-1)
+            loss = confidence * bce_loss + smoothing * smooth_loss
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
