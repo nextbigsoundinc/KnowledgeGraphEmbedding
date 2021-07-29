@@ -104,7 +104,7 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
-        pred = torch.softmax(x, dim=-1)
+        pred = torch.log_softmax(x, dim=-1)
         return pred
 
 class CoCoELayer(nn.Module):
@@ -622,14 +622,14 @@ class KGEModel(nn.Module):
 
         """
         assert 0 <= smoothing < 1
-        confidence = 1.0 - smoothing
+        confidence = np.log(1.0 - smoothing)
         label_shape = torch.Size((true_labels.size(0), classes))
         # print("true_labels=[{}]".format(true_labels.data.unsqueeze(1).shape))
         # print("true_labels 2=[{}]".format(true_labels.data.shape))
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             # print("true_dist=[{}]".format(true_dist.shape))
-            true_dist.fill_(smoothing / (classes - 1))
+            true_dist.fill_(np.log(smoothing / (classes - 1)))
             true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
         return true_dist
 
