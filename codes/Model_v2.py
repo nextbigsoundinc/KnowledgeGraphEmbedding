@@ -74,35 +74,18 @@ class ConvELayer(nn.Module):
         stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
         x = self.conv1(x)
-        # x = self.conv1(x)                                           # len * 32 * 18 * 8
-        #print("after conv1=[", x.shape, "]")
-        x = self.mpool(x)                                           # len * 32 * 9 * 4
-        #print("after maxpool=[", x.shape, "]")
         x = self.bn1(x)
         x = F.relu(x)
         x = self.feature_map_drop(x)
-        #print("after fm drop=[", x.shape, "]")
         x = x.view(x.shape[0], -1)                                  # len * 1152
-        #print("after reshape=[", x.shape, "]")
         x = self.fc(x)                   # len * 200
-        #print("after fully connected=[", x.shape, "]")
         x = self.hidden_drop(x)
-        #print("after hidden_drop=[", x.shape, "]")
         x = self.bn2(x)
-        #print("after bn2 connected=[", x.shape, "]")
         x = F.relu(x)  # bs * 200
-        #print("relu=[",x.shape,"]")
-        #print("tail emb:[", tail_embedding.shape,"]")
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
         pred = torch.sigmoid(x)
         return pred
-
-        # print("all scores=[", all_scores.shape, "]")
-        # print("tail score=[", score.shape, "]")
-        # print("score=[", score, "]")
-        # return pred  # len * # ent
-
 
 class CoCoELayer(nn.Module):
     def __init__(self, ent_real, ent_img, rel_real, rel_img, negative_sample_size):
@@ -772,8 +755,7 @@ class KGEModel(nn.Module):
                 for test_dataset in test_dataset_list:
                     for positive_sample, negative_sample, filter_bias, mode in test_dataset:                # pos_sample: bs * 3
                         if args.cuda:                                                                       # neg_sample: bs * 256
-
-                                                                                                            # bs * (1 good trip, 256 bad trip)
+                                                                             # bs * (1 good trip, 256 bad trip)
                             positive_sample = positive_sample.cuda()
                             negative_sample = negative_sample.cuda()
                             filter_bias = filter_bias.cuda()
@@ -842,9 +824,9 @@ class KGEModel(nn.Module):
                                 # Notice that argsort is not ranking
 
                                 ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                                print(argsort[i, :])
+                                print("entity_id sort=[{}]".format(argsort[i, :]))
                                 assert ranking.size(0) == 1
-                                print('ranking=[{}]'.format(ranking))
+                                print("true tail id=[{}]".format(positive_arg[i]))
                                 # ranking + 1 is the true ranking used in evaluation metrics
                                 ranking = 1 + ranking.item()
 
