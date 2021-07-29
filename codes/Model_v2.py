@@ -643,9 +643,7 @@ class KGEModel(nn.Module):
         '''
 
         model.train()
-
         optimizer.zero_grad()
-
         positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
 
         if args.cuda:
