@@ -627,7 +627,7 @@ class KGEModel(nn.Module):
         # print("true_labels=[{}]".format(true_labels.data.unsqueeze(1).shape))
         # print("true_labels 2=[{}]".format(true_labels.data.shape))
         with torch.no_grad():
-            true_dist = torch.empty(size=label_shape, device=true_labels.device())
+            true_dist = torch.empty(size=label_shape)
             # print("true_dist=[{}]".format(true_dist.shape))
             true_dist.fill_(smoothing / (classes - 1))
             true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
