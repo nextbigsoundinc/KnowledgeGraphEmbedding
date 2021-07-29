@@ -30,7 +30,7 @@ class ConvELayer(nn.Module):
                  input_drop=0.2, hidden_drop=0.3,
                  feat_drop=0.2,
                  emb_dim1=20,
-                 hidden_size=9728):
+                 hidden_size=27968):
 
         super(ConvELayer, self).__init__()
         self.nentity = number_of_entities
