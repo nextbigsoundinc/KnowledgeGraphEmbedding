@@ -59,7 +59,7 @@ class ConvELayer(nn.Module):
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
-        self.loss = torch.nn.BCELoss()  # modify: cosine embedding loss / triplet loss
+        self.loss = torch.nn.CrossEntropyLoss()  # modify: cosine embedding loss / triplet loss
         self.emb_dim1 = emb_dim1             # this is from the original configuration in ConvE
 
         self.nentity = self.entity_embedding.weight.shape[0]
@@ -104,7 +104,7 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
-        pred = torch.sigmoid(x)
+        pred = torch.softmax(x, dim=-1)
         return pred
 
 class CoCoELayer(nn.Module):
