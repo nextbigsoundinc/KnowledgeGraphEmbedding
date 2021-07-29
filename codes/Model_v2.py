@@ -23,36 +23,37 @@ from torch.nn.init import xavier_normal_, xavier_uniform_
 
 class ConvELayer(nn.Module):
 
-    def __init__(self, entity_embedding, relation_embedding,
+    def __init__(self, number_of_entities,
+                 entity_dimension,
                  input_drop=0.2, hidden_drop=0.3,
                  feat_drop=0.2,
                  emb_dim1=20,
-                 test_batch_size1=512,
-                 test_batch_size2=8,
                  hidden_size=9728):
 
         super(ConvELayer, self).__init__()
-        self.entity_embedding = entity_embedding
-        self.relation_embedding = relation_embedding
+        self.nentity = number_of_entities
+        self.entity_dim = entity_dimension
+        self.entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
+        self.relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
 
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
-        # self.loss = torch.nn.BCELoss()  # modify: cosine embedding loss / triplet loss
+        self.loss = torch.nn.BCELoss()  # modify: cosine embedding loss / triplet loss
         self.emb_dim1 = emb_dim1             # this is from the original configuration in ConvE
 
         self.nentity = self.entity_embedding.weight.shape[0]
         self.embedding_dim = self.entity_embedding.weight.shape[1]
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
-        self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
+        #self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(2, 32, (3, 3), 1, 0, bias=True)
-        self.mpool = torch.nn.MaxPool2d(2, stride=2)
+        #self.mpool = torch.nn.MaxPool2d(2, stride=2)
 
-        self.bn0 = torch.nn.BatchNorm2d(2)
+        self.bn0 = torch.nn.BatchNorm2d(1)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
-        self.fc = torch.nn.Linear(6912, self.embedding_dim)
+        self.fc = torch.nn.Linear(hidden_size, self.embedding_dim)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
 
     def init(self):
@@ -67,9 +68,8 @@ class ConvELayer(nn.Module):
 
         # print("head embedding=[", head_embedding.shape, "]")
         # print("rel embedding=[", rel_embedding.shape, "]")
-        stacked_inputs = torch.cat([head_embedding, rel_embedding], 1)                                  # len * 2 * 20 * 10
+        stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
         # print("stacked=[", stacked_inputs.shape, "]")
-
 
         stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
@@ -207,11 +207,8 @@ class KGEModel(nn.Module):
         self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
         if model_name in ['ConvE', 'CoCoE']:
-            self.entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
-            self.relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
-            self.conve_layer = ConvELayer(self.entity_embedding, self.relation_embedding)
+            self.conve_layer = ConvELayer(self.nentity, self.entity_dim)
             self.conve_layer.init()
-            self.loss = torch.nn.BCELoss()
             if model_name == 'CoCoE':
                 self.img_entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
                 self.img_relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
@@ -669,7 +666,7 @@ class KGEModel(nn.Module):
                 pred = pred.cuda()
                 targets = targets.cuda()
 
-            loss = model.loss(pred, targets)
+            loss = model.conve_layer.loss(pred, targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
@@ -838,7 +835,7 @@ class KGEModel(nn.Module):
                                     'HITS@10': 1.0 if ranking <= 10 else 0.0,
                                     'HITS@1000': 1.0 if ranking <= 1000 else 0.0
                                 }
-                                print(stats_dict)
+                                #print(stats_dict)
                                 logs.append(stats_dict)
 
                             if step % args.test_log_steps == 0:
