@@ -624,7 +624,7 @@ class KGEModel(nn.Module):
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
         label_shape = torch.Size((true_labels.size(0), classes))
-        print("true_labels=[{}]".format(true_labels.data))
+        print("true_labels=[{}]".format(true_labels.data.unsqueeze(1)))
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             true_dist.fill_(smoothing / (classes - 1))
