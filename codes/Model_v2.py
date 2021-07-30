@@ -84,15 +84,15 @@ class ComplExDeep(nn.Module):
         x = self.fc1(x)
         x = F.relu(x)
         x = self.hidden_drop(x)
-        print("hidden_drop x.shape=", x.shape)
-        print("bn2 x.shape=", x.shape)
+        # print("hidden_drop x.shape=", x.shape)
+        # print("bn2 x.shape=", x.shape)
         #print('x.shape=', x.shape)
         x = self.fc2(x)
         x = self.inp_drop(x)
-        x = F.relu(x)  # bs * 200
-        print('x.shape=', x.shape)
+        # x = F.relu(x)  # bs * 200
+        # print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
-        print('score1.shape=', score1.shape)
+        # print('score1.shape=', score1.shape)
         return torch.sigmoid(score1)
 
 
@@ -661,7 +661,7 @@ class KGEModel(nn.Module):
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
             targets = torch.zeros(batch_size, pred.size(1))
-            print('targets=', targets.shape)
+            # print('targets=', targets.shape)
             for batch in range(batch_size):
                 targets[batch][0] = 1.0
 
