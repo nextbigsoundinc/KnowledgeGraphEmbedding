@@ -1,6 +1,6 @@
 # CoCoE
-bash run.sh train CoCoE FB15k-237 0 20 128 256 200 9.0 1.0 0.003 100000 16 -de -dr -r 0.00001
-bash run.sh train CoCoE wn18 1 28 128 256 200 9.0 1.0 0.003 80000 8 -de -dr -r 0.00001
+bash run_v2.sh train CoCoE FB15k-237 0 20 128 256 200 9.0 1.0 0.003 100000 16 -de -dr -r 0.00001
+bash run_v2.sh train CoCoE wn18 1 28 128 256 200 9.0 1.0 0.003 80000 8 -de -dr -r 0.00001
 # TransE
 bash run.sh train TransE FB15k-237 1 21 1024 256 1000 9.0 1.0 0.00005 100000 16
 bash run.sh train TransE wn18 0 23 512 1024 500 12.0 0.5 0.0001 80000 8
