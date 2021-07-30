@@ -78,7 +78,8 @@ class ComplExDeep(nn.Module):
         print('x.shape=', x.shape)
         x = self.fc2(x)
         print('x.shape=', x.shape)
-        return x
+        score = x.sum(dim=2)
+        return score
 
 
 
