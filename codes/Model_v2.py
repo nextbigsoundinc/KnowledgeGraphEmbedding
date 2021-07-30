@@ -52,7 +52,6 @@ class ComplExDeep(nn.Module):
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 32)
-        self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
