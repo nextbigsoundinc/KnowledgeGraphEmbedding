@@ -622,16 +622,11 @@ class KGEModel(nn.Module):
 
         """
         assert 0 <= smoothing < 1
-        #confidence = 1.0 - smoothing
-        confidence = 1.0
+        confidence = 1.0 - smoothing
         label_shape = torch.Size((true_labels.size(0), classes))
-        # print("true_labels=[{}]".format(true_labels.data.unsqueeze(1).shape))
-        # print("true_labels 2=[{}]".format(true_labels.data.shape))
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
-            # print("true_dist=[{}]".format(true_dist.shape))
-            #true_dist.fill_(smoothing / (classes - 1))
-            true_dist.fill_(0.0)
+            true_dist.fill_(smoothing / (classes - 1))
             true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
         return true_dist
 
@@ -705,13 +700,13 @@ class KGEModel(nn.Module):
             # #     # print("positive index = {}".format(positive_sample[batch][2]))
             # #     targets[batch][positive_sample[batch][2]] = 1
             # # # print('targets shape= {}'.format(targets.shape))
-            # smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
+            smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
 
 
             if args.cuda:
                 pred = pred.cuda()
-                #smooth_targets = smooth_targets.cuda()
-            loss = model.conve_layer.loss(pred, positive_sample[:, 2].long())
+                smooth_targets = smooth_targets.cuda()
+            loss = model.conve_layer.loss(pred, smooth_targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
