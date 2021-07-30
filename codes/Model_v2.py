@@ -108,6 +108,7 @@ class ConvELayer(nn.Module):
 
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.bn0 = torch.nn.BatchNorm2d(1)
+        self.bn00 = torch.nn.BatchNorm2d(1024)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.emb_dim1)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
@@ -129,9 +130,7 @@ class ConvELayer(nn.Module):
                                                                                negative_sample_size,
                                                                                self.emb_dim1,
                                                                                self.emb_dim2)
-            print("stacked_inputs.shape=", stacked_inputs.shape)
-            stacked_inputs = self.bn0(stacked_inputs)
-            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
+
         else:
             batch_size = re_head.size(0)
             negative_sample_size = re_tail.size(1)
@@ -143,10 +142,15 @@ class ConvELayer(nn.Module):
                                                                                negative_sample_size,
                                                                                self.emb_dim1,
                                                                                self.emb_dim2)
+
+        if batch_size == 1:
             print("stacked_inputs.shape=", stacked_inputs.shape)
             stacked_inputs = self.bn0(stacked_inputs)
             print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
-
+        else:
+            print("stacked_inputs.shape=", stacked_inputs.shape)
+            stacked_inputs = self.bn00(stacked_inputs)
+            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
         x = self.inp_drop(stacked_inputs)
         print("inp_drop x.shape=", x.shape)
         x = self.conv1(x)
