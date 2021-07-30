@@ -72,7 +72,7 @@ class ComplExDeep(nn.Module):
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
 
-        stacked_embeddings = torch.cat([re_score, im_score], dim=1)
+        stacked_embeddings = torch.cat([re_score, im_score], dim=2).view(re_score.size(0), -1)
         print('stacked_embeddings.shape=', stacked_embeddings.shape)
         x = self.fc1(stacked_embeddings)
         print('x.shape=', x.shape)
@@ -758,18 +758,18 @@ class KGEModel(nn.Module):
         else:
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
-            # test_dataloader_head = DataLoader(
-            #     TestDataset(
-            #         test_triples,
-            #         all_true_triples,
-            #         args.nentity,
-            #         args.nrelation,
-            #         'head-batch'
-            #     ),
-            #     batch_size=args.test_batch_size,
-            #     num_workers=max(1, args.cpu_num//2),
-            #     collate_fn=TestDataset.collate_fn
-            # )
+            test_dataloader_head = DataLoader(
+                TestDataset(
+                    test_triples,
+                    all_true_triples,
+                    args.nentity,
+                    args.nrelation,
+                    'head-batch'
+                ),
+                batch_size=args.test_batch_size,
+                num_workers=max(1, args.cpu_num//2),
+                collate_fn=TestDataset.collate_fn
+            )
 
             test_dataloader_tail = DataLoader(
                 TestDataset(
@@ -784,8 +784,8 @@ class KGEModel(nn.Module):
                 collate_fn=TestDataset.collate_fn
             )
             
-            # test_dataset_list = [test_dataloader_head, test_dataloader_tail]
-            test_dataset_list = [test_dataloader_tail]
+            test_dataset_list = [test_dataloader_head, test_dataloader_tail]
+            #test_dataset_list = [test_dataloader_tail]
             
             logs = []
 
