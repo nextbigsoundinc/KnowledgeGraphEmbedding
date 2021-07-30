@@ -696,22 +696,22 @@ class KGEModel(nn.Module):
             }
 
         else:
-            smoothing = 0.1
-            confidence = 1.0 - smoothing
+            # smoothing = 0.1
+            # confidence = 1.0 - smoothing
             pred = model(positive_sample)
-            batch_size = pred.size(0)  # e.g., 1024
-            # targets = torch.zeros(batch_size, pred.size(1))
-            # for batch in range(batch_size):
-            #     # print("positive index = {}".format(positive_sample[batch][2]))
-            #     targets[batch][positive_sample[batch][2]] = 1
-            # # print('targets shape= {}'.format(targets.shape))
-            smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
+            # batch_size = pred.size(0)  # e.g., 1024
+            # # targets = torch.zeros(batch_size, pred.size(1))
+            # # for batch in range(batch_size):
+            # #     # print("positive index = {}".format(positive_sample[batch][2]))
+            # #     targets[batch][positive_sample[batch][2]] = 1
+            # # # print('targets shape= {}'.format(targets.shape))
+            # smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
 
 
             if args.cuda:
                 pred = pred.cuda()
-                smooth_targets = smooth_targets.cuda()
-            loss = model.conve_layer.loss(pred, smooth_targets)
+                #smooth_targets = smooth_targets.cuda()
+            loss = model.conve_layer.loss(pred, positive_sample[:, 2].long())
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
