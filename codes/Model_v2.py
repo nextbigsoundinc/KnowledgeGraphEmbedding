@@ -93,7 +93,7 @@ class ComplExDeep(nn.Module):
         print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
         print('score1.shape=', score1.shape)
-        return score1
+        return torch.sigmoid(score1)
 
 
 class ConvELayer(nn.Module):
@@ -588,10 +588,11 @@ class KGEModel(nn.Module):
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
         label_shape = torch.Size((true_labels.size(0), classes))
+        indices = torch.zeros(true_labels.size(0), 1).int()
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             true_dist.fill_(smoothing / (classes - 1))
-            true_dist.scatter_(1, true_labels.data.unsqueeze(1), confidence)
+            true_dist.scatter_(1, indices, confidence)
         return true_dist
 
 
