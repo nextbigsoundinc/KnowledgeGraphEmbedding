@@ -658,10 +658,10 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            targets = torch.zeros(batch_size, pred.size(1) + 1)
+            targets = torch.zeros(batch_size, pred.size(1))
             print('targets=', targets.shape)
             for batch in range(batch_size):
-                targets[batch_size][0] = 1.0
+                targets[batch][0] = 1.0
 
             smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
 
