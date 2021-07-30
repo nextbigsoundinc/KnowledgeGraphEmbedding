@@ -111,7 +111,7 @@ class ConvELayer(nn.Module):
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
         self.fc = torch.nn.Linear(hidden_size, self.emb_dim1)
 
-    def forward(self, head, relation,  tail, mode):
+    def forward(self, head, relation, tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
         re_relation, im_relation = torch.chunk(relation, 2, dim=2)
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
@@ -444,7 +444,7 @@ class KGEModel(nn.Module):
         # score.sum(dim=2): torch.Size([8, 40943])
         #
 
-        score = self.conve_layer(head, relation, -1, 1)
+        score = self.conve_layer(head, relation, tail, mode)
 
         return score  # len * # ent
 
