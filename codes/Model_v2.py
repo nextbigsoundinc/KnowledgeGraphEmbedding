@@ -204,7 +204,7 @@ class CoCoELayer(nn.Module):
 
 class KGEModel(nn.Module):
     def __init__(self, model_name, nentity, nrelation, hidden_dim, gamma, 
-                 double_entity_embedding=False, double_relation_embedding=False):
+                 double_entity_embedding=True, double_relation_embedding=True):
         super(KGEModel, self).__init__()
         self.model_name = model_name
         self.nentity = nentity
