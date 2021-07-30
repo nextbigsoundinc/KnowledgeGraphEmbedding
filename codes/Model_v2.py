@@ -101,7 +101,7 @@ class ConvELayer(nn.Module):
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
-        self.emb_dim1 = embedd_dim_fold  # this is from the original configuration in ConvE
+        self.emb_dim1 = embedding_dim  # this is from the original configuration in ConvE
         self.emb_dim2 = self.emb_dim1 // embedd_dim_fold
 
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
@@ -305,7 +305,7 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.entity_dim, self.relation_dim)
+            self.cocoe_layer = ComplExDeep(self.entity_dim, self.nentity)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.relation_dim, self.nentity)
