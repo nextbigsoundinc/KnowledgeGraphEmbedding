@@ -73,27 +73,19 @@ class ComplExDeep(nn.Module):
         # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
-            batch_size = re_tail.size(0)
-            negative_sample_size = re_head.size(1)
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
             re_head_score = re_head * re_score
             im_head_score = im_head * im_score
-            stacked_inputs = torch.cat([re_head_score, im_head_score], -1).view(batch_size,
-                                                                               negative_sample_size,
-                                                                               -1)
+            score = re_head_score + im_head_score
         else:
-            batch_size = re_head.size(0)
-            negative_sample_size = re_tail.size(1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_tail_score = re_tail * re_score
             im_tail_score = im_tail * im_score
-            stacked_inputs = torch.cat([re_tail_score, im_tail_score], -1).view(batch_size,
-                                                                               negative_sample_size,
-                                                                               -1)
+            score = re_tail_score + im_tail_score
         #print('x.shape=', score.shape)
-        x = self.inp_drop(stacked_inputs)
+        x = self.inp_drop(score)
         x = self.fc1(x)
         x = F.relu(x)
         x = self.hidden_drop(x)
@@ -101,11 +93,6 @@ class ComplExDeep(nn.Module):
         # print("bn2 x.shape=", x.shape)
         #print('x.shape=', x.shape)
         x = self.fc2(x)
-        x = F.relu(x)
-        x = self.hidden_drop(x)
-        x = self.fc3(x)
-        # x = F.relu(x)  # bs * 200
-        # print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score1
@@ -148,8 +135,6 @@ class ConvELayer(nn.Module):
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
         if mode == 'head-batch':
-            batch_size = re_tail.size(0)
-            negative_sample_size = re_head.size(1)
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
             re_head_score = re_head * re_score
