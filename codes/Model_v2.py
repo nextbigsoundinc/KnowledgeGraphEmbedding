@@ -90,9 +90,9 @@ class ComplExDeep(nn.Module):
         x = self.fc2(x)
         x = self.inp_drop(x)
         x = F.relu(x)  # bs * 200
-        #print('x.shape=', x.shape)
+        print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
-        #print('score.shape=', score1.shape)
+        print('score1.shape=', score1.shape)
         return score1
 
 
