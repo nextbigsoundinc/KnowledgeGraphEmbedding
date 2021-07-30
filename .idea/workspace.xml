@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +47,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="11934" />
+          <entry key="py" value="11981" />
           <entry key="sh" value="68" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +57,7 @@
           <entry key="Bash" value="68" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="11934" />
+          <entry key="Python" value="11981" />
         </counts>
       </usages-collector>
     </session>
@@ -116,11 +115,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="607" column="34" selection-start-line="607" selection-start-column="34" selection-end-line="607" selection-end-column="34" />
+            <state relative-caret-position="387">
+              <caret line="686" column="51" selection-start-line="686" selection-start-column="51" selection-end-line="686" selection-end-column="51" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627678898000" expanded="true" signature="21203:21291" ph="..." />
+                <marker date="1627679136000" expanded="true" signature="21203:21291" ph="..." />
               </folding>
             </state>
           </provider>
@@ -415,13 +414,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00271" summary="revert">
-      <created>1627647065782</created>
-      <option name="number" value="00271" />
-      <option name="presentableId" value="LOCAL-00271" />
-      <option name="project" value="LOCAL" />
-      <updated>1627647065782</updated>
     </task>
     <task id="LOCAL-00272" summary="revert">
       <created>1627647312949</created>
@@ -759,7 +751,14 @@
       <option name="project" value="LOCAL" />
       <updated>1627678834972</updated>
     </task>
-    <option name="localTasksCounter" value="320" />
+    <task id="LOCAL-00320" summary="revert">
+      <created>1627678905806</created>
+      <option name="number" value="00320" />
+      <option name="presentableId" value="LOCAL-00320" />
+      <option name="project" value="LOCAL" />
+      <updated>1627678905806</updated>
+    </task>
+    <option name="localTasksCounter" value="321" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1027,11 +1026,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="607" column="34" selection-start-line="607" selection-start-column="34" selection-end-line="607" selection-end-column="34" />
+        <state relative-caret-position="387">
+          <caret line="686" column="51" selection-start-line="686" selection-start-column="51" selection-end-line="686" selection-end-column="51" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1627678898000" expanded="true" signature="21203:21291" ph="..." />
+            <marker date="1627679136000" expanded="true" signature="21203:21291" ph="..." />
           </folding>
         </state>
       </provider>
