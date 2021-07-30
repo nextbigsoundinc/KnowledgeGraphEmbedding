@@ -664,13 +664,13 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                 targets[batch][0] = 1.0
 
-            smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
+            #smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
 
 
             if args.cuda:
                 pred = pred.cuda()
-                smooth_targets = smooth_targets.cuda()
-            loss = model.conve_layer.loss(pred, smooth_targets)
+                targets = targets.cuda()
+            loss = model.conve_layer.loss(pred, targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
