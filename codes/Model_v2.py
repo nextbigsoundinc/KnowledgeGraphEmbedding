@@ -94,7 +94,7 @@ class ConvELayer(nn.Module):
                  feat_drop=0.3,
                  hidden_size=512):
 
-        super(ComplExDeep, self).__init__()
+        super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim * 0.5)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
