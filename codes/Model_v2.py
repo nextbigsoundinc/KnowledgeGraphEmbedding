@@ -299,9 +299,7 @@ class KGEModel(nn.Module):
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.relation_dim, self.nentity)
-            self.conve_layer.init()
 
-        
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
         
