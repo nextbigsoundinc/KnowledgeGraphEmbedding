@@ -48,7 +48,7 @@ class ComplExDeep(nn.Module):
                  hidden_size=512):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = embedding_dim
+        self.input_neurons = embedding_dim * 0.5
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 1)
