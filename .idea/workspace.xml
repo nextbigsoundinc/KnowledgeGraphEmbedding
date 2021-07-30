@@ -48,7 +48,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="11494" />
+          <entry key="py" value="11535" />
           <entry key="sh" value="6" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="6" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="11494" />
+          <entry key="Python" value="11535" />
         </counts>
       </usages-collector>
     </session>
@@ -125,11 +125,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="101" column="36" selection-start-line="101" selection-start-column="36" selection-end-line="101" selection-end-column="36" />
+            <state relative-caret-position="284">
+              <caret line="106" column="39" selection-start-line="106" selection-start-column="39" selection-end-line="106" selection-end-column="39" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627670349000" expanded="true" signature="19556:19644" ph="..." />
+                <marker date="1627670726000" expanded="true" signature="19602:19690" ph="..." />
               </folding>
             </state>
           </provider>
@@ -414,20 +414,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00246" summary="revert">
-      <created>1627591462262</created>
-      <option name="number" value="00246" />
-      <option name="presentableId" value="LOCAL-00246" />
-      <option name="project" value="LOCAL" />
-      <updated>1627591462262</updated>
-    </task>
-    <task id="LOCAL-00247" summary="revert">
-      <created>1627591883598</created>
-      <option name="number" value="00247" />
-      <option name="presentableId" value="LOCAL-00247" />
-      <option name="project" value="LOCAL" />
-      <updated>1627591883598</updated>
     </task>
     <task id="LOCAL-00248" summary="revert">
       <created>1627592260967</created>
@@ -758,7 +744,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627670128011</updated>
     </task>
-    <option name="localTasksCounter" value="295" />
+    <task id="LOCAL-00295" summary="revert">
+      <created>1627670353461</created>
+      <option name="number" value="00295" />
+      <option name="presentableId" value="LOCAL-00295" />
+      <option name="project" value="LOCAL" />
+      <updated>1627670353461</updated>
+    </task>
+    <task id="LOCAL-00296" summary="revert">
+      <created>1627670496411</created>
+      <option name="number" value="00296" />
+      <option name="presentableId" value="LOCAL-00296" />
+      <option name="project" value="LOCAL" />
+      <updated>1627670496412</updated>
+    </task>
+    <option name="localTasksCounter" value="297" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1024,11 +1024,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="101" column="36" selection-start-line="101" selection-start-column="36" selection-end-line="101" selection-end-column="36" />
+        <state relative-caret-position="284">
+          <caret line="106" column="39" selection-start-line="106" selection-start-column="39" selection-end-line="106" selection-end-column="39" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1627670349000" expanded="true" signature="19556:19644" ph="..." />
+            <marker date="1627670726000" expanded="true" signature="19602:19690" ph="..." />
           </folding>
         </state>
       </provider>
