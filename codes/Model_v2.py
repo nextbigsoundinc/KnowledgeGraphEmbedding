@@ -681,9 +681,10 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                 targets[batch][0] = 1
 
-            smooth_targets = KGEModel.smooth_one_hot(targets, 2, 0.1)
+            smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
 
-
+            print("targets=", targets)
+            print("smooth_targets=", smooth_targets)
             if args.cuda:
                 pred = pred.cuda()
                 smooth_targets = smooth_targets.cuda()
