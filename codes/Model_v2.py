@@ -93,7 +93,7 @@ class ComplExDeep(nn.Module):
         # print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
-        return torch.sigmoid(score1)
+        return score1
 
 
 class ConvELayer(nn.Module):
