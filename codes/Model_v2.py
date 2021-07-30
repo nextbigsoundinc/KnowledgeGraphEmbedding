@@ -59,7 +59,7 @@ class ConvELayer(nn.Module):
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
-        self.loss = torch.nn.BCELoss()  # modify: cosine embedding loss / triplet loss
+        self.loss = torch.nn.CrossEntropyLoss()  # modify: cosine embedding loss / triplet loss
         self.emb_dim1 = emb_dim1             # this is from the original configuration in ConvE
 
         self.nentity = self.entity_embedding.weight.shape[0]
@@ -104,8 +104,7 @@ class ConvELayer(nn.Module):
         x = F.relu(x)  # bs * 200
         x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
-        pred = torch.softmax(x, dim=-1)
-        return pred
+        return x
 
 class CoCoELayer(nn.Module):
     def __init__(self, ent_real, ent_img, rel_real, rel_img, negative_sample_size):
@@ -700,13 +699,13 @@ class KGEModel(nn.Module):
             # #     # print("positive index = {}".format(positive_sample[batch][2]))
             # #     targets[batch][positive_sample[batch][2]] = 1
             # # # print('targets shape= {}'.format(targets.shape))
-            smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
+            #smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
 
 
             if args.cuda:
                 pred = pred.cuda()
-                smooth_targets = smooth_targets.cuda()
-            loss = model.conve_layer.loss(pred, smooth_targets)
+                #smooth_targets = smooth_targets.cuda()
+            loss = model.conve_layer.loss(pred, positive_sample[:, 2])
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
