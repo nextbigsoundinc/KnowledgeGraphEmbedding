@@ -51,7 +51,7 @@ class ComplExDeep(nn.Module):
                  ):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(embedding_dim * 0.5)
+        self.input_neurons = int(embedding_dim * 2)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 1)
@@ -72,15 +72,27 @@ class ComplExDeep(nn.Module):
         # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
+            batch_size = re_tail.size(0)
+            negative_sample_size = re_head.size(1)
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            score = re_head * re_score + im_head * im_score
+            re_head_score = re_head * re_score
+            im_head_score = im_head * im_score
+            stacked_inputs = torch.cat([re_head_score, im_head_score], -1).view(batch_size,
+                                                                               negative_sample_size,
+                                                                               -1)
         else:
+            batch_size = re_head.size(0)
+            negative_sample_size = re_tail.size(1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            score = re_score * re_tail + im_score * im_tail
+            re_tail_score = re_tail * re_score
+            im_tail_score = im_tail * im_score
+            stacked_inputs = torch.cat([re_tail_score, im_tail_score], -1).view(batch_size,
+                                                                               negative_sample_size,
+                                                                               -1)
         #print('x.shape=', score.shape)
-        x = self.inp_drop(score)
+        x = self.inp_drop(stacked_inputs)
         x = self.fc1(x)
         x = F.relu(x)
         x = self.hidden_drop(x)
