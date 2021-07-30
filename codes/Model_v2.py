@@ -310,7 +310,7 @@ class KGEModel(nn.Module):
             self.cocoe_layer = ComplExDeep(self.entity_dim, self.nentity)
 
         elif model_name == 'ConvE':
-            self.conve_layer = ConvELayer(self.entity_dim, self.relation_dim, self.nentity)
+            self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
 
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
