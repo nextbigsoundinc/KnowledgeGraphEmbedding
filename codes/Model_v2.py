@@ -87,7 +87,7 @@ class ConvELayer(nn.Module):
 
     def __init__(self,
                  embedding_dim,
-                 relation_dim,
+                 nentity,
                  embedd_dim_fold=20,
                  input_drop=0.2,
                  hidden_drop=0.3,
@@ -96,6 +96,7 @@ class ConvELayer(nn.Module):
 
         super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim * 0.5)
+        self.nentity = nentity
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
@@ -297,7 +298,7 @@ class KGEModel(nn.Module):
             self.cocoe_layer = ComplExDeep(self.entity_dim, self.relation_dim)
 
         elif model_name == 'ConvE':
-            self.conve_layer = ConvELayer(self.nentity, self.nrelation, self.entity_dim)
+            self.conve_layer = ConvELayer(self.entity_dim, self.relation_dim, self.nentity)
             self.conve_layer.init()
 
         
@@ -325,112 +326,76 @@ class KGEModel(nn.Module):
         in their triple ((head, relation) or (relation, tail)).
         '''
 
-        batch_size=0
-        negative_sample_size=0
+        if mode == 'single':
+            batch_size, negative_sample_size = sample.size(0), 1
 
-        if self.model_name not in ['CoCoE', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplEx']:
+            head = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=sample[:,0]
+            ).unsqueeze(1)
 
-            if mode == 'single':
-                batch_size, negative_sample_size = sample.size(0), 1
-                head = sample[:, 0]
-                relation = sample[:, 1]
-                tail = sample[:, 2]
+            relation = torch.index_select(
+                self.relation_embedding,
+                dim=0,
+                index=sample[:,1]
+            ).unsqueeze(1)
 
-            elif mode == 'head-batch':
-                tail_part, head_part = sample  # tail part: 1024 * 3 (1024 positive triples)
-                # head part: 1024 * 256 (each row represent neg sample ids of the corresponding positive triple)
-                # in other words, each positive triplet have 256 negetive triplets
-                #print("head part=[", head_part,"]")
-                #print("tail part=[", tail_part,"]")
-                batch_size, negative_sample_size = head_part.size(0), head_part.size(1)  # 1024 256
-                head = head_part.view(-1)
-                relation = tail_part[:, 1]
-                tail = tail_part[:, 2]
+            tail = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=sample[:,2]
+            ).unsqueeze(1)
 
-            elif mode == 'tail-batch':
-                head_part, tail_part = sample      # tail_part: bs * neg_sample_size        #1024*256
-                batch_size, negative_sample_size = tail_part.size(0), tail_part.size(1)
-                head = head_part[:, 0]          # 1024
-                relation = head_part[:, 1]      # 1024
-                tail = tail_part.view(-1)       # 1024 * 256
+        elif mode == 'head-batch':
+            tail_part, head_part = sample           # tail part: 1024 * 3 (1024 positive triples)
+                                                    # head part: 1024 * 256 (each row represent neg sample ids of the corresponding positive triple)
+                                                    # in other words, each positive triplet have 256 negetive triplets
+            batch_size, negative_sample_size = head_part.size(0), head_part.size(1)     # 1024 256
 
-            else:
-                raise ValueError('mode %s not supported' % mode)
+            head = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=head_part.view(-1)
+            ).view(batch_size, negative_sample_size, -1)                # indexes * entity_dim: (1024 * 256) * entity_dim
+                                                                        # corrupted head
 
-            # print("mode=[",mode,"]")
+            relation = torch.index_select(
+                self.relation_embedding,
+                dim=0,
+                index=tail_part[:, 1]
+            ).unsqueeze(1)                                              # 1024 * 1 * entity_dim
+
+            tail = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=tail_part[:, 2]
+            ).unsqueeze(1)                                              # 1024 * 1 * entity_dim
+
+        elif mode == 'tail-batch':
+            head_part, tail_part = sample
+            batch_size, negative_sample_size = tail_part.size(0), tail_part.size(1)
+
+            head = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=head_part[:, 0]
+            ).unsqueeze(1)
+
+            relation = torch.index_select(
+                self.relation_embedding,
+                dim=0,
+                index=head_part[:, 1]
+            ).unsqueeze(1)
+
+            tail = torch.index_select(
+                self.entity_embedding,
+                dim=0,
+                index=tail_part.view(-1)
+            ).view(batch_size, negative_sample_size, -1)
 
         else:
-
-            if mode == 'single':
-                batch_size, negative_sample_size = sample.size(0), 1
-
-                head = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=sample[:,0]
-                ).unsqueeze(1)
-
-                relation = torch.index_select(
-                    self.relation_embedding,
-                    dim=0,
-                    index=sample[:,1]
-                ).unsqueeze(1)
-
-                tail = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=sample[:,2]
-                ).unsqueeze(1)
-
-            elif mode == 'head-batch':
-                tail_part, head_part = sample           # tail part: 1024 * 3 (1024 positive triples)
-                                                        # head part: 1024 * 256 (each row represent neg sample ids of the corresponding positive triple)
-                                                        # in other words, each positive triplet have 256 negetive triplets
-                batch_size, negative_sample_size = head_part.size(0), head_part.size(1)     # 1024 256
-
-                head = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=head_part.view(-1)
-                ).view(batch_size, negative_sample_size, -1)                # indexes * entity_dim: (1024 * 256) * entity_dim
-                                                                            # corrupted head
-
-                relation = torch.index_select(
-                    self.relation_embedding,
-                    dim=0,
-                    index=tail_part[:, 1]
-                ).unsqueeze(1)                                              # 1024 * 1 * entity_dim
-
-                tail = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=tail_part[:, 2]
-                ).unsqueeze(1)                                              # 1024 * 1 * entity_dim
-
-            elif mode == 'tail-batch':
-                head_part, tail_part = sample
-                batch_size, negative_sample_size = tail_part.size(0), tail_part.size(1)
-
-                head = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=head_part[:, 0]
-                ).unsqueeze(1)
-
-                relation = torch.index_select(
-                    self.relation_embedding,
-                    dim=0,
-                    index=head_part[:, 1]
-                ).unsqueeze(1)
-
-                tail = torch.index_select(
-                    self.entity_embedding,
-                    dim=0,
-                    index=tail_part.view(-1)
-                ).view(batch_size, negative_sample_size, -1)
-
-            else:
-                raise ValueError('mode %s not supported' % mode)
+            raise ValueError('mode %s not supported' % mode)
             
         model_func = {
             'TransE': self.TransE,
