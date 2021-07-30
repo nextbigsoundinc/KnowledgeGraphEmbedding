@@ -51,7 +51,7 @@ class ComplExDeep(nn.Module):
         self.input_neurons = embedding_dim
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 32)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 1)
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -68,13 +68,13 @@ class ComplExDeep(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
+            score = re_head * re_score + im_head * im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
+            score = re_score * re_tail + im_score * im_tail
 
-        stacked_embeddings = torch.cat([re_score, im_score], dim=2)
-        print('stacked_embeddings.shape=', stacked_embeddings.shape)
-        x = self.fc1(stacked_embeddings)
+        x = self.fc1(score)
         print('x.shape=', x.shape)
         x = self.fc2(x)
         print('x.shape=', x.shape)
