@@ -295,7 +295,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = BCEWithLogitsLoss()
+        self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
