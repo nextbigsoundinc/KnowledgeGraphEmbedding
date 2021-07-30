@@ -101,8 +101,10 @@ class ConvELayer(nn.Module):
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
-        self.emb_dim1 = embedding_dim  # this is from the original configuration in ConvE
-        self.emb_dim2 = self.emb_dim1 // embedd_dim_fold
+        self.embedding_dim = embedding_dim
+        self.emb_dim2 = embedd_dim_fold
+        self.emb_dim1 = self.embedding_dim // self.emb_dim2  # this is from the original configuration in ConvE
+
 
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.bn0 = torch.nn.BatchNorm2d(1)
