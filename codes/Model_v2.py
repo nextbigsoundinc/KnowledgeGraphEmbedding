@@ -58,12 +58,12 @@ class ComplExDeep(nn.Module):
         re_relation, im_relation = torch.chunk(relation, 2, dim=2)
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
-        print('re_head.shape=', re_head.shape)
-        print('im_head.shape=', im_head.shape)
-        print('re_relation.shape=', re_relation.shape)
-        print('im_relation.shape=', im_relation.shape)
-        print('re_tail.shape=', re_tail.shape)
-        print('im_tail.shape=', im_tail.shape)
+        # print('re_head.shape=', re_head.shape)
+        # print('im_head.shape=', im_head.shape)
+        # print('re_relation.shape=', re_relation.shape)
+        # print('im_relation.shape=', im_relation.shape)
+        # print('re_tail.shape=', re_tail.shape)
+        # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
@@ -73,13 +73,13 @@ class ComplExDeep(nn.Module):
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             score = re_score * re_tail + im_score * im_tail
-        print('x.shape=', score.shape)
+        #print('x.shape=', score.shape)
         x = self.fc1(score)
-        print('x.shape=', x.shape)
+        #print('x.shape=', x.shape)
         x = self.fc2(x)
-        print('x.shape=', x.shape)
+        #print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
-        print('score.shape=', score1.shape)
+        #print('score.shape=', score1.shape)
         return score1
 
 
