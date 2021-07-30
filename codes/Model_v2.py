@@ -605,7 +605,7 @@ class KGEModel(nn.Module):
         confidence = 1.0 - smoothing
         label_shape = torch.Size((true_labels.size(0), classes))
         indices = torch.zeros(true_labels.size(0), 1).long()
-        print("indices=", indices)
+        # print("indices=", indices)
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             true_dist.fill_(smoothing / (classes - 1))
@@ -683,8 +683,8 @@ class KGEModel(nn.Module):
 
             smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
 
-            print("targets=", targets)
-            print("smooth_targets=", smooth_targets)
+            # print("targets=", targets)
+            # print("smooth_targets=", smooth_targets)
             if args.cuda:
                 pred = pred.cuda()
                 smooth_targets = smooth_targets.cuda()
