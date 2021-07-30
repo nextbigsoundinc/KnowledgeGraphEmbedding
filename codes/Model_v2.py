@@ -720,18 +720,18 @@ class KGEModel(nn.Module):
         else:
             #Otherwise use standard (filtered) MRR, MR, HITS@1, HITS@3, and HITS@10 metrics
             #Prepare dataloader for evaluation
-            # test_dataloader_head = DataLoader(
-            #     TestDataset(
-            #         test_triples,
-            #         all_true_triples,
-            #         args.nentity,
-            #         args.nrelation,
-            #         'head-batch'
-            #     ),
-            #     batch_size=args.test_batch_size,
-            #     num_workers=max(1, args.cpu_num//2),
-            #     collate_fn=TestDataset.collate_fn
-            # )
+            test_dataloader_head = DataLoader(
+                TestDataset(
+                    test_triples,
+                    all_true_triples,
+                    args.nentity,
+                    args.nrelation,
+                    'head-batch'
+                ),
+                batch_size=args.test_batch_size,
+                num_workers=max(1, args.cpu_num//2),
+                collate_fn=TestDataset.collate_fn
+            )
 
             test_dataloader_tail = DataLoader(
                 TestDataset(
@@ -746,9 +746,8 @@ class KGEModel(nn.Module):
                 collate_fn=TestDataset.collate_fn
             )
             
-            #test_dataset_list = [test_dataloader_head, test_dataloader_tail]
-            test_dataset_list = [test_dataloader_tail]
-            
+            test_dataset_list = [test_dataloader_head, test_dataloader_tail]
+
             logs = []
 
             step = 0
