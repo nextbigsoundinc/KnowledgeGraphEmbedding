@@ -202,10 +202,10 @@ class BidirectionalOneShotIterator(object):
 
     def __next__(self):
         self.step += 1
-        if self.step % 2 == 0:
-            data = next(self.iterator_head)
-        else:
-            data = next(self.iterator_tail)
+        # if self.step % 2 == 0:
+        #     data = next(self.iterator_head)
+        # else:
+        data = next(self.iterator_tail)
         return data
 
     @staticmethod
