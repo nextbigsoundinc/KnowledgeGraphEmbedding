@@ -54,7 +54,8 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(embedding_dim)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 1)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 32)
+        self.fc3 = torch.nn.Linear(32, 1)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
@@ -100,7 +101,9 @@ class ComplExDeep(nn.Module):
         # print("bn2 x.shape=", x.shape)
         #print('x.shape=', x.shape)
         x = self.fc2(x)
-        x = self.inp_drop(x)
+        x = F.relu(x)
+        x = self.hidden_drop(x)
+        x = self.fc3(x)
         # x = F.relu(x)  # bs * 200
         # print('x.shape=', x.shape)
         score1 = x.sum(dim=2)
