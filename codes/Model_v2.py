@@ -83,74 +83,81 @@ class ComplExDeep(nn.Module):
         return score1
 
 
-
-
 class ConvELayer(nn.Module):
 
     def __init__(self,
-                 number_of_entities,
-                 number_of_relations,
-                 entity_dimension,
-                 input_drop=0.2, hidden_drop=0.3,
-                 feat_drop=0.2,
-                 emb_dim1=20,
-                 hidden_size=27968):
+                 embedding_dim,
+                 relation_dim,
+                 embedd_dim_fold=20,
+                 input_drop=0.2,
+                 hidden_drop=0.3,
+                 feat_drop=0.3,
+                 hidden_size=512):
 
-        super(ConvELayer, self).__init__()
-        self.nentity = number_of_entities
-        self.entity_dim = entity_dimension
-        self.nrelation = number_of_relations
-        self.entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
-        self.relation_embedding = nn.Embedding(self.nrelation, self.entity_dim, padding_idx=0)
-
+        super(ComplExDeep, self).__init__()
+        self.input_neurons = int(embedding_dim * 0.5)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
-        self.loss = torch.nn.CrossEntropyLoss()  # modify: cosine embedding loss / triplet loss
-        self.emb_dim1 = emb_dim1             # this is from the original configuration in ConvE
-
-        self.nentity = self.entity_embedding.weight.shape[0]
-        self.embedding_dim = self.entity_embedding.weight.shape[1]
+        self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
+        self.emb_dim1 = embedd_dim_fold  # this is from the original configuration in ConvE
         self.emb_dim2 = self.embedding_dim // self.emb_dim1
 
-        #self.adavgpool1 = torch.nn.AdaptiveAvgPool2d((8,1))
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
-        #self.mpool = torch.nn.MaxPool2d(2, stride=2)
-
         self.bn0 = torch.nn.BatchNorm2d(1)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.embedding_dim)
-        self.fc = torch.nn.Linear(hidden_size, self.embedding_dim)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
+        self.fc = torch.nn.Linear(hidden_size, self.embedding_dim)
 
-    def init(self):
-        xavier_normal_(self.entity_embedding.weight.data)
-        xavier_normal_(self.relation_embedding.weight.data)
+    def forward(self, head, relation,  tail, mode):
+        re_head, im_head = torch.chunk(head, 2, dim=2)
+        re_relation, im_relation = torch.chunk(relation, 2, dim=2)
+        re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
-    def forward(self, head, rel,  batch_size, negative_sample_size):
-        head_embedding = self.entity_embedding(head).view(batch_size, negative_sample_size,
-                                                          self.emb_dim1, self.emb_dim2)
-        rel_embedding = self.relation_embedding(rel).view(batch_size, 1,
-                                                          self.emb_dim1, self.emb_dim2)  # bs * 1 * 200       len(e1) = len(rel)
+        if mode == 'head-batch':
+            re_score = re_relation * re_tail + im_relation * im_tail
+            im_score = re_relation * im_tail - im_relation * re_tail
+            re_head_score = re_head * re_score
+            im_head_score = im_head * im_score
+            stacked_inputs = torch.cat([re_head_score, im_head_score], 2)
+            print("stacked_inputs.shape=", stacked_inputs.shape)
+            stacked_inputs = self.bn0(stacked_inputs)
+            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
+        else:
+            re_score = re_head * re_relation - im_head * im_relation
+            im_score = re_head * im_relation + im_head * re_relation
+            re_tail_score = re_tail * re_score
+            im_tail_score = im_tail * im_score
+            stacked_inputs = torch.cat([re_tail_score, im_tail_score], 2)
+            print("stacked_inputs.shape=", stacked_inputs.shape)
+            stacked_inputs = self.bn0(stacked_inputs)
+            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
 
-        # print("head embedding=[", head_embedding.shape, "]")
-        # print("rel embedding=[", rel_embedding.shape, "]")
-        stacked_inputs = torch.cat([head_embedding, rel_embedding], 2)                                  # len * 2 * 20 * 10
-        # print("stacked=[", stacked_inputs.shape, "]")
-
-        stacked_inputs = self.bn0(stacked_inputs)
         x = self.inp_drop(stacked_inputs)
+        print("inp_drop x.shape=", x.shape)
         x = self.conv1(x)
+        print("conv1 x.shape=", x.shape)
         x = self.bn1(x)
+        print("bn1 x.shape=", x.shape)
         x = F.relu(x)
+        print("relu x.shape=", x.shape)
         x = self.feature_map_drop(x)
-        x = x.view(x.shape[0], -1)                                  # len * 1152
-        x = self.fc(x)                   # len * 200
+        print("feature_map x.shape=", x.shape)
+        x = x.view(x.shape[0], -1) # len * 1152
+        print("x.view x.shape=", x.shape)
+        x = self.fc(x)
+        print("fc x.shape=", x.shape)
+        # len * 200
         x = self.hidden_drop(x)
+        print("hidden_drop x.shape=", x.shape)
         x = self.bn2(x)
+        print("bn2 x.shape=", x.shape)
         x = F.relu(x)  # bs * 200
-        x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
+        print("reul2 x.shape=", x.shape)
+        # x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
+        print("residual x.shape=", x.shape)
         return x
 
 class CoCoELayer(nn.Module):
@@ -272,26 +279,27 @@ class KGEModel(nn.Module):
         self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
         self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
-        if model_name == 'ConvE':
+
+        self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
+        nn.init.uniform_(
+            tensor=self.entity_embedding,
+            a=-self.embedding_range.item(),
+            b=self.embedding_range.item()
+        )
+
+        self.relation_embedding = nn.Parameter(torch.zeros(nrelation, self.relation_dim))
+        nn.init.uniform_(
+            tensor=self.relation_embedding,
+            a=-self.embedding_range.item(),
+            b=self.embedding_range.item()
+        )
+        if model_name == 'CoCoE':
+            self.cocoe_layer = ComplExDeep(self.entity_dim, self.relation_dim)
+
+        elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.nentity, self.nrelation, self.entity_dim)
             self.conve_layer.init()
 
-        else:
-            self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
-            nn.init.uniform_(
-                tensor=self.entity_embedding,
-                a=-self.embedding_range.item(),
-                b=self.embedding_range.item()
-            )
-
-            self.relation_embedding = nn.Parameter(torch.zeros(nrelation, self.relation_dim))
-            nn.init.uniform_(
-                tensor=self.relation_embedding,
-                a=-self.embedding_range.item(),
-                b=self.embedding_range.item()
-            )
-            if model_name == 'CoCoE':
-                self.cocoe_layer = ComplExDeep(self.entity_dim, self.relation_dim)
         
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
@@ -473,48 +481,7 @@ class KGEModel(nn.Module):
         # score.sum(dim=2): torch.Size([8, 40943])
         #
 
-        if mode == 'head-batch':
-            # head_rel_embeddings = self.conve_layer(head, relation, batch_size, negative_sample_size)
-            # score = torch.mm(head_rel_embeddings,
-            #                  self.conve_layer.entity_embedding.weight.transpose(1,
-            #                                                                     0))  # len * 200  @ (200 * # ent)  => len *  # ent
-            # print(score.shape)
-            # score = score[:, tail]
-            # print(score.shape)
-            # # score = score.sum(dim=1).view(batch_size, -1)
-            multi_head = list(torch.tensor_split(head, negative_sample_size))
-            a_head = multi_head.pop(0)
-            scores = list()
-            single_score_all = self.conve_layer(a_head, relation, -1, 1).view(-1)
-            single_score_tail = torch.index_select(input=single_score_all, dim=0, index=tail)
-            single_score_tail = single_score_tail.view(batch_size, 1)
-            scores.append(single_score_tail)
-            del a_head
-            while (len(multi_head) > 0):
-                a_head = multi_head.pop(0)
-                single_score_all = self.conve_layer(a_head, relation, -1, 1).view(-1)
-                single_score_tail = torch.index_select(input=single_score_all, dim=0, index=tail)
-                single_score_tail = single_score_tail.view(batch_size, 1)
-                # print("single_score=[", single_score_tail.shape, "]")
-                scores.append(single_score_tail)
-                score_stack = torch.cat(scores, dim=1)
-                # print("score_stack=[", score_stack.shape, "]")
-                del single_score_all
-                del single_score_tail
-                del scores
-                del a_head
-                scores = list()
-                scores.append(score_stack)
-                if (len(multi_head) % 1000) == 0:
-                    torch.cuda.empty_cache()
-                    gc.collect()
-            del multi_head
-            score = torch.cat(scores, dim=1)
-
-
-            # print("score=[", score.shape, "]")
-        else:
-            score = self.conve_layer(head, relation, -1, 1)
+        score = self.conve_layer(head, relation, -1, 1)
 
         return score  # len * # ent
 
@@ -651,9 +618,10 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        if model.model_name not in ['ConvE']:
-            negative_score = model((positive_sample, negative_sample), mode=mode)
-            positive_score = model(positive_sample)
+        negative_score = model((positive_sample, negative_sample), mode=mode)
+        positive_score = model(positive_sample)
+
+        if model.model_name not in ['ConvE', 'CoCoE']:
 
             if args.negative_adversarial_sampling:
                 # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
@@ -696,22 +664,19 @@ class KGEModel(nn.Module):
             }
 
         else:
-            # smoothing = 0.1
-            # confidence = 1.0 - smoothing
-            pred = model(positive_sample)
-            # batch_size = pred.size(0)  # e.g., 1024
-            # # targets = torch.zeros(batch_size, pred.size(1))
-            # # for batch in range(batch_size):
-            # #     # print("positive index = {}".format(positive_sample[batch][2]))
-            # #     targets[batch][positive_sample[batch][2]] = 1
-            # # # print('targets shape= {}'.format(targets.shape))
-            #smooth_targets = KGEModel.smooth_one_hot(positive_sample[:, 2].long(), pred.size(1), 0.1)
+            batch_size = positive_sample.size(0)
+            pred = torch.cat([positive_score, negative_score], dim=1)
+            targets = torch.zeros(batch_size, pred.size(1) + 1)
+            for batch in range(batch_size):
+                targets[batch_size][0] = 1.0
+
+            smooth_targets = KGEModel.smooth_one_hot(targets, pred.size(1), 0.1)
 
 
             if args.cuda:
                 pred = pred.cuda()
-                #smooth_targets = smooth_targets.cuda()
-            loss = model.conve_layer.loss(pred, positive_sample[:, 2])
+                smooth_targets = smooth_targets.cuda()
+            loss = model.conve_layer.loss(pred, smooth_targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
@@ -805,88 +770,48 @@ class KGEModel(nn.Module):
 
                         batch_size = positive_sample.size(0)
 
-                        if model.model_name not in ['ConvE']:
+                        score = model((positive_sample, negative_sample), mode)
+                        #print("score=[{}]".format(score))
+                        score += filter_bias
+                        #print("score+filter bias=[{}]".format(score))
 
-                            score = model((positive_sample, negative_sample), mode)
-                            #print("score=[{}]".format(score))
-                            score += filter_bias
-                            #print("score+filter bias=[{}]".format(score))
-
-                            # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
+                        # print('\n**************************\nScore_dim: ', score.size(), '\n**************************\n')
 
 
-                            #Explicitly sort all the entities to ensure that there is no test exposure bias
-                            argsort = torch.argsort(score, dim = 1, descending=True)
+                        #Explicitly sort all the entities to ensure that there is no test exposure bias
+                        argsort = torch.argsort(score, dim = 1, descending=True)
 
 
-                            if mode == 'head-batch':
-                                positive_arg = positive_sample[:, 0]
-                            elif mode == 'tail-batch':
-                                positive_arg = positive_sample[:, 2]
-                            else:
-                                raise ValueError('mode %s not supported' % mode)
-
-
-                            for i in range(batch_size):
-                                #print("negative sample shape=[{}]".format(negative_sample.shape))
-                                #Notice that argsort is not ranking
-
-                                ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                                #print(argsort[i, :])
-                                assert ranking.size(0) == 1
-                                #print('ranking=[{}]'.format(ranking))
-                                #ranking + 1 is the true ranking used in evaluation metrics
-                                ranking = 1 + ranking.item()
-                                logs.append({
-                                    'MRR': 1.0/ranking,
-                                    'MR': float(ranking),
-                                    'HITS@1': 1.0 if ranking <= 1 else 0.0,
-                                    'HITS@3': 1.0 if ranking <= 3 else 0.0,
-                                    'HITS@10': 1.0 if ranking <= 10 else 0.0,
-                                    'HITS@1000': 1.0 if ranking <= 1000 else 0.0
-                                })
-
-                            if step % args.test_log_steps == 0:
-                                logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
+                        if mode == 'head-batch':
+                            positive_arg = positive_sample[:, 0]
+                        elif mode == 'tail-batch':
+                            positive_arg = positive_sample[:, 2]
                         else:
-                            score = model((positive_sample, negative_sample), mode)
-                            #print("score test=[{}]".format(score.shape))
+                            raise ValueError('mode %s not supported' % mode)
 
-                            # Explicitly sort all the entities to ensure that there is no test exposure bias
-                            argsort = torch.argsort(score, dim=1, descending=True)
 
-                            if mode == 'head-batch':
-                                positive_arg = positive_sample[:, 0]
-                            elif mode == 'tail-batch':
-                                positive_arg = positive_sample[:, 2]
-                            else:
-                                raise ValueError('mode %s not supported' % mode)
+                        for i in range(batch_size):
+                            #print("negative sample shape=[{}]".format(negative_sample.shape))
+                            #Notice that argsort is not ranking
 
-                            for i in range(batch_size):
-                                # print("negative sample shape=[{}]".format(negative_sample.shape))
-                                # Notice that argsort is not ranking
+                            ranking = (argsort[i, :] == positive_arg[i]).nonzero()
+                            #print(argsort[i, :])
+                            assert ranking.size(0) == 1
+                            #print('ranking=[{}]'.format(ranking))
+                            #ranking + 1 is the true ranking used in evaluation metrics
+                            ranking = 1 + ranking.item()
+                            logs.append({
+                                'MRR': 1.0/ranking,
+                                'MR': float(ranking),
+                                'HITS@1': 1.0 if ranking <= 1 else 0.0,
+                                'HITS@3': 1.0 if ranking <= 3 else 0.0,
+                                'HITS@10': 1.0 if ranking <= 10 else 0.0,
+                                'HITS@1000': 1.0 if ranking <= 1000 else 0.0
+                            })
 
-                                ranking = (argsort[i, :] == positive_arg[i]).nonzero()
-                                assert ranking.size(0) == 1
-                                print("true tail score=[{}]".format(score[i][positive_arg[i]]))
-                                print("high tail score=[{}]".format(score[i][argsort[i][0]]))
-                                # ranking + 1 is the true ranking used in evaluation metrics
-                                ranking = 1 + ranking.item()
+                        if step % args.test_log_steps == 0:
+                            logging.info('Evaluating the model... (%d/%d)' % (step, total_steps))
 
-                                stats_dict = {
-                                    'MRR': 1.0 / ranking,
-                                    'MR': float(ranking),
-                                    'HITS@1': 1.0 if ranking <= 1 else 0.0,
-                                    'HITS@3': 1.0 if ranking <= 3 else 0.0,
-                                    'HITS@10': 1.0 if ranking <= 10 else 0.0,
-                                    'HITS@1000': 1.0 if ranking <= 1000 else 0.0
-                                }
-                                #print(stats_dict)
-                                logs.append(stats_dict)
-
-                            if step % args.test_log_steps == 0:
-                                logging.info(
-                                    'Evaluating the model... (%d/%d)' % (step, total_steps))
 
                         step += 1
 
