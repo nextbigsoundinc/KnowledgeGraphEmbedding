@@ -295,6 +295,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
+        self.loss = BCEWithLogitsLoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -670,7 +671,7 @@ class KGEModel(nn.Module):
             if args.cuda:
                 pred = pred.cuda()
                 targets = targets.cuda()
-            loss = model.conve_layer.loss(pred, targets)
+            loss = model.loss(pred, targets)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
