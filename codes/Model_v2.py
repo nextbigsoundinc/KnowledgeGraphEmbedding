@@ -72,7 +72,7 @@ class ComplExDeep(nn.Module):
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
 
-        stacked_embeddings = torch.cat([re_score, im_score], dim=2).view(re_score.size(0), -1)
+        stacked_embeddings = torch.cat([re_score, im_score], dim=2)
         print('stacked_embeddings.shape=', stacked_embeddings.shape)
         x = self.fc1(stacked_embeddings)
         print('x.shape=', x.shape)
@@ -649,7 +649,7 @@ class KGEModel(nn.Module):
             negative_sample = negative_sample.cuda()
             subsampling_weight = subsampling_weight.cuda()
 
-        if model.model_name not in ['ConvE', 'CoCoE']:
+        if model.model_name not in ['ConvE']:
             negative_score = model((positive_sample, negative_sample), mode=mode)
             positive_score = model(positive_sample)
 
