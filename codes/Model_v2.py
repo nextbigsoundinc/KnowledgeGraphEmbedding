@@ -117,20 +117,30 @@ class ConvELayer(nn.Module):
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
         if mode == 'head-batch':
+            batch_size = re_tail.shape(0)
+            negative_sample_size = re_head.shape(1)
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
             re_head_score = re_head * re_score
             im_head_score = im_head * im_score
-            stacked_inputs = torch.cat([re_head_score, im_head_score], 2)
+            stacked_inputs = torch.cat([re_head_score, im_head_score], 2).view(batch_size,
+                                                                               negative_sample_size,
+                                                                               self.emb_dim1,
+                                                                               self.emb_dim2)
             print("stacked_inputs.shape=", stacked_inputs.shape)
             stacked_inputs = self.bn0(stacked_inputs)
             print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
         else:
+            batch_size = re_head.shape(0)
+            negative_sample_size = re_tail.shape(1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_tail_score = re_tail * re_score
             im_tail_score = im_tail * im_score
-            stacked_inputs = torch.cat([re_tail_score, im_tail_score], 2)
+            stacked_inputs = torch.cat([re_tail_score, im_tail_score], 2).view(batch_size,
+                                                                               negative_sample_size,
+                                                                               self.emb_dim1,
+                                                                               self.emb_dim2)
             print("stacked_inputs.shape=", stacked_inputs.shape)
             stacked_inputs = self.bn0(stacked_inputs)
             print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
