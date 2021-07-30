@@ -38,6 +38,42 @@ import torch
 import torch.nn as nn
 
 
+
+
+class ComplExDeep(nn.Module):
+
+    def __init__(self,
+                 embedding_dim,
+                 relation_dim,
+                 hidden_size=512):
+
+        super(ComplExDeep, self).__init__()
+        self.input_neurons = ((2*embedding_dim) + (2*relation_dim))
+        self.hidden_size = hidden_size
+        self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 32)
+        self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
+
+    def forward(self, head, relation,  tail, mode):
+        re_head, im_head = torch.chunk(head, 2, dim=2)
+        re_relation, im_relation = torch.chunk(relation, 2, dim=2)
+        re_tail, im_tail = torch.chunk(tail, 2, dim=2)
+
+        if mode == 'head-batch':
+            re_score = re_relation * re_tail + im_relation * im_tail
+            im_score = re_relation * im_tail - im_relation * re_tail
+        else:
+            re_score = re_head * re_relation - im_head * im_relation
+            im_score = re_head * im_relation + im_head * re_relation
+
+        stacked_embeddings = torch.cat([re_score, im_score], dim=1)
+        x = self.fc1(stacked_embeddings)
+        x = self.fc2(x)
+        return x
+
+
+
+
 class ConvELayer(nn.Module):
 
     def __init__(self,
@@ -225,17 +261,9 @@ class KGEModel(nn.Module):
         self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
         self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
-        if model_name in ['ConvE', 'CoCoE']:
+        if model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.nentity, self.nrelation, self.entity_dim)
             self.conve_layer.init()
-            if model_name == 'CoCoE':
-                self.img_entity_embedding = nn.Embedding(self.nentity, self.entity_dim, padding_idx=0)
-                self.img_relation_embedding = nn.Embedding(self.nrelation, self.relation_dim, padding_idx=0)
-                self.cocoe_layer = CoCoELayer(self.entity_embedding,
-                                              self.img_entity_embedding,
-                                              self.relation_embedding,
-                                              self.img_relation_embedding, hidden_dim)
-                self.cocoe_layer.init()
 
         else:
             self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
@@ -251,7 +279,8 @@ class KGEModel(nn.Module):
                 a=-self.embedding_range.item(),
                 b=self.embedding_range.item()
             )
-
+            if model_name == 'CoCoE':
+                self.cocoe_layer = ComplExDeep(self.entity_dim, self.relation_dim)
         
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
@@ -280,7 +309,7 @@ class KGEModel(nn.Module):
         batch_size=0
         negative_sample_size=0
 
-        if self.model_name not in ['TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplEx']:
+        if self.model_name not in ['CoCoE', 'TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplEx']:
 
             if mode == 'single':
                 batch_size, negative_sample_size = sample.size(0), 1
@@ -479,42 +508,8 @@ class KGEModel(nn.Module):
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
-        if mode == 'head-batch':
-            multi_head = list(torch.tensor_split(head, negative_sample_size))
-            a_head = multi_head.pop(0)
-            scores = list()
-            single_score_all = self.cocoe_layer(a_head, relation, -1, 1)
-            single_score_tail = single_score_all[:, tail]
-            single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-            scores.append(single_score_tail)
-            del a_head
-            while (len(multi_head) > 0):
-                a_head = multi_head.pop(0)
-                single_score_all = self.conve_layer(a_head, relation, -1, 1)
-                single_score_tail = single_score_all[:, tail]
-                single_score_tail = single_score_tail.sum(dim=1).view(batch_size, -1)
-                # print("single_score=[", single_score_tail.shape, "]")
-                scores.append(single_score_tail)
-                score_stack = torch.cat(scores, dim=1)
-                # print("score_stack=[", score_stack.shape, "]")
-                del single_score_all
-                del single_score_tail
-                del scores
-                scores = list()
-                scores.append(score_stack)
-                del a_head
-                if (len(multi_head) % 1000) == 0:
-                    torch.cuda.empty_cache()
-                    gc.collect()
-            del multi_head
-            score = torch.cat(scores, dim=1)
-            #print("score=[", score.shape, "]")
-        else:
-            score = self.concoe_layer(head, relation, -1, 1)
-            #print("score=[", score.shape, "]")
-            score = score[:, tail]
-            score = score.sum(dim=1).view(batch_size, -1)
-            #print("score=[", score.shape, "]")
+        score = self.cocoe_layer(head, relation, tail, mode)
+        return score
 
     def TransE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
         #print(mode)
