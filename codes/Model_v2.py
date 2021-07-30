@@ -805,7 +805,7 @@ class KGEModel(nn.Module):
 
                         batch_size = positive_sample.size(0)
 
-                        if model.model_name not in ['ConvE', 'CoCoE']:
+                        if model.model_name not in ['ConvE']:
 
                             score = model((positive_sample, negative_sample), mode)
                             #print("score=[{}]".format(score))
