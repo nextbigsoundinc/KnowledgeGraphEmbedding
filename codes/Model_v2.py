@@ -86,6 +86,7 @@ class ComplExDeep(nn.Module):
         score1 = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score1 = score1.norm(dim=0)  # 1024 * 256 * hid_dim
         score_complex = re_score + im_score
+        score_complex = self.input_drop(score_complex)
         score_complex = score_complex.sum(dim=2)
         residual = self.residual(score_complex)
 
@@ -304,7 +305,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.CrossEntropyLoss()  # modify: cosine embedding loss / triplet loss
+        self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -670,19 +671,19 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            target = torch.zeros(batch_size).long()
+            target = torch.zeros(batch_size, pred.size(1)).long()
             # print('targets=', target.shape)
-            # for batch in range(batch_size):
-            #     target[batch][0] = 1
+            for batch in range(batch_size):
+                target[batch][0] = 1
 
-            #smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.01)
 
             # print("targets=", targets)
             # print("smooth_targets=", smooth_targets)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
-            loss = model.loss(pred, target)
+                smooth_target = smooth_target.cuda()
+            loss = model.loss(pred, smooth_target)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
