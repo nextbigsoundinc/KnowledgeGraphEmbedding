@@ -351,7 +351,7 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.entity_dim, hidden_size=self.hidden_dim)
+            self.cocoe_layer = ComplExDeep(self.entity_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
