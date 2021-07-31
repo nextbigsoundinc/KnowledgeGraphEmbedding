@@ -97,9 +97,9 @@ class ComplExDeep(nn.Module):
         x = self.fc1(x)
         x = self.hidden_drop(x)
         if x.shape[1] > 1:
-            x = self.bn00(x)
-        else:
             x = self.bn0(x)
+        else:
+            x = self.bn00(x)
         x = F.relu(x)
         # print("hidden_drop x.shape=", x.shape)
         # print("bn2 x.shape=", x.shape)
@@ -107,9 +107,9 @@ class ComplExDeep(nn.Module):
         x = self.fc2(x)
         x = self.hidden_drop(x)
         if x.shape[1] > 1:
-            x = self.bn11(x)
-        else:
             x = self.bn1(x)
+        else:
+            x = self.bn11(x)
         x = F.relu(x)
         x = self.fc3(x)
         score = x.sum(dim=2)
