@@ -48,7 +48,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="12218" />
+          <entry key="py" value="12232" />
           <entry key="sh" value="74" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="74" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="12218" />
+          <entry key="Python" value="12232" />
         </counts>
       </usages-collector>
     </session>
@@ -107,11 +107,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="572">
-              <caret line="669" lean-forward="true" selection-start-line="666" selection-start-column="11" selection-end-line="669" />
+            <state relative-caret-position="693">
+              <caret line="116" column="42" lean-forward="true" selection-start-line="116" selection-start-column="42" selection-end-line="116" selection-end-column="42" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627696176000" expanded="true" signature="20380:20468" ph="..." />
+                <marker date="1627699063000" expanded="true" signature="20402:20490" ph="..." />
               </folding>
             </state>
           </provider>
@@ -227,7 +227,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="x" value="1440" />
     <option name="y" value="12" />
     <option name="width" value="1200" />
@@ -418,20 +418,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00292" summary="revert">
-      <created>1627669697451</created>
-      <option name="number" value="00292" />
-      <option name="presentableId" value="LOCAL-00292" />
-      <option name="project" value="LOCAL" />
-      <updated>1627669697451</updated>
-    </task>
-    <task id="LOCAL-00293" summary="revert">
-      <created>1627670056506</created>
-      <option name="number" value="00293" />
-      <option name="presentableId" value="LOCAL-00293" />
-      <option name="project" value="LOCAL" />
-      <updated>1627670056506</updated>
     </task>
     <task id="LOCAL-00294" summary="revert">
       <created>1627670128011</created>
@@ -762,11 +748,25 @@
       <option name="project" value="LOCAL" />
       <updated>1627696099919</updated>
     </task>
-    <option name="localTasksCounter" value="341" />
+    <task id="LOCAL-00341" summary="revert">
+      <created>1627696181300</created>
+      <option name="number" value="00341" />
+      <option name="presentableId" value="LOCAL-00341" />
+      <option name="project" value="LOCAL" />
+      <updated>1627696181300</updated>
+    </task>
+    <task id="LOCAL-00342" summary="revert">
+      <created>1627697442057</created>
+      <option name="number" value="00342" />
+      <option name="presentableId" value="LOCAL-00342" />
+      <option name="project" value="LOCAL" />
+      <updated>1627697442057</updated>
+    </task>
+    <option name="localTasksCounter" value="343" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="-180" width="1920" height="1080" extended-state="0" />
+    <frame x="1440" y="-180" width="1920" height="1080" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project Explorer" />
@@ -1030,11 +1030,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="572">
-          <caret line="669" lean-forward="true" selection-start-line="666" selection-start-column="11" selection-end-line="669" />
+        <state relative-caret-position="693">
+          <caret line="116" column="42" lean-forward="true" selection-start-line="116" selection-start-column="42" selection-end-line="116" selection-end-column="42" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1627696176000" expanded="true" signature="20380:20468" ph="..." />
+            <marker date="1627699063000" expanded="true" signature="20402:20490" ph="..." />
           </folding>
         </state>
       </provider>
