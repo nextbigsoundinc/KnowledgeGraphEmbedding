@@ -56,8 +56,8 @@ class ComplExDeep(nn.Module):
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 128)
         self.fc3 = torch.nn.Linear(128, 32)
-        self.bn0 = torch.nn.BatchNorm1d(channel_size, affine=False)
-        self.bn00 = torch.nn.BatchNorm1d(1, affine=False)
+        self.bn0 = torch.nn.BatchNorm1d(1, affine=False)
+        self.bn00 = torch.nn.BatchNorm1d(256, affine=False)
         self.bn000 = torch.nn.BatchNorm1d(14541, affine=False)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
@@ -94,7 +94,7 @@ class ComplExDeep(nn.Module):
         x = self.fc1(x)
         x = self.hidden_drop(x)
         if x.shape[1] == 1:
-            x = self.bn00(x)
+            x = self.bn0(x)
         elif x.shape[1] == 256:
             x = self.bn00(x)
         else:
