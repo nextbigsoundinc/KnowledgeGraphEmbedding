@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="revert">
+    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
@@ -48,7 +48,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="12975" />
+          <entry key="py" value="13014" />
           <entry key="sh" value="74" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="74" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="12975" />
+          <entry key="Python" value="13014" />
         </counts>
       </usages-collector>
     </session>
@@ -102,12 +102,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="83" column="50" selection-start-line="83" selection-start-column="50" selection-end-line="83" selection-end-column="50" />
+            <state relative-caret-position="427">
+              <caret line="356" column="72" lean-forward="true" selection-start-line="356" selection-start-column="72" selection-end-line="356" selection-end-column="72" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627758287000" expanded="true" signature="3066:3075" ph="..." />
-                <marker date="1627758287000" expanded="true" signature="21328:21416" ph="..." />
+                <marker date="1627774209000" expanded="true" signature="3066:3075" ph="..." />
+                <marker date="1627774209000" expanded="true" signature="21337:21425" ph="..." />
               </folding>
             </state>
           </provider>
@@ -423,20 +423,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00320" summary="revert">
-      <created>1627678905806</created>
-      <option name="number" value="00320" />
-      <option name="presentableId" value="LOCAL-00320" />
-      <option name="project" value="LOCAL" />
-      <updated>1627678905806</updated>
-    </task>
-    <task id="LOCAL-00321" summary="revert">
-      <created>1627679141309</created>
-      <option name="number" value="00321" />
-      <option name="presentableId" value="LOCAL-00321" />
-      <option name="project" value="LOCAL" />
-      <updated>1627679141309</updated>
     </task>
     <task id="LOCAL-00322" summary="revert">
       <created>1627679264019</created>
@@ -767,7 +753,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627758227872</updated>
     </task>
-    <option name="localTasksCounter" value="369" />
+    <task id="LOCAL-00369" summary="revert">
+      <created>1627758291424</created>
+      <option name="number" value="00369" />
+      <option name="presentableId" value="LOCAL-00369" />
+      <option name="project" value="LOCAL" />
+      <updated>1627758291424</updated>
+    </task>
+    <task id="LOCAL-00370" summary="revert">
+      <created>1627758440397</created>
+      <option name="number" value="00370" />
+      <option name="presentableId" value="LOCAL-00370" />
+      <option name="project" value="LOCAL" />
+      <updated>1627758440397</updated>
+    </task>
+    <option name="localTasksCounter" value="371" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1035,12 +1035,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="83" column="50" selection-start-line="83" selection-start-column="50" selection-end-line="83" selection-end-column="50" />
+        <state relative-caret-position="427">
+          <caret line="356" column="72" lean-forward="true" selection-start-line="356" selection-start-column="72" selection-end-line="356" selection-end-column="72" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1627758287000" expanded="true" signature="3066:3075" ph="..." />
-            <marker date="1627758287000" expanded="true" signature="21328:21416" ph="..." />
+            <marker date="1627774209000" expanded="true" signature="3066:3075" ph="..." />
+            <marker date="1627774209000" expanded="true" signature="21337:21425" ph="..." />
           </folding>
         </state>
       </provider>
