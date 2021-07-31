@@ -55,8 +55,6 @@ class ComplExDeep(nn.Module):
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 128)
         self.fc3 = torch.nn.Linear(128, 32)
-        self.bn1 = torch.nn.LazyBatchNorm1d()
-        self.bn2 = torch.nn.LazyBatchNorm1d()
         self.residual = torch.nn.Identity()
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
