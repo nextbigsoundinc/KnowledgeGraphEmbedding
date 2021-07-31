@@ -76,7 +76,7 @@ class ComplExDeep(nn.Module):
     def __init__(self,
                  embedding_dim,
                  channel_size=256,
-                 hidden_size=768,
+                 hidden_size=256,
                  input_drop=0.5,
                  hidden_drop=0.5
                  ):
@@ -85,8 +85,8 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(embedding_dim)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 512)
-        self.fc3 = torch.nn.Linear(512, 1)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 128)
+        self.fc3 = torch.nn.Linear(128, 1)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
 
