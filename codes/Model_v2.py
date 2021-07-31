@@ -86,7 +86,7 @@ class ComplExDeep(nn.Module):
         score1 = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score1 = score1.norm(dim=0)  # 1024 * 256 * hid_dim
         score_complex = re_score + im_score
-        score_complex = self.input_drop(score_complex)
+        score_complex = self.inp_drop(score_complex)
         score_complex = score_complex.sum(dim=2)
         residual = self.residual(score_complex)
 
