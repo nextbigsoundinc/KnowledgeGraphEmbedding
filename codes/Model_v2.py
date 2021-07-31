@@ -81,7 +81,7 @@ class ComplExDeep(nn.Module):
                  ):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(embedding_dim)
+        self.input_neurons = int(embedding_dim*2)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 128)
