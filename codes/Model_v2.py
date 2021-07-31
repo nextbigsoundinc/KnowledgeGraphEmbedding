@@ -76,23 +76,19 @@ class ComplExDeep(nn.Module):
     def __init__(self,
                  embedding_dim,
                  channel_size=256,
-                 hidden_size=512,
-                 input_drop=0.2,
-                 hidden_drop=0.3
+                 hidden_size=768,
+                 input_drop=0.5,
+                 hidden_drop=0.5
                  ):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(embedding_dim//2)
+        self.input_neurons = int(embedding_dim)
         self.hidden_size = hidden_size
-        self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 128)
-        self.fc3 = torch.nn.Linear(128, 32)
-        self.bn0 = torch.nn.BatchNorm1d(1, affine=False)
-        self.bn00 = torch.nn.BatchNorm1d(256, affine=False)
-        self.bn000 = torch.nn.BatchNorm1d(14541, affine=False)
+        self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 512)
+        self.fc3 = torch.nn.Linear(512, 128)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
-        self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -117,17 +113,9 @@ class ComplExDeep(nn.Module):
             re_score = re_tail * re_score
             im_score = im_tail * im_score
 
-        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
-        score = score.norm(dim=0)  # 1024 * 256 * hid_dim
-
-        # print('score.shape=', score.shape)
-        x = self.inp_drop(score)
-        x = self.fc1(x)
+        x = self.fc1(re_score, im_score)
         x = self.hidden_drop(x)
         x = F.relu(x)
-        # print("hidden_drop x.shape=", x.shape)
-        # print("bn2 x.shape=", x.shape)
-        # print('x.shape=', x.shape)
         x = self.fc2(x)
         x = self.hidden_drop(x)
         x = F.relu(x)
