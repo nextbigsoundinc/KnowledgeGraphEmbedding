@@ -83,7 +83,7 @@ class ComplExDeep(nn.Module):
             re_tail_score = re_tail * re_score
             im_tail_score = im_tail * im_score
             score = re_tail_score + im_tail_score
-        print('x.shape=', score.shape)
+        #print('x.shape=', score.shape)
         x = self.inp_drop(score)
         x = self.fc1(x)
         x = self.hidden_drop(x)
