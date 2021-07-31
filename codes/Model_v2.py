@@ -44,6 +44,7 @@ class ComplExDeep(nn.Module):
 
     def __init__(self,
                  embedding_dim,
+                 channel_size=256,
                  hidden_size=512,
                  input_drop=0.2,
                  hidden_drop=0.3
@@ -55,6 +56,8 @@ class ComplExDeep(nn.Module):
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 128)
         self.fc3 = torch.nn.Linear(128, 32)
+        self.bn0 = torch.nn.BatchNorm1d(channel_size)
+        self.bn1 = torch.nn.BatchNorm1d(channel_size)
         self.residual = torch.nn.Identity()
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
@@ -90,14 +93,14 @@ class ComplExDeep(nn.Module):
         x = self.inp_drop(score)
         x = self.fc1(x)
         x = self.hidden_drop(x)
-        x = self.bn1(x)
+        x = self.bn0(x)
         x = F.relu(x)
         # print("hidden_drop x.shape=", x.shape)
         # print("bn2 x.shape=", x.shape)
         # print('x.shape=', x.shape)
         x = self.fc2(x)
         x = self.hidden_drop(x)
-        x = self.bn2(x)
+        x = self.bn1(x)
         x = F.relu(x)
         x = self.fc3(x)
         score = x.sum(dim=2)
@@ -295,7 +298,7 @@ class CoCoELayer(nn.Module):
 
 class KGEModel(nn.Module):
     def __init__(self, model_name, nentity, nrelation, hidden_dim, gamma, 
-                 double_entity_embedding=True, double_relation_embedding=True):
+                 double_entity_embedding=True, double_relation_embedding=True, neg_sample_size=256):
         super(KGEModel, self).__init__()
         self.model_name = model_name
         self.nentity = nentity
@@ -332,7 +335,7 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.entity_dim, hidden_size=self.hidden_dim)
+            self.cocoe_layer = ComplExDeep(self.entity_dim, channel_size=neg_sample_size, hidden_size=self.hidden_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
