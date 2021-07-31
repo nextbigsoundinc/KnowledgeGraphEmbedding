@@ -20,6 +20,8 @@ from dataloader import TestDataset
 
 from torch.nn.init import xavier_normal_, xavier_uniform_
 
+from torch.nn.modules.loss import _WeightedLoss
+import torch.nn.functional as F
 
 # Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
 #
@@ -38,6 +40,35 @@ import torch
 import torch.nn as nn
 
 
+class SmoothCrossEntropyLoss(_WeightedLoss):
+    def __init__(self, weight=None, reduction='mean', smoothing=0.0):
+        super().__init__(weight=weight, reduction=reduction)
+        self.smoothing = smoothing
+        self.weight = weight
+        self.reduction = reduction
+
+    def k_one_hot(self, targets:torch.Tensor, n_classes:int, smoothing=0.0):
+        with torch.no_grad():
+            targets = torch.empty(size=(targets.size(0), n_classes),
+                                  device=targets.device) \
+                                  .fill_(smoothing /(n_classes-1)) \
+                                  .scatter_(1, targets.data.unsqueeze(1), 1.-smoothing)
+        return targets
+
+    def reduce_loss(self, loss):
+        return loss.mean() if self.reduction == 'mean' else loss.sum() \
+        if self.reduction == 'sum' else loss
+
+    def forward(self, inputs, targets):
+        assert 0 <= self.smoothing < 1
+
+        targets = self.k_one_hot(targets, inputs.size(-1), self.smoothing)
+        log_preds = F.log_softmax(inputs, -1)
+
+        if self.weight is not None:
+            log_preds = log_preds * self.weight.unsqueeze(0)
+
+        return self.reduce_loss(-(targets * log_preds).sum(dim=-1))
 
 
 class ComplExDeep(nn.Module):
@@ -93,24 +124,12 @@ class ComplExDeep(nn.Module):
         x = self.inp_drop(score)
         x = self.fc1(x)
         x = self.hidden_drop(x)
-        if x.shape[1] == 1:
-            x = self.bn0(x)
-        elif x.shape[1] == 256:
-            x = self.bn00(x)
-        else:
-            x = self.bn000(x)
         x = F.relu(x)
         # print("hidden_drop x.shape=", x.shape)
         # print("bn2 x.shape=", x.shape)
         # print('x.shape=', x.shape)
         x = self.fc2(x)
         x = self.hidden_drop(x)
-        if x.shape[1] == 1:
-            x = self.bn0(x)
-        elif x.shape[1] == 256:
-            x = self.bn00(x)
-        else:
-            x = self.bn000(x)
         x = F.relu(x)
         x = self.fc3(x)
         score = x.sum(dim=2)
@@ -315,7 +334,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.CrossEntropyLoss()  # modify: cosine embedding loss / triplet loss
+        self.loss = SmoothCrossEntropyLoss(smoothing=0.1)  # modify: cosine embedding loss / triplet loss
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
