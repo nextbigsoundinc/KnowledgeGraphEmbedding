@@ -89,7 +89,7 @@ class ComplExDeep(nn.Module):
         score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score = score.norm(dim=0)  # 1024 * 256 * hid_dim
 
-        # print('x.shape=', score.shape)
+        print('score.shape=', score.shape)
         x = self.inp_drop(score)
         x = self.fc1(x)
         x = self.hidden_drop(x)
