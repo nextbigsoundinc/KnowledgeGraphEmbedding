@@ -55,9 +55,9 @@ class ComplExDeep(nn.Module):
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 128)
         self.fc3 = torch.nn.Linear(128, 32)
-        self.bn1 = torch.nn.BatchNorm1d(self.input_neurons)
-        self.bn2 = torch.nn.BatchNorm1d(self.hidden_size)
-        self.bn3 = torch.nn.BatchNorm1d(128)
+        self.bn1 = torch.nn.BatchNorm2d(self.input_neurons)
+        self.bn2 = torch.nn.BatchNorm2d(self.hidden_size)
+        self.bn3 = torch.nn.BatchNorm2d(128)
 
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
@@ -87,7 +87,7 @@ class ComplExDeep(nn.Module):
             re_tail_score = re_tail * re_score
             im_tail_score = im_tail * im_score
             score = re_tail_score + im_tail_score
-        #print('x.shape=', score.shape)
+        print('x.shape=', score.shape)
         score = self.bn1(score)
         x = self.inp_drop(score)
         x = self.fc1(x)

@@ -48,7 +48,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="12140" />
+          <entry key="py" value="12156" />
           <entry key="sh" value="74" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="74" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="12140" />
+          <entry key="Python" value="12156" />
         </counts>
       </usages-collector>
     </session>
@@ -107,11 +107,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="727">
-              <caret line="89" column="49" lean-forward="true" selection-start-line="89" selection-start-column="49" selection-end-line="89" selection-end-column="49" />
+            <state relative-caret-position="513">
+              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627692118000" expanded="true" signature="20629:20717" ph="..." />
+                <marker date="1627692426000" expanded="true" signature="20612:20700" ph="..." />
               </folding>
             </state>
           </provider>
@@ -182,6 +182,7 @@
       <find>test</find>
       <find>print</find>
       <find>print(mode</find>
+      <find>ComplExDeep</find>
     </findStrings>
   </component>
   <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
@@ -417,20 +418,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00279" summary="revert">
-      <created>1627649371001</created>
-      <option name="number" value="00279" />
-      <option name="presentableId" value="LOCAL-00279" />
-      <option name="project" value="LOCAL" />
-      <updated>1627649371001</updated>
-    </task>
-    <task id="LOCAL-00280" summary="revert">
-      <created>1627649491478</created>
-      <option name="number" value="00280" />
-      <option name="presentableId" value="LOCAL-00280" />
-      <option name="project" value="LOCAL" />
-      <updated>1627649491478</updated>
     </task>
     <task id="LOCAL-00281" summary="revert">
       <created>1627649869059</created>
@@ -761,7 +748,21 @@
       <option name="project" value="LOCAL" />
       <updated>1627691848858</updated>
     </task>
-    <option name="localTasksCounter" value="328" />
+    <task id="LOCAL-00328" summary="revert">
+      <created>1627692189420</created>
+      <option name="number" value="00328" />
+      <option name="presentableId" value="LOCAL-00328" />
+      <option name="project" value="LOCAL" />
+      <updated>1627692189420</updated>
+    </task>
+    <task id="LOCAL-00329" summary="revert">
+      <created>1627692327755</created>
+      <option name="number" value="00329" />
+      <option name="presentableId" value="LOCAL-00329" />
+      <option name="project" value="LOCAL" />
+      <updated>1627692327755</updated>
+    </task>
+    <option name="localTasksCounter" value="330" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1029,11 +1030,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="727">
-          <caret line="89" column="49" lean-forward="true" selection-start-line="89" selection-start-column="49" selection-end-line="89" selection-end-column="49" />
+        <state relative-caret-position="513">
+          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1627692118000" expanded="true" signature="20629:20717" ph="..." />
+            <marker date="1627692426000" expanded="true" signature="20612:20700" ph="..." />
           </folding>
         </state>
       </provider>
