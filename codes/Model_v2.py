@@ -44,7 +44,6 @@ class ComplExDeep(nn.Module):
 
     def __init__(self,
                  embedding_dim,
-                 batch_size,
                  hidden_size=512,
                  input_drop=0.2,
                  hidden_drop=0.3
