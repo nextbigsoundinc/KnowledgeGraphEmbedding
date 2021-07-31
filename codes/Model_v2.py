@@ -75,7 +75,7 @@ class ComplExDeep(nn.Module):
 
     def __init__(self,
                  embedding_dim,
-                 hidden_size=256,
+                 hidden_size=128,
                  input_drop=0.3,
                  hidden_drop=0.2
                  ):
@@ -84,7 +84,7 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(embedding_dim // 2)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 128)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 32)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
 
@@ -347,7 +347,7 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(embedding_dim=self.entity_dim, hidden_size=hidden_dim)
+            self.cocoe_layer = ComplExDeep(embedding_dim=self.entity_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
