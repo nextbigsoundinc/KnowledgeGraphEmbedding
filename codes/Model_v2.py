@@ -44,17 +44,17 @@ class ComplExDeep(nn.Module):
 
     def __init__(self,
                  embedding_dim,
-                 hidden_size=512,
+                 hidden_size=1024,
                  input_drop=0.2,
                  hidden_drop=0.3
                  ):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(embedding_dim//2)
+        self.input_neurons = int(embedding_dim*2)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Linear(self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 128)
-        self.fc3 = torch.nn.Linear(128, 32)
+        self.fc2 = torch.nn.Linear(self.hidden_size, 512)
+        self.fc3 = torch.nn.Linear(512, 128)
         self.residual = torch.nn.Identity()
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
@@ -65,12 +65,12 @@ class ComplExDeep(nn.Module):
         re_relation, im_relation = torch.chunk(relation, 2, dim=2)
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
-        # print('re_head.shape=', re_head.shape)
-        # print('im_head.shape=', im_head.shape)
-        # print('re_relation.shape=', re_relation.shape)
-        # print('im_relation.shape=', im_relation.shape)
-        # print('re_tail.shape=', re_tail.shape)
-        # print('im_tail.shape=', im_tail.shape)
+        print('re_head.shape=', re_head.shape)
+        print('im_head.shape=', im_head.shape)
+        print('re_relation.shape=', re_relation.shape)
+        print('im_relation.shape=', im_relation.shape)
+        print('re_tail.shape=', re_tail.shape)
+        print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
@@ -83,18 +83,18 @@ class ComplExDeep(nn.Module):
             re_score = re_tail * re_score
             im_score = im_tail * im_score
 
-        score1 = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
-        score1 = score1.norm(dim=0)  # 1024 * 256 * hid_dim
+        score = torch.stack([re_score, im_score], dim=-1)  # # 2 * 1024 * 256 * hid_dim
+        # score = score.norm(dim=0)  # 1024 * 256 * hid_dim
 
-        # print('x.shape=', score.shape)
-        x = self.inp_drop(score1)
+        print('x.shape=', score.shape)
+        x = self.inp_drop(score)
         x = self.fc1(x)
         x = self.hidden_drop(x)
         x = self.bn1(x)
         x = F.relu(x)
-        # print("hidden_drop x.shape=", x.shape)
-        # print("bn2 x.shape=", x.shape)
-        # print('x.shape=', x.shape)
+        print("hidden_drop x.shape=", x.shape)
+        print("bn2 x.shape=", x.shape)
+        print('x.shape=', x.shape)
         x = self.fc2(x)
         x = self.hidden_drop(x)
         x = self.bn2(x)
