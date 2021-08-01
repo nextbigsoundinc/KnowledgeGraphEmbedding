@@ -750,19 +750,19 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            target = torch.zeros(batch_size, pred.size(1), dtype=torch.float32)
+            target = torch.zeros(batch_size).long()
             # print('targets=', target.shape)
             for batch in range(batch_size):
                 target[batch][0] = 1.0
 
-            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
 
             # print("targets=", targets)
             # print("smooth_targets=", smooth_targets)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
-            loss = model.loss(pred, target)
+                smooth_target = target.cuda()
+            loss = model.loss(pred, smooth_target)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
