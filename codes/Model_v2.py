@@ -87,12 +87,11 @@ class ComplExDeep(nn.Module):
         self.relation_embedding = relation_embedding
         self.img_relation_embedding = img_relation_embedding
         self.hidden_size = hidden_size
-        self.hidden_drop = torch.nn.Dropout(0.3)
-        self.input_drop = torch.nn.Dropout(0.4)
-        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 128)
-        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 128)
-        self.fc1 = torch.nn.Bilinear(128, 128, 64)
-        self.fc2 = torch.nn.Linear(64, 16)
+        self.hidden_drop = torch.nn.Dropout(0.5)
+        self.input_drop = torch.nn.Dropout(0.5)
+        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc1 = torch.nn.Bilinear(256, 256, 1)
 
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
@@ -140,8 +139,7 @@ class ComplExDeep(nn.Module):
 
         re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
         im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
-        x = F.relu(self.hidden_drop(self.fc1(re_score, im_score)))
-        x = self.fc2(x)
+        score = self.fc1(re_score, im_score)
         score = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
@@ -344,7 +342,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = SmoothCrossEntropyLoss(smoothing=0.1)  # modify: cosine embedding loss / triplet loss
+        self.loss = torch.nn.BCEWithLogitsLoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -746,12 +744,12 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            target = torch.zeros(batch_size).long()
-            # print('targets=', target.shape)
-            # for batch in range(batch_size):
-            #     target[batch][0] = 1
+            target = torch.zeros(batch_size, pred.size(1)).long()
+            print('targets=', target.shape)
+            for batch in range(batch_size):
+                target[batch][0] = 1
 
-            #smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
+            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
 
             # print("targets=", targets)
             # print("smooth_targets=", smooth_targets)
