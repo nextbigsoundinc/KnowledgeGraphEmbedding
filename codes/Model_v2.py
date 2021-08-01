@@ -92,8 +92,8 @@ class ComplExDeep(nn.Module):
         self.init()
 
     def init(self):
-        xavier_normal_(self.real_entity_embedding.weight.data)
-        xavier_normal_(self.real_relation_embedding.weight.data)
+        xavier_normal_(self.entity_embedding.weight.data)
+        xavier_normal_(self.relation_embedding.weight.data)
         xavier_normal_(self.img_entity_embedding.weight.data)
         xavier_normal_(self.img_relation_embedding.weight.data)
 
