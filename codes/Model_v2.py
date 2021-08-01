@@ -74,17 +74,18 @@ class SmoothCrossEntropyLoss(_WeightedLoss):
 class ComplExDeep(nn.Module):
 
     def __init__(self,
-                 nentity,
-                 nrelation,
-                 embedding_dim,
+                 entity_embedding,
+                 img_entity_embedding,
+                 relation_embedding,
+                 img_relation_embedding,
                  hidden_size=128):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(embedding_dim)
-        self.real_entity_embedding = torch.nn.Embedding(nentity, embedding_dim)
-        self.img_entity_embedding = torch.nn.Embedding(nentity, embedding_dim)
-        self.real_relation_embedding = torch.nn.Embedding(nrelation, embedding_dim)
-        self.img_relation_embedding = torch.nn.Embedding(nrelation, embedding_dim)
+        self.input_neurons = int(entity_embedding.size(1))
+        self.entity_embedding = entity_embedding
+        self.img_entity_embedding = img_entity_embedding
+        self.relation_embedding = relation_embedding
+        self.img_relation_embedding = img_relation_embedding
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 32)
@@ -97,12 +98,12 @@ class ComplExDeep(nn.Module):
         xavier_normal_(self.img_relation_embedding.weight.data)
 
     def forward(self, head, relation,  tail, mode, batch_size, negative_sample_size):
-        re_head = self.real_entity_embedding(head)
+        re_head = self.entity_embedding(head)
         im_head = self.img_entity_embedding(head)
-        re_relation = self.real_relation_embedding(relation)
+        re_relation = self.relation_embedding(relation)
         im_relation = self.img_relation_embedding(relation)
-        re_tail = self.real_entity_embedding(tail)
-        im_tail = self.real_entity_embedding(tail)
+        re_tail = self.entity_embedding(tail)
+        im_tail = self.img_entity_embedding(tail)
 
         # print('re_head.shape=', re_head.shape)
         # print('im_head.shape=', im_head.shape)
@@ -367,8 +368,16 @@ class KGEModel(nn.Module):
                 a=-self.embedding_range.item(),
                 b=self.embedding_range.item()
             )
+        else:
+            self.entity_embedding = torch.nn.Embedding(nentity, self.entity_dim)
+            self.img_entity_embedding = torch.nn.Embedding(nentity, self.entity_dim)
+            self.relation_embedding = torch.nn.Embedding(nrelation, self.entity_dim)
+            self.img_relation_embedding = torch.nn.Embedding(nrelation, self.entity_dim)
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.nentity, self.nrelation, embedding_dim=self.hidden_dim)
+            self.cocoe_layer = ComplExDeep(self.entity_embedding,
+                                           self.img_entity_embedding,
+                                           self.relation_embedding,
+                                           self.img_relation_embedding)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
