@@ -128,11 +128,11 @@ def save_model(model, optimizer, save_variable_list, args):
         relation_embedding = model.conve_layer.relation_embedding.weight.detach().cpu().numpy()
         np.save(os.path.join(args.save_path, 'entity_embedding'), entity_embedding)
         np.save(os.path.join(args.save_path, 'relation_embedding'), relation_embedding)
-    elif args.model in {'CoCo', 'CoCo2'}:
-        ent_real = model.ent_real.weight.detach().cpu().numpy()
-        ent_img = model.ent_img.weight.detach().cpu().numpy()
-        rel_real = model.rel_real.weight.detach().cpu().numpy()
-        rel_img = model.rel_img.weight.detach().cpu().numpy()
+    elif args.model in ['CoCoE']:
+        ent_real = model.cocoe_layer.entity_embedding.weight.detach().cpu().numpy()
+        ent_img = model.cocoe_layer.img_entity_embedding.weight.detach().cpu().numpy()
+        rel_real = model.cocoe_layer.relation_embdding.weight.detach().cpu().numpy()
+        rel_img = model.cocoe_layer.img_relation_embdding.weight.detach().cpu().numpy()
         np.save(os.path.join(args.save_path, 'ent_real'), ent_real)
         np.save(os.path.join(args.save_path, 'ent_img'), ent_img)
         np.save(os.path.join(args.save_path, 'rel_real'), rel_real)
