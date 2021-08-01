@@ -91,7 +91,11 @@ class ComplExDeep(nn.Module):
         self.input_drop = torch.nn.Dropout(0.5)
         self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
         self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc1 = torch.nn.Bilinear(256, 256, 1)
+        self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
+        self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_score = torch.nn.Linear(256, 32)
+
+
 
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
@@ -139,7 +143,9 @@ class ComplExDeep(nn.Module):
 
         re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
         im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
-        score = self.fc1(re_score, im_score)
+        x = F.relu(self.input_drop(self.fc_combine(re_score, im_score)))
+        x = F.relu(self.input_drop(self.fc_combine_reduce(x)))
+        score = self.fc_score(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
