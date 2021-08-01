@@ -131,8 +131,8 @@ def save_model(model, optimizer, save_variable_list, args):
     elif args.model in ['CoCoE']:
         ent_real = model.cocoe_layer.entity_embedding.weight.detach().cpu().numpy()
         ent_img = model.cocoe_layer.img_entity_embedding.weight.detach().cpu().numpy()
-        rel_real = model.cocoe_layer.relation_embdding.weight.detach().cpu().numpy()
-        rel_img = model.cocoe_layer.img_relation_embdding.weight.detach().cpu().numpy()
+        rel_real = model.cocoe_layer.relation_embedding.weight.detach().cpu().numpy()
+        rel_img = model.cocoe_layer.img_relation_embedding.weight.detach().cpu().numpy()
         np.save(os.path.join(args.save_path, 'ent_real'), ent_real)
         np.save(os.path.join(args.save_path, 'ent_img'), ent_img)
         np.save(os.path.join(args.save_path, 'rel_real'), rel_real)
