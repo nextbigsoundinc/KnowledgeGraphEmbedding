@@ -91,8 +91,6 @@ class ComplExDeep(nn.Module):
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 32)
-        self.inp_drop = torch.nn.Dropout(input_drop)
-        self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.init()
 
     def init(self):
@@ -140,7 +138,6 @@ class ComplExDeep(nn.Module):
             im_score = im_tail * im_score
 
         x = self.fc1(re_score, im_score)
-        x = self.hidden_drop(x)
         x = F.relu(x)
         x = self.fc2(x)
         score = x.sum(dim=2)
