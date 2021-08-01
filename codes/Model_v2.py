@@ -77,10 +77,7 @@ class ComplExDeep(nn.Module):
                  nentity,
                  nrelation,
                  embedding_dim,
-                 hidden_size=128,
-                 input_drop=0.3,
-                 hidden_drop=0.2
-                 ):
+                 hidden_size=128):
 
         super(ComplExDeep, self).__init__()
         self.input_neurons = int(embedding_dim)
@@ -371,7 +368,7 @@ class KGEModel(nn.Module):
                 b=self.embedding_range.item()
             )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.nentity, self.nrelation, embedding_dim=self.entity_dim)
+            self.cocoe_layer = ComplExDeep(self.nentity, self.nrelation, embedding_dim=self.hidden_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
