@@ -140,7 +140,7 @@ class ComplExDeep(nn.Module):
         re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
         im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
         score = self.fc1(re_score, im_score)
-        score = x.sum(dim=2)
+        score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
 
