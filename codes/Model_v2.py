@@ -87,8 +87,8 @@ class ComplExDeep(nn.Module):
         self.relation_embedding = relation_embedding
         self.img_relation_embedding = img_relation_embedding
         self.hidden_size = hidden_size
-        self.fc_real_reduction(self.input_neurons, 32)
-        self.fc_img_reduction(self.input_neurons, 32)
+        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 32)
+        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 32)
         self.fc1 = torch.nn.Bilinear(32, 32, 16)
         self.fc2 = torch.nn.Linear(16, 1)
 
