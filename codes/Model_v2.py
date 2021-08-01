@@ -369,10 +369,10 @@ class KGEModel(nn.Module):
                 b=self.embedding_range.item()
             )
         else:
-            self.entity_embedding = torch.nn.Embedding(nentity, self.entity_dim)
-            self.img_entity_embedding = torch.nn.Embedding(nentity, self.entity_dim)
-            self.relation_embedding = torch.nn.Embedding(nrelation, self.entity_dim)
-            self.img_relation_embedding = torch.nn.Embedding(nrelation, self.entity_dim)
+            self.entity_embedding = torch.nn.Embedding(nentity, self.hidden_dim)
+            self.img_entity_embedding = torch.nn.Embedding(nentity, self.hidden_dim)
+            self.relation_embedding = torch.nn.Embedding(nrelation, self.hidden_dim)
+            self.img_relation_embedding = torch.nn.Embedding(nrelation, self.hidden_dim)
         if model_name == 'CoCoE':
             self.cocoe_layer = ComplExDeep(self.entity_embedding,
                                            self.img_entity_embedding,
