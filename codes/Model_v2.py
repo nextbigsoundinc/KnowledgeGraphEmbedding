@@ -356,24 +356,26 @@ class KGEModel(nn.Module):
             torch.Tensor([(self.gamma.item() + self.epsilon) / hidden_dim]), 
             requires_grad=False
         )
-        
-        self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
-        self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
 
-        self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
-        nn.init.uniform_(
-            tensor=self.entity_embedding,
-            a=-self.embedding_range.item(),
-            b=self.embedding_range.item()
-        )
+        if self.model_name not in ['CoCoE']:
+            self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
+            self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
 
-        self.relation_embedding = nn.Parameter(torch.zeros(nrelation, self.relation_dim))
-        nn.init.uniform_(
-            tensor=self.relation_embedding,
-            a=-self.embedding_range.item(),
-            b=self.embedding_range.item()
-        )
+
+            self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
+            nn.init.uniform_(
+                tensor=self.entity_embedding,
+                a=-self.embedding_range.item(),
+                b=self.embedding_range.item()
+            )
+
+            self.relation_embedding = nn.Parameter(torch.zeros(nrelation, self.relation_dim))
+            nn.init.uniform_(
+                tensor=self.relation_embedding,
+                a=-self.embedding_range.item(),
+                b=self.embedding_range.item()
+            )
         if model_name == 'CoCoE':
             self.cocoe_layer = ComplExDeep(self.nentity, self.nrelation, embedding_dim=self.entity_dim)
 
