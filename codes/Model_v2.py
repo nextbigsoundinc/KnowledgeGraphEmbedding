@@ -74,6 +74,8 @@ class SmoothCrossEntropyLoss(_WeightedLoss):
 class ComplExDeep(nn.Module):
 
     def __init__(self,
+                 nentity,
+                 nrelation,
                  embedding_dim,
                  hidden_size=128,
                  input_drop=0.3,
@@ -82,10 +84,10 @@ class ComplExDeep(nn.Module):
 
         super(ComplExDeep, self).__init__()
         self.input_neurons = int(embedding_dim)
-        self.real_entity_embedding = torch.nn.Embedding(self.nentity, embedding_dim)
-        self.img_entity_embedding = torch.nn.Embedding(self.nentity, embedding_dim)
-        self.real_relation_embedding = torch.nn.Embedding(self.nentity, embedding_dim)
-        self.img_relation_embedding = torch.nn.Embedding(self.nentity, embedding_dim)
+        self.real_entity_embedding = torch.nn.Embedding(nentity, embedding_dim)
+        self.img_entity_embedding = torch.nn.Embedding(nentity, embedding_dim)
+        self.real_relation_embedding = torch.nn.Embedding(nrelation, embedding_dim)
+        self.img_relation_embedding = torch.nn.Embedding(nrelation, embedding_dim)
         self.hidden_size = hidden_size
         self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
         self.fc2 = torch.nn.Linear(self.hidden_size, 32)
@@ -366,7 +368,7 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(embedding_dim=self.entity_dim)
+            self.cocoe_layer = ComplExDeep(self.nentity, self.nrelation, embedding_dim=self.entity_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
