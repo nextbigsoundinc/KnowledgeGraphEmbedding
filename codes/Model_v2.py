@@ -81,7 +81,7 @@ class ComplExDeep(nn.Module):
                  hidden_size=128):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(entity_embedding.data.size(1))
+        self.input_neurons = int(entity_embedding.shape[1])
         self.entity_embedding = entity_embedding
         self.img_entity_embedding = img_entity_embedding
         self.relation_embedding = relation_embedding
