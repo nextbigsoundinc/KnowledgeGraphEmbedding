@@ -88,7 +88,7 @@ class ComplExDeep(nn.Module):
         self.img_relation_embedding = img_relation_embedding
         self.hidden_size = hidden_size
         self.hidden_drop = torch.nn.Dropout(0.3)
-        self.inp_drop = torch.nn.Dropout(0.4)
+        self.input_drop = torch.nn.Dropout(0.4)
         self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 128)
         self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 128)
         self.fc1 = torch.nn.Bilinear(128, 128, 64)
@@ -138,8 +138,8 @@ class ComplExDeep(nn.Module):
             re_score = re_tail * re_score
             im_score = im_tail * im_score
 
-        re_score = F.relu(self.in_drop(self.fc_real_reduction(re_score)))
-        im_score = F.relu(self.in_drop(self.fc_img_reduction(im_score)))
+        re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
+        im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
         x = F.relu(self.hidden_drop(self.fc1(re_score, im_score)))
         x = self.fc2(x)
         score = x.sum(dim=2)
