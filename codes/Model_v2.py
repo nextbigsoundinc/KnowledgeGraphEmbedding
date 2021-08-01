@@ -93,6 +93,13 @@ class ComplExDeep(nn.Module):
         self.fc2 = torch.nn.Linear(self.hidden_size, 32)
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
+        self.init()
+
+    def init(self):
+        xavier_normal_(self.real_entity_embedding.weight.data)
+        xavier_normal_(self.real_relation_embedding.weight.data)
+        xavier_normal_(self.img_entity_embedding.weight.data)
+        xavier_normal_(self.img_relation_embedding.weight.data)
 
     def forward(self, head, relation,  tail, mode, batch_size, negative_sample_size):
         re_head = self.real_entity_embedding(head)
