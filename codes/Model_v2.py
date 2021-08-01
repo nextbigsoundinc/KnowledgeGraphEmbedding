@@ -357,7 +357,6 @@ class KGEModel(nn.Module):
             requires_grad=False
         )
 
-
         if self.model_name not in ['CoCoE']:
             self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
             self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
