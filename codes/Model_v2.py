@@ -87,9 +87,10 @@ class ComplExDeep(nn.Module):
         self.relation_embedding = relation_embedding
         self.img_relation_embedding = img_relation_embedding
         self.hidden_size = hidden_size
-        self.fc1 = torch.nn.Bilinear(self.input_neurons, self.input_neurons, self.hidden_size)
-        self.fc2 = torch.nn.Linear(self.hidden_size, 32)
-        self.init()
+        self.fc_real_reduction(self.input_neurons, 32)
+        self.fc_img_reduction(self.input_neurons, 32)
+        self.fc1 = torch.nn.Bilinear(32, 32, 16)
+        self.fc2 = torch.nn.Linear(16, 1)
 
     def init(self):
         xavier_normal_(self.entity_embedding.weight.data)
@@ -135,6 +136,8 @@ class ComplExDeep(nn.Module):
             re_score = re_tail * re_score
             im_score = im_tail * im_score
 
+        re_score = self.fc_real_reduction(re_score)
+        im_score = self.fc_img_reduction(im_score)
         x = self.fc1(re_score, im_score)
         x = F.relu(x)
         x = self.fc2(x)
@@ -378,6 +381,7 @@ class KGEModel(nn.Module):
                                            self.img_entity_embedding,
                                            self.relation_embedding,
                                            self.img_relation_embedding)
+            self.cocoe_layer.init()
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
