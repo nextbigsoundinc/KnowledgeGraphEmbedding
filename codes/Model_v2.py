@@ -189,7 +189,7 @@ class ConvELayer(nn.Module):
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.bn0 = torch.nn.BatchNorm2d(1)
         self.bn1 = torch.nn.BatchNorm2d(32)
-        self.bn2 = torch.nn.BatchNorm1d(self.emb_dim1)
+        self.bn2 = torch.nn.BatchNorm1d(self.input_neurons)
         self.register_parameter('b', nn.Parameter(torch.zeros(50)))
         self.fc = torch.nn.Linear(hidden_size, self.input_neurons)
         self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
