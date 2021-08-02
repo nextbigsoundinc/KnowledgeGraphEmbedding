@@ -822,13 +822,13 @@ class KGEModel(nn.Module):
             # for batch in range(batch_size):
             #     target[batch][0] = 1
 
-            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
+            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
             #print("pred=", pred)
             #print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                smooth_target = smooth_target.cuda()
-            loss = model.loss(pred, smooth_target)
+                target = target.cuda()
+            loss = model.loss(pred, target)
             #print("loss=", loss)
             loss.backward()
             log = {
