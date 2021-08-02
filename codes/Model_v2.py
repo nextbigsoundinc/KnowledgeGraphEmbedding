@@ -285,8 +285,10 @@ class ConvELayer(nn.Module):
         # x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
         print("x expand x.shape=", x.shape)
+        print("re_entity.shape=", re_entity.shape)
         re_score = re_entity * x
         print("re_score = re_entity * x=", re_score.shape)
+        print("im_entity.shape=", im_entity.shape)
         im_score = im_entity * x
         print("im_score = im_entity * x=", im_score.shape)
         re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
