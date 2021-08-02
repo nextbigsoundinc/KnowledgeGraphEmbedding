@@ -230,6 +230,8 @@ class ConvELayer(nn.Module):
 
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
+            print("re_score_shape=", re_score.shape)
+            print("im_score_shape=", im_score.shape)
             re_entity = re_head
             im_entity = im_head
 
@@ -244,6 +246,8 @@ class ConvELayer(nn.Module):
             im_tail = im_tail.view(batch_size, negative_sample_size, -1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
+            print("re_score_shape=", re_score.shape)
+            print("im_score_shape=", im_score.shape)
             re_entity = re_tail
             im_entity = im_tail
 
