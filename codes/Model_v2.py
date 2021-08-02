@@ -567,7 +567,7 @@ class KGEModel(nn.Module):
         return score  # len * # ent
 
     def CoCoE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
-        score = self.cocoe_layer(head, relation, tail, mode, batch_size, negative_sample_size)
+        score = self.cocoe_layer(head, relation, tail, mode)
         return score
 
     def TransE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
