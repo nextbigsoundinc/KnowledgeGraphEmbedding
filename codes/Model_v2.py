@@ -141,7 +141,7 @@ class ComplExDeep(nn.Module):
         score = score.norm(dim=0)  # 1024 * 256 * hid_dim
 
         x = F.relu(self.input_drop(self.fc1(score)))
-        x = self.fc_score(x)
+        x = self.fc2(x)
         score = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
