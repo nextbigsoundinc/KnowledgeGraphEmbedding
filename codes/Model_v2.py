@@ -447,7 +447,8 @@ class KGEModel(nn.Module):
                                           self.img_entity_embedding,
                                           self.relation_embedding,
                                           self.img_relation_embedding,
-                                          self.entity_dim, self.nentity)
+                                          self.hidden_dim,
+                                          self.nentity)
             self.conve_layer.init()
 
         if model_name == 'pRotatE':
