@@ -168,7 +168,6 @@ class ConvELayer(nn.Module):
 
         super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim)
-        self.input_neurons = int(entity_embedding.weight.size(1))
         self.entity_embedding = entity_embedding
         self.img_entity_embedding = img_entity_embedding
         self.relation_embedding = relation_embedding
@@ -230,6 +229,8 @@ class ConvELayer(nn.Module):
 
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
+            re_score = re_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
             print("re_score_shape=", re_score.shape)
             print("im_score_shape=", im_score.shape)
             re_entity = re_head
@@ -246,6 +247,8 @@ class ConvELayer(nn.Module):
             im_tail = im_tail.view(batch_size, negative_sample_size, -1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
+            re_score = re_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
             print("re_score_shape=", re_score.shape)
             print("im_score_shape=", im_score.shape)
             re_entity = re_tail
