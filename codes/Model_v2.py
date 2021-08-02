@@ -831,6 +831,7 @@ class KGEModel(nn.Module):
                 pred = pred.cuda()
                 target = target.cuda()
             loss = model.loss(pred, target)
+            print("loss=", loss)
             loss.backward()
             log = {
                 'positive_sample_loss': 0,
