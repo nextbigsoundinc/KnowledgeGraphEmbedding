@@ -164,7 +164,7 @@ class ConvELayer(nn.Module):
                  input_drop=0.2,
                  hidden_drop=0.3,
                  feat_drop=0.3,
-                 hidden_size=512):
+                 hidden_size=58368):
 
         super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim)
