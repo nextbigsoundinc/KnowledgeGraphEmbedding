@@ -77,7 +77,7 @@ class ComplExDeep(nn.Module):
                  input_neurons):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(input_neurons)
+        self.input_neurons = int(input_neurons // 2)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
         self.fc1 = torch.nn.Linear(self.input_neurons, 256)
@@ -109,6 +109,7 @@ class ComplExDeep(nn.Module):
 
         score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score = score.norm(dim=0)  # 1024 * 256 * hid_dim
+        print('score.shape=', score.shape)
 
         x = F.relu(self.input_drop(self.fc1(score)))
         x = self.fc2(x)
