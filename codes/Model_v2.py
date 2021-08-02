@@ -154,6 +154,10 @@ class ComplExDeep(nn.Module):
 class ConvELayer(nn.Module):
 
     def __init__(self,
+                 entity_embedding,
+                 img_entity_embedding,
+                 relation_embedding,
+                 img_relation_embedding,
                  embedding_dim,
                  nentity,
                  embedd_dim_fold=20,
@@ -164,59 +168,94 @@ class ConvELayer(nn.Module):
 
         super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim)
+        self.input_neurons = int(entity_embedding.weight.size(1))
+        self.entity_embedding = entity_embedding
+        self.img_entity_embedding = img_entity_embedding
+        self.relation_embedding = relation_embedding
+        self.img_relation_embedding = img_relation_embedding
         self.nentity = nentity
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
         self.embedding_dim = embedding_dim
+        self.entity_embedding = entity_embedding
+        self.img_entity_embedding = img_entity_embedding
+        self.relation_embedding = relation_embedding
+        self.img_relation_embedding = img_relation_embedding
 
         self.emb_dim1 = embedding_dim // embedd_dim_fold  # this is from the original configuration in ConvE
         self.emb_dim2 = embedd_dim_fold
 
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
         self.bn0 = torch.nn.BatchNorm2d(1)
-        self.bn00 = torch.nn.BatchNorm2d(1024)
         self.bn1 = torch.nn.BatchNorm2d(32)
         self.bn2 = torch.nn.BatchNorm1d(self.emb_dim1)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.nentity)))
         self.fc = torch.nn.Linear(hidden_size, self.emb_dim1)
+        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
+        self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_score = torch.nn.Linear(256, 32)
 
-    def forward(self, head, relation, tail, mode):
-        re_head, im_head = torch.chunk(head, 2, dim=2)
-        re_relation, im_relation = torch.chunk(relation, 2, dim=2)
-        re_tail, im_tail = torch.chunk(tail, 2, dim=2)
+    def init(self):
+        xavier_normal_(self.entity_embedding.weight.data)
+        xavier_normal_(self.relation_embedding.weight.data)
+        xavier_normal_(self.img_entity_embedding.weight.data)
+        xavier_normal_(self.img_relation_embedding.weight.data)
+
+    def forward(self, head, relation, tail, mode, batch_size, negative_sample_size):
+        re_head = self.entity_embedding(head)
+        im_head = self.img_entity_embedding(head)
+        re_relation = self.relation_embedding(relation)
+        im_relation = self.img_relation_embedding(relation)
+        re_tail = self.entity_embedding(tail)
+        im_tail = self.img_entity_embedding(tail)
+
+        # print('re_head.shape=', re_head.shape)
+        # print('im_head.shape=', im_head.shape)
+        # print('re_relation.shape=', re_relation.shape)
+        # print('im_relation.shape=', im_relation.shape)
+        # print('re_tail.shape=', re_tail.shape)
+        # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
+            re_head = self.entity_embedding(head)
+            im_head = self.img_entity_embedding(head)
+            re_relation = self.relation_embedding(relation)
+            im_relation = self.img_relation_embedding(relation)
+            re_tail = self.entity_embedding(tail)
+            im_tail = self.img_entity_embedding(tail)
+
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_head_score = re_head * re_score
-            im_head_score = im_head * im_score
-            stacked_inputs = torch.cat([re_head_score, im_head_score], 2).view(batch_size,
-                                                                               negative_sample_size,
-                                                                               self.emb_dim1,
-                                                                               self.emb_dim2)
+            re_entity = re_head
+            im_entity = im_head
 
+            # re_score = re_head * re_score
+            # im_score = im_head * im_score
         else:
-            batch_size = re_head.size(0)
-            negative_sample_size = re_tail.size(1)
+            re_head = self.entity_embedding(head)
+            im_head = self.img_entity_embedding(head)
+            re_relation = self.relation_embedding(relation)
+            im_relation = self.img_relation_embedding(relation)
+            re_tail = self.entity_embedding(tail)
+            im_tail = self.img_entity_embedding(tail)
+
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            re_tail_score = re_tail * re_score
-            im_tail_score = im_tail * im_score
-            stacked_inputs = torch.cat([re_tail_score, im_tail_score], 2).view(batch_size,
-                                                                               negative_sample_size,
-                                                                               self.emb_dim1,
-                                                                               self.emb_dim2)
+            re_entity = re_tail
+            im_entity = im_tail
 
-        if batch_size == 1:
-            print("stacked_inputs.shape=", stacked_inputs.shape)
-            stacked_inputs = self.bn0(stacked_inputs)
-            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
-        else:
-            print("stacked_inputs.shape=", stacked_inputs.shape)
-            stacked_inputs = self.bn00(stacked_inputs)
-            print("bn0 stacked_inputs.shape=", stacked_inputs.shape)
+            # re_score = re_tail * re_score
+            # im_score = im_tail * im_score
+
+        stacked_inputs = torch.cat([re_score, im_score], 2).view(batch_size,
+                                                                 1,
+                                                                 self.emb_dim1,
+                                                                 self.emb_dim2)
+
         x = self.inp_drop(stacked_inputs)
         print("inp_drop x.shape=", x.shape)
         x = self.conv1(x)
@@ -227,7 +266,7 @@ class ConvELayer(nn.Module):
         print("relu x.shape=", x.shape)
         x = self.feature_map_drop(x)
         print("feature_map x.shape=", x.shape)
-        x = x.view(x.shape[0], -1) # len * 1152
+        x = x.view(x.shape[0], -1)  # len * 1152
         print("x.view x.shape=", x.shape)
         x = self.fc(x)
         print("fc x.shape=", x.shape)
@@ -237,11 +276,26 @@ class ConvELayer(nn.Module):
         x = self.bn2(x)
         print("bn2 x.shape=", x.shape)
         x = F.relu(x)  # bs * 200
-        print("reul2 x.shape=", x.shape)
+        print("relu2 x.shape=", x.shape)
         # x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
-        print("residual x.shape=", x.shape)
-        return x
+        print("x expand x.shape=", x.shape)
+        re_score = re_entity * x
+        print("re_score = re_entity * x=", re_score.shape)
+        im_score = im_entity * x
+        print("im_score = im_entity * x=", im_score.shape)
+        re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
+        print("fc real reduction", re_score.shape)
+        im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
+        print("fc img reduction", im_score.shape)
+        x = F.relu(self.input_drop(self.fc_combine(re_score, im_score)))
+        print("bilinear layer", x.shape)
+        x = F.relu(self.input_drop(self.fc_combine_reduce(x)))
+        score = self.fc_score(x)
+        score = score.sum(dim=2)
+        # print('score1.shape=', score1.shape)
+        return score
+
 
 class CoCoELayer(nn.Module):
     def __init__(self, ent_real, ent_img, rel_real, rel_img, negative_sample_size):
@@ -360,7 +414,7 @@ class KGEModel(nn.Module):
             requires_grad=False
         )
 
-        if self.model_name not in ['CoCoE']:
+        if self.model_name not in ['CoCoE', 'ConvE']:
             self.entity_dim = hidden_dim*2 if double_entity_embedding else hidden_dim
             self.relation_dim = hidden_dim*2 if double_relation_embedding else hidden_dim
             self.entity_embedding = nn.Parameter(torch.zeros(nentity, self.entity_dim))
@@ -389,7 +443,12 @@ class KGEModel(nn.Module):
             self.cocoe_layer.init()
 
         elif model_name == 'ConvE':
-            self.conve_layer = ConvELayer(self.entity_dim, self.nentity)
+            self.conve_layer = ConvELayer(self.entity_embedding,
+                                          self.img_entity_embedding,
+                                          self.relation_embedding,
+                                          self.img_relation_embedding,
+                                          self.entity_dim, self.nentity)
+            self.conve_layer.init()
 
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
@@ -414,7 +473,7 @@ class KGEModel(nn.Module):
         Because negative samples and positive samples usually share two elements 
         in their triple ((head, relation) or (relation, tail)).
         '''
-        if self.model_name in ['CoCoE']:
+        if self.model_name in ['CoCoE', 'ConvE']:
             if mode == 'single':
                 batch_size, negative_sample_size = sample.size(0), 1
 
@@ -563,7 +622,7 @@ class KGEModel(nn.Module):
         # score.sum(dim=2): torch.Size([8, 40943])
         #
 
-        score = self.conve_layer(head, relation, tail, mode)
+        score = self.conve_layer(head, relation, tail, mode, batch_size, negative_sample_size)
 
         return score  # len * # ent
 
