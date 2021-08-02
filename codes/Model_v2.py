@@ -89,12 +89,8 @@ class ComplExDeep(nn.Module):
         self.hidden_size = hidden_size
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
-        self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_score = torch.nn.Linear(256, 32)
-
+        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
+        self.fc2 = torch.nn.Linear(256, 32)
 
 
     def init(self):
@@ -141,12 +137,12 @@ class ComplExDeep(nn.Module):
             re_score = re_tail * re_score
             im_score = im_tail * im_score
 
-        re_score = F.relu(self.input_drop(self.fc_real_reduction(re_score)))
-        im_score = F.relu(self.input_drop(self.fc_img_reduction(im_score)))
-        x = F.relu(self.input_drop(self.fc_combine(re_score, im_score)))
-        x = F.relu(self.input_drop(self.fc_combine_reduce(x)))
-        score = self.fc_score(x)
-        score = score.sum(dim=2)
+        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
+        score = score.norm(dim=0)  # 1024 * 256 * hid_dim
+
+        x = F.relu(self.input_drop(self.fc1(score)))
+        x = self.fc_score(x)
+        score = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
 
@@ -192,10 +188,10 @@ class ConvELayer(nn.Module):
         self.bn2 = torch.nn.BatchNorm1d(self.input_neurons)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.input_neurons)))
         self.fc = torch.nn.Linear(hidden_size, self.input_neurons)
-        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
-        self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
+        # self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
+        # self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
+        # self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
+        # self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
         self.fc_score = torch.nn.Linear(256, 32)
 
     def init(self):
@@ -294,7 +290,7 @@ class ConvELayer(nn.Module):
         x = torch.stack([re_score, im_score], dim=0)
         x = x.norm(dim=0)
         #print("im_score = im_entity * x=", im_score.shape)
-        score = F.relu(self.hidden_drop(self.fc_real_reduction(x)))
+        score = F.relu(self.hidden_drop(self.fc(x)))
         # #print("fc real reduction", re_score.shape)
         # im_score = F.relu(self.hidden_drop(self.fc_img_reduction(im_score)))
         # #print("fc img reduction", im_score.shape)
