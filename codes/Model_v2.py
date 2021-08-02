@@ -221,12 +221,12 @@ class ConvELayer(nn.Module):
         # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
-            re_head = self.entity_embedding(head)
-            im_head = self.img_entity_embedding(head)
-            re_relation = self.relation_embedding(relation)
-            im_relation = self.img_relation_embedding(relation)
-            re_tail = self.entity_embedding(tail)
-            im_tail = self.img_entity_embedding(tail)
+            re_head = re_head.view(batch_size, negative_sample_size, -1)
+            im_head = im_head.view(batch_size, negative_sample_size, -1)
+            re_relation = re_relation.view(batch_size, 1, -1)
+            im_relation = im_relation.view(batch_size, 1, -1)
+            re_tail = re_tail.view(batch_size, 1, -1)
+            im_tail = im_tail.view(batch_size, 1, -1)
 
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
@@ -236,13 +236,12 @@ class ConvELayer(nn.Module):
             # re_score = re_head * re_score
             # im_score = im_head * im_score
         else:
-            re_head = self.entity_embedding(head)
-            im_head = self.img_entity_embedding(head)
-            re_relation = self.relation_embedding(relation)
-            im_relation = self.img_relation_embedding(relation)
-            re_tail = self.entity_embedding(tail)
-            im_tail = self.img_entity_embedding(tail)
-
+            re_head = re_head.view(batch_size, 1, -1)
+            im_head = im_head.view(batch_size, 1, -1)
+            re_relation = re_relation.view(batch_size, 1, -1)
+            im_relation = im_relation.view(batch_size, 1, -1)
+            re_tail = re_tail.view(batch_size, negative_sample_size, -1)
+            im_tail = im_tail.view(batch_size, negative_sample_size, -1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_entity = re_tail
