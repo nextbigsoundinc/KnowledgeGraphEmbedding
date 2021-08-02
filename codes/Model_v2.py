@@ -106,12 +106,12 @@ class ComplExDeep(nn.Module):
             im_score = re_head * im_relation + im_head * re_relation
             re_score = re_tail * re_score
             im_score = im_tail * im_score
-        print('re_score.shape=', re_score.shape)
-        print('im_score.shape=', im_score.shape)
+        # print('re_score.shape=', re_score.shape)
+        # print('im_score.shape=', im_score.shape)
         score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
-        print('score.shape=', score.shape)
+        # print('score.shape=', score.shape)
         score = score.norm(dim=0)  # 1024 * 256 * hid_dim
-        print('score.shape=', score.shape)
+        # print('score.shape=', score.shape)
 
         x = F.relu(self.input_drop(self.fc1(score)))
         x = self.fc2(x)
