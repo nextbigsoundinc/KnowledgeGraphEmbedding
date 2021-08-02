@@ -257,10 +257,8 @@ class ConvELayer(nn.Module):
             # re_score = re_tail * re_score
             # im_score = im_tail * im_score
 
-        stacked_inputs = torch.cat([re_score, im_score], 2).view(batch_size,
-                                                                 1,
-                                                                 self.emb_dim2,
-                                                                 self.emb_dim1)
+        stacked_inputs = torch.cat([re_score, im_score], 2)
+
         print("stacked_inputs=", stacked_inputs.shape)
 
         x = self.inp_drop(stacked_inputs)
