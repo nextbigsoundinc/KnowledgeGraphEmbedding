@@ -84,7 +84,7 @@ class ComplExDeep(nn.Module):
         self.fc2 = torch.nn.Linear(256, 32)
         self.fc3 = torch.nn.Linear(32, 1)
 
-    def forward(self, head, relation,  tail, mode, batch_size, negative_sample_size):
+    def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
         re_relation, im_relation = torch.chunk(relation, 2, dim=2)
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)
@@ -408,8 +408,7 @@ class KGEModel(nn.Module):
         )
 
         if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.entity_dim,
-                                           self.nentity)
+            self.cocoe_layer = ComplExDeep(self.entity_dim)
 
         elif model_name == 'ConvE':
             self.conve_layer = ConvELayer(self.entity_embedding,
