@@ -818,7 +818,7 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            target = torch.zeros(batch_size, pred.size(1)).int()
+            target = torch.zeros(batch_size, pred.size(1), dtype=torch.int32)
             # print('targets=', target.shape)
             for batch in range(batch_size):
                 target[batch][0] = 1
