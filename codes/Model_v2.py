@@ -531,7 +531,7 @@ class KGEModel(nn.Module):
         # score.sum(dim=2): torch.Size([8, 40943])
         #
 
-        score = self.conve_layer(head, relation, tail, mode, batch_size, negative_sample_size)
+        score = self.conve_layer(head, relation, tail, mode)
 
         return score  # len * # ent
 
