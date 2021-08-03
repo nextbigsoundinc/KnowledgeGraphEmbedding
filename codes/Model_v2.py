@@ -101,13 +101,16 @@ class ComplExDeep(nn.Module):
             im_score = re_relation * im_tail - im_relation * re_tail
             re_score = re_head * re_score
             im_score = im_head * im_score
-            score = re_score + im_score
+            #score = re_score + im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_score = re_score * re_tail
             im_score = im_score * im_tail
-            score = re_score + im_score
+            #score = re_score + im_score
+
+        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
+        score = score.norm(dim=0)
 
         x = F.relu(self.hidden_drop(self.fc1(score)))
         x = F.relu(self.hidden_drop(self.fc2(x)))
@@ -711,17 +714,13 @@ class KGEModel(nn.Module):
 
         else:
             batch_size = positive_sample.size(0)
-            negative_score = negative_score.mean(dim=1)
-            positive_score = positive_score.squeeze(dim=1)
-
             pred = torch.cat([positive_score, negative_score], dim=0)
             #print("pred=.shape", pred.shape)
             smoothing = 0.001
             confidence = 1.0 - smoothing
-            target = torch.zeros(pred.size(0), dtype=torch.float64)
-            target[0] = confidence
-            for i in range(1, len(target)):
-                target[i] = smoothing
+            target = torch.zeros(batch_size, pred.size(0), dtype=torch.float64)
+            for batch in range(batch_size):
+                target[batch][0] = 1.0
 
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
