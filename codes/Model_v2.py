@@ -99,17 +99,21 @@ class ComplExDeep(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            score = re_head * re_score + im_head * im_score
+            re_score = re_score - re_head  # 1024 * 256 * hid_dim
+            im_score = im_score - im_head
+            #score = re_head * re_score + im_head * im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            score = re_score * re_tail + im_score * im_tail
+            re_score = re_score - re_tail
+            im_score = im_score - im_tail
+            #score = re_score * re_tail + im_score * im_tail
 
         # print('re_score.shape=', re_score.shape)
         # print('im_score.shape=', im_score.shape)
-        #score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
+        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         # print('score.shape=', score.shape)
-        #score = score.norm(dim=0)  # 1024 * 256 * hid_dim
+        score = score.norm(dim=0)  # 1024 * 256 * hid_dim
         # print('score.shape=', score.shape)
 
         x = F.relu(self.fc1(score))
@@ -173,13 +177,10 @@ class ConvELayer(nn.Module):
         xavier_normal_(self.img_entity_embedding.weight.data)
         xavier_normal_(self.img_relation_embedding.weight.data)
 
-    def forward(self, head, relation, tail, mode, batch_size, negative_sample_size):
-        re_head = self.entity_embedding(head)
-        im_head = self.img_entity_embedding(head)
-        re_relation = self.relation_embedding(relation)
-        im_relation = self.img_relation_embedding(relation)
-        re_tail = self.entity_embedding(tail)
-        im_tail = self.img_entity_embedding(tail)
+    def forward(self, head, relation, tail, mode):
+        re_head, im_head = torch.chunk(head, 2, dim=2)
+        re_relation, im_relation = torch.chunk(relation, 2, dim=2)
+        re_tail, im_tail = torch.chunk(tail, 2, dim=2)
 
         # print('re_head.shape=', re_head.shape)
         # print('im_head.shape=', im_head.shape)
@@ -189,17 +190,9 @@ class ConvELayer(nn.Module):
         # print('im_tail.shape=', im_tail.shape)
 
         if mode == 'head-batch':
-            re_head = re_head.view(batch_size, negative_sample_size, -1)
-            im_head = im_head.view(batch_size, negative_sample_size, -1)
-            re_relation = re_relation.view(batch_size, 1, -1)
-            im_relation = im_relation.view(batch_size, 1, -1)
-            re_tail = re_tail.view(batch_size, 1, -1)
-            im_tail = im_tail.view(batch_size, 1, -1)
-
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
-            im_score = im_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
+            #score = re_head * re_score + im_head * im_score
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
             re_entity = re_head
@@ -208,16 +201,9 @@ class ConvELayer(nn.Module):
             # re_score = re_head * re_score
             # im_score = im_head * im_score
         else:
-            re_head = re_head.view(batch_size, 1, -1)
-            im_head = im_head.view(batch_size, 1, -1)
-            re_relation = re_relation.view(batch_size, 1, -1)
-            im_relation = im_relation.view(batch_size, 1, -1)
-            re_tail = re_tail.view(batch_size, negative_sample_size, -1)
-            im_tail = im_tail.view(batch_size, negative_sample_size, -1)
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            re_score = re_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
-            im_score = im_score.view(batch_size, 1, self.emb_dim2, self.emb_dim1)
+            #score = re_score * re_tail + im_score * im_tail
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
             re_entity = re_tail
@@ -791,7 +777,7 @@ class KGEModel(nn.Module):
             #Countries S* datasets are evaluated on AUC-PR
             #Process test data for AUC-PR evaluation
             sample = list()
-            y_true  = list()
+            y_true = list()
             for head, relation, tail in test_triples:
                 for candidate_region in args.regions:
                     y_true.append(1 if candidate_region == tail else 0)
