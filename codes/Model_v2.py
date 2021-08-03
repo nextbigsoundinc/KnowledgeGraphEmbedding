@@ -101,24 +101,79 @@ class ComplExDeep(nn.Module):
             im_score = re_relation * im_tail - im_relation * re_tail
             re_score = re_head * re_score
             im_score = im_head * im_score
-            #score = re_score + im_score
+            score = re_score + im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_score = re_score * re_tail
             im_score = im_score * im_tail
-            #score = re_score + im_score
-
-        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
-        score = score.norm(dim=0)
+            score = re_score + im_score
 
         x = F.relu(self.hidden_drop(self.fc1(score)))
-        x = F.relu(self.hidden_drop(self.fc2(x)))
+        x = self.fc2(x)
         score = self.fc3(x)
         # #x = self.fc3(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
+
+
+class RotatEDeep(nn.Module):
+
+    def __init__(self,
+                 input_neurons):
+
+        super(RotatEDeep, self).__init__()
+        self.input_neurons = int(input_neurons * 0.5)
+        self.hidden_drop = torch.nn.Dropout(0.5)
+        self.input_drop = torch.nn.Dropout(0.5)
+        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
+        self.fc2 = torch.nn.Linear(256, 128)
+        self.fc3 = torch.nn.Linear(128, 64)
+
+    def forward(self, head, relation,  tail, mode, embedding_range):
+
+        pi = 3.14159265358979323846
+
+        re_head, im_head = torch.chunk(head, 2, dim=2)  # both 1024 * 256 * hid_dim
+        re_tail, im_tail = torch.chunk(tail, 2, dim=2)  # both 1024 * 1 * hid_dim
+
+        # Make phases of relations uniformly distributed in [-pi, pi]
+
+        phase_relation = relation / embedding_range / pi
+
+        re_relation = torch.cos(phase_relation)  # 1024 * 1 * hid_dim
+        im_relation = torch.sin(phase_relation)  # 1024 * 1 * hid_dim
+
+        # print('re_head.shape=', re_head.shape)
+        # print('im_head.shape=', im_head.shape)
+        # print('re_relation.shape=', re_relation.shape)
+        # print('im_relation.shape=', im_relation.shape)
+        # print('re_tail.shape=', re_tail.shape)
+        # print('im_tail.shape=', im_tail.shape)
+
+        if mode == 'head-batch':
+            re_score = re_relation * re_tail + im_relation * im_tail
+            im_score = re_relation * im_tail - im_relation * re_tail
+            re_score = re_head - re_score
+            im_score = im_head - im_score
+
+        else:
+            re_score = re_head * re_relation - im_head * im_relation
+            im_score = re_head * im_relation + im_head * re_relation
+            re_score = re_score - re_tail
+            im_score = im_score - im_tail
+
+        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
+        score = score.norm(dim=0)
+
+        x = F.relu(self.hidden_drop(self.fc1(score)))
+        x = self.fc2(x)
+        score = self.fc3(x)
+        score = score.sum(dim=2)
+        # print('score1.shape=', score1.shape)
+        return score
+
 
 
 class ConvELayer(nn.Module):
@@ -378,18 +433,17 @@ class KGEModel(nn.Module):
             b=self.embedding_range.item()
         )
 
-        if model_name == 'CoCoE':
-            self.cocoe_layer = ComplExDeep(self.entity_dim)
+        if model_name == 'RotatEDeep':
+            self.cocoe_layer = RotatEDeep(self.entity_dim)
 
-        elif model_name == 'ConvE':
-            self.conve_layer = ConvELayer(self.entity_dim,
-                                          self.nentity)
+        elif model_name == 'ComplExDeep':
+            self.conve_layer = ComplExDeep(self.entity_dim)
 
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
         
         #Do not forget to modify this line when you add a new model in the "forward" function
-        if model_name not in ['TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ConvE', 'CoCoE']:
+        if model_name not in ['TransE', 'DistMult', 'ComplEx', 'RotatE', 'pRotatE', 'ComplExDeep', 'RotatEDeep']:
             raise ValueError('model %s not supported' % model_name)
             
         if model_name == 'RotatE' and (not double_entity_embedding or double_relation_embedding):
@@ -495,6 +549,14 @@ class KGEModel(nn.Module):
         else:
             raise ValueError('model %s not supported' % self.model_name)
         
+        return score
+
+    def RotatEDeep(self, head, relation, tail, mode):
+
+        embedding_range = self.embedding_range.item()
+
+
+
         return score
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
@@ -670,7 +732,7 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
-        if model.model_name not in ['ConvE', 'CoCoE']:
+        if model.model_name not in ['RotatEDeep', 'ComplExDeep']:
 
             if args.negative_adversarial_sampling:
                 # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
