@@ -654,9 +654,9 @@ class KGEModel(nn.Module):
         # print("indices=", indices)
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
-            true_dist.fill_(F.logsigmoid(smoothing / (classes - 1)))
-            true_dist.scatter_(1, indices, F.logsigmoid(confidence))
-        return true_dist
+            true_dist.fill_(smoothing / (classes - 1))
+            true_dist.scatter_(1, indices, confidence)
+        return F.logsigmoid(true_dist)
 
 
     @staticmethod
