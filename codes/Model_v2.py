@@ -99,27 +99,23 @@ class ComplExDeep(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_head * re_score
-            im_score = im_head * im_score
+            score = re_head * re_score + im_head * im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            re_score = re_tail * re_score
-            im_score = im_tail * im_score
-        score1 = re_score * im_score
-        score1 = score1.sum(dim=2)
+            score = re_score * re_tail + im_score * im_tail
+
         # print('re_score.shape=', re_score.shape)
         # print('im_score.shape=', im_score.shape)
-        score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
+        #score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         # print('score.shape=', score.shape)
-        score = score.norm(dim=0)  # 1024 * 256 * hid_dim
+        #score = score.norm(dim=0)  # 1024 * 256 * hid_dim
         # print('score.shape=', score.shape)
 
         x = F.relu(self.fc1(score))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         score = x.sum(dim=2)
-        score += score1
         # print('score1.shape=', score1.shape)
         return score
 
