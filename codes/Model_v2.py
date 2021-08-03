@@ -714,10 +714,10 @@ class KGEModel(nn.Module):
 
         else:
             batch_size = positive_sample.size(0)
-            print("positive_score.shape=", positive_score.shape)
-            print("negative_score.shape=", negative_score.shape)
+            # print("positive_score.shape=", positive_score.shape)
+            # print("negative_score.shape=", negative_score.shape)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            print("pred.shape=", pred.shape)
+            # print("pred.shape=", pred.shape)
             smoothing = 0.001
             confidence = 1.0 - smoothing
             target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
@@ -728,8 +728,8 @@ class KGEModel(nn.Module):
             # for batch in range(batch_size):
 
             # target = F.logsigmoid(target)
-            print("pred=", pred)
-            print('targets=', target)
+            # print("pred=", pred)
+            # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
                 target = target.cuda()
