@@ -80,9 +80,9 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
-        self.fc2 = torch.nn.Linear(256, 32)
-        self.fc3 = torch.nn.Linear(32, 1)
+        self.fc1 = torch.nn.Linear(self.input_neurons, 512)
+        self.fc2 = torch.nn.Linear(512, 128)
+        #self.fc3 = torch.nn.Linear(256, 64)
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -99,14 +99,18 @@ class ComplExDeep(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score - re_head  # 1024 * 256 * hid_dim
-            im_score = im_score - im_head
+            # re_score = re_score - re_head  # 1024 * 256 * hid_dim
+            # im_score = im_score - im_head
+            re_score = re_score * re_head  # 1024 * 256 * hid_dim
+            im_score = im_score * im_head
             #score = re_head * re_score + im_head * im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            re_score = re_score - re_tail
-            im_score = im_score - im_tail
+            # re_score = re_score - re_tail
+            # im_score = im_score - im_tail
+            re_score = re_score * re_tail
+            im_score = im_score * im_tail
             #score = re_score * re_tail + im_score * im_tail
 
         # print('re_score.shape=', re_score.shape)
@@ -117,8 +121,8 @@ class ComplExDeep(nn.Module):
         # print('score.shape=', score.shape)
 
         x = F.relu(self.fc1(score))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.fc2(x)
+        #x = self.fc3(x)
         score = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
