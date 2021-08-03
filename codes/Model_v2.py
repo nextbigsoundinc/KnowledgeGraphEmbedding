@@ -80,11 +80,9 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 32)
-        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 32)
-        self.bfc = torch.nn.Bilinear(32, 32, 8)
-        self.fc_score = torch.nn.Linear(8, 1)
-        #self.fc3 = torch.nn.Linear(256, 64)
+        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
+        self.fc2 = torch.nn.Linear(256, 128)
+        self.fc3 = torch.nn.Linear(128, 64)
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -103,21 +101,17 @@ class ComplExDeep(nn.Module):
             im_score = re_relation * im_tail - im_relation * re_tail
             re_score = re_head * re_score
             im_score = im_head * im_score
-            # re_score = re_score - re_head  # 1024 * 256 * hid_dim
-            # im_score = im_score - im_head
-            # re_score = re_score * re_head  # 1024 * 256 * hid_dim
-            # im_score = im_score * im_head
-
+            score = re_score + im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_score = re_score * re_tail
             im_score = im_score * im_tail
+            score = re_score + im_score
 
-        x = F.relu(self.hidden_drop(self.fc_real_reduction(re_score)))
-        y = F.relu(self.hidden_drop(self.fc_img_reduction(im_score)))
-        z = F.relu(self.hidden_drop(self.bfc(x, y)))
-        score = self.fc_score(z)
+        x = F.relu(self.hidden_drop(self.fc1(score)))
+        x = F.relu(self.hidden_drop(self.fc2(x)))
+        score = self.fc_score(x)
         # #x = self.fc3(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
