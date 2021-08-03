@@ -738,7 +738,7 @@ class KGEModel(nn.Module):
 
             # target = F.logsigmoid(target)
             # print("pred=", pred)
-            print('targets=', target)
+            # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
                 target = target.cuda()
