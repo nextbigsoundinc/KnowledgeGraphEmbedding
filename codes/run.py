@@ -365,8 +365,6 @@ def main(args):
             kge_model.init()
 
 
-
-    
     step = init_step
     
     logging.info('Start Training...')

@@ -356,7 +356,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.CrossEntropyLoss()
+        self.loss = torch.nn.BCELoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -677,17 +677,17 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
+        if args.negative_adversarial_sampling:
+            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+            negative_score = (
+                    F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                    * F.logsigmoid(-negative_score)).sum(dim=1)
+        else:
+            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
+
+        positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+
         if model.model_name not in ['ConvE', 'CoCoE']:
-
-            if args.negative_adversarial_sampling:
-                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-                negative_score = (
-                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                        * F.logsigmoid(-negative_score)).sum(dim=1)
-            else:
-                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
 
             if args.uni_weight:
                 positive_sample_loss = - positive_score.mean()
@@ -724,17 +724,17 @@ class KGEModel(nn.Module):
             pred = torch.cat([positive_score, negative_score], dim=1)
             #print("pred=.shape", pred.shape)
             target = torch.zeros(batch_size, dtype=torch.int64)
-            #print('target.shape=', target.shape)
-            # for batch in range(batch_size):
-            #     target[batch][0] = 1
+            print('target.shape=', target.shape)
+            for batch in range(batch_size):
+                target[batch][0] = 1
 
-            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), 0.001)
             #print("pred=", pred)
             #print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
-            loss = model.loss(pred, target)
+                smooth_target = smooth_target.cuda()
+            loss = model.loss(pred, smooth_target)
             #print("loss=", loss)
             loss.backward()
             log = {
