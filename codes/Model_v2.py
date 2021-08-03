@@ -649,7 +649,7 @@ class KGEModel(nn.Module):
         """
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
-        label_shape = torch.Size((true_labels.size(0)))
+        label_shape = torch.Size((true_labels.size(0), 1))
         indices = torch.zeros(1).long()
         # print("indices=", indices)
         with torch.no_grad():
@@ -728,17 +728,17 @@ class KGEModel(nn.Module):
             #print("pred=.shape", pred.shape)
             target = torch.zeros(pred.size(0), dtype=torch.int64)
             target[0] = 1
+
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
 
-
-            smooth_target = KGEModel.smooth_one_hot(target, pred.size(0)-1, 0.001)
+            target = F.logsigmoid(target)
             print("pred=", pred)
-            print('targets=', smooth_target)
+            print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                smooth_target = smooth_target.cuda()
-            loss = model.loss(pred, smooth_target)
+                target = target.cuda()
+            loss = model.loss(pred, target)
             #print("loss=", loss)
             loss.backward()
             log = {
