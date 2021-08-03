@@ -177,6 +177,8 @@ class ConvELayer(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
+            re_score = re_score.view(re_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(im_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
             #score = re_head * re_score + im_head * im_score
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
@@ -188,6 +190,8 @@ class ConvELayer(nn.Module):
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
+            re_score = re_score.view(re_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(im_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
             #score = re_score * re_tail + im_score * im_tail
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
