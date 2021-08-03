@@ -721,8 +721,8 @@ class KGEModel(nn.Module):
 
         else:
             batch_size = positive_sample.size(0)
-            negative_score = F.logsigmoid(negative_score).mean(dim=1)
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+            negative_score = negative_score.mean(dim=1)
+            positive_score = positive_score.squeeze(dim=1)
 
             pred = torch.cat([positive_score, negative_score], dim=0)
             #print("pred=.shape", pred.shape)
@@ -732,7 +732,7 @@ class KGEModel(nn.Module):
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
 
-            target = F.logsigmoid(target)
+            # target = F.logsigmoid(target)
             print("pred=", pred)
             print('targets=', target)
             if args.cuda:
