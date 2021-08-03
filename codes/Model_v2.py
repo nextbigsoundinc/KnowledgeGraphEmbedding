@@ -720,7 +720,7 @@ class KGEModel(nn.Module):
             print("pred.shape=", pred.shape)
             smoothing = 0.001
             confidence = 1.0 - smoothing
-            target = torch.zeros(batch_size, pred.size(0), dtype=torch.float64)
+            target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
             for batch in range(batch_size):
                 target[batch][0] = 1.0
 
