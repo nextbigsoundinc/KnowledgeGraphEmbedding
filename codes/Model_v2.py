@@ -111,7 +111,7 @@ class ComplExDeep(nn.Module):
 
         x = F.relu(self.hidden_drop(self.fc1(score)))
         x = F.relu(self.hidden_drop(self.fc2(x)))
-        score = self.fc_score(x)
+        score = self.fc3(x)
         # #x = self.fc3(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
