@@ -80,10 +80,10 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
-        self.bfc = torch.nn.Bilinear(256, 256, 128)
-        self.fc_score = torch.nn.Linear(128, 32)
+        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 128)
+        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 128)
+        self.bfc = torch.nn.Bilinear(128, 128, 64)
+        self.fc_score = torch.nn.Linear(64, 16)
         #self.fc3 = torch.nn.Linear(256, 64)
 
     def forward(self, head, relation,  tail, mode):
