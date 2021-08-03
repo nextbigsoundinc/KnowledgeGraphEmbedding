@@ -733,8 +733,8 @@ class KGEModel(nn.Module):
             # for batch in range(batch_size):
 
             # target = F.logsigmoid(target)
-            print("pred=", pred)
-            print('targets=', target)
+            # print("pred=", pred)
+            # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
                 target = target.cuda()
