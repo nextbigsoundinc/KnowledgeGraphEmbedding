@@ -29,7 +29,7 @@
         <counts>
           <entry key="json" value="3" />
           <entry key="md" value="1" />
-          <entry key="py" value="29" />
+          <entry key="py" value="30" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="7" />
           <entry key="txt" value="1" />
@@ -41,14 +41,14 @@
           <entry key="JSON" value="3" />
           <entry key="Markdown" value="1" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="29" />
+          <entry key="Python" value="30" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="16807" />
+          <entry key="py" value="16819" />
           <entry key="sh" value="74" />
           <entry key="txt" value="123" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="74" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="123" />
-          <entry key="Python" value="16807" />
+          <entry key="Python" value="16819" />
         </counts>
       </usages-collector>
     </session>
@@ -77,29 +77,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/codes/dataloader.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="794">
-              <caret line="209" lean-forward="true" selection-start-line="209" selection-end-line="209" />
+            <state relative-caret-position="144">
+              <caret line="351" column="31" selection-start-line="351" selection-start-column="31" selection-end-line="351" selection-end-column="31" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1627675573000" expanded="true" signature="4635:4644" ph="..." />
+                <marker date="1628015570000" expanded="true" signature="16349:16362" ph="..." />
+                <marker date="1628015570000" expanded="true" signature="22487:22575" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.pyenv/versions/3.7.2/lib/python3.7/site-packages/torch/nn/modules/loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="409">
-              <caret line="714" column="13" selection-start-line="714" selection-start-column="13" selection-end-line="714" selection-end-column="13" />
-              <folding>
-                <element signature="e#20#58#0" expanded="true" />
-                <marker date="1628014599000" expanded="true" signature="16350:16363" ph="..." />
-                <marker date="1628014599000" expanded="true" signature="22488:22576" ph="..." />
-              </folding>
+            <state relative-caret-position="581">
+              <caret line="1043" column="33" lean-forward="true" selection-start-line="1043" selection-start-column="33" selection-end-line="1043" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -431,34 +427,6 @@
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
     </task>
-    <task id="LOCAL-00428" summary="revert">
-      <created>1627933740805</created>
-      <option name="number" value="00428" />
-      <option name="presentableId" value="LOCAL-00428" />
-      <option name="project" value="LOCAL" />
-      <updated>1627933740805</updated>
-    </task>
-    <task id="LOCAL-00429" summary="revert">
-      <created>1627933812891</created>
-      <option name="number" value="00429" />
-      <option name="presentableId" value="LOCAL-00429" />
-      <option name="project" value="LOCAL" />
-      <updated>1627933812891</updated>
-    </task>
-    <task id="LOCAL-00430" summary="revert">
-      <created>1627933898612</created>
-      <option name="number" value="00430" />
-      <option name="presentableId" value="LOCAL-00430" />
-      <option name="project" value="LOCAL" />
-      <updated>1627933898612</updated>
-    </task>
-    <task id="LOCAL-00431" summary="revert">
-      <created>1627934063858</created>
-      <option name="number" value="00431" />
-      <option name="presentableId" value="LOCAL-00431" />
-      <option name="project" value="LOCAL" />
-      <updated>1627934063858</updated>
-    </task>
     <task id="LOCAL-00432" summary="revert">
       <created>1627934612948</created>
       <option name="number" value="00432" />
@@ -774,7 +742,35 @@
       <option name="project" value="LOCAL" />
       <updated>1628013854613</updated>
     </task>
-    <option name="localTasksCounter" value="477" />
+    <task id="LOCAL-00477" summary="revert">
+      <created>1628014604789</created>
+      <option name="number" value="00477" />
+      <option name="presentableId" value="LOCAL-00477" />
+      <option name="project" value="LOCAL" />
+      <updated>1628014604789</updated>
+    </task>
+    <task id="LOCAL-00478" summary="revert">
+      <created>1628014653403</created>
+      <option name="number" value="00478" />
+      <option name="presentableId" value="LOCAL-00478" />
+      <option name="project" value="LOCAL" />
+      <updated>1628014653403</updated>
+    </task>
+    <task id="LOCAL-00479" summary="revert">
+      <created>1628014760739</created>
+      <option name="number" value="00479" />
+      <option name="presentableId" value="LOCAL-00479" />
+      <option name="project" value="LOCAL" />
+      <updated>1628014760739</updated>
+    </task>
+    <task id="LOCAL-00480" summary="revert">
+      <created>1628014789849</created>
+      <option name="number" value="00480" />
+      <option name="presentableId" value="LOCAL-00480" />
+      <option name="project" value="LOCAL" />
+      <updated>1628014789849</updated>
+    </task>
+    <option name="localTasksCounter" value="481" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -937,13 +933,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.pyenv/versions/3.7.2/lib/python3.7/site-packages/torch/nn/modules/loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1651">
-          <caret line="1132" lean-forward="true" selection-start-line="1132" selection-end-line="1132" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/run.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1040,14 +1029,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.pyenv/versions/3.7.2/lib/python3.7/site-packages/torch/nn/modules/loss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="581">
+          <caret line="1043" column="33" lean-forward="true" selection-start-line="1043" selection-start-column="33" selection-end-line="1043" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="714" column="13" selection-start-line="714" selection-start-column="13" selection-end-line="714" selection-end-column="13" />
+        <state relative-caret-position="144">
+          <caret line="351" column="31" selection-start-line="351" selection-start-column="31" selection-end-line="351" selection-end-column="31" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1628014599000" expanded="true" signature="16350:16363" ph="..." />
-            <marker date="1628014599000" expanded="true" signature="22488:22576" ph="..." />
+            <marker date="1628015570000" expanded="true" signature="16349:16362" ph="..." />
+            <marker date="1628015570000" expanded="true" signature="22487:22575" ph="..." />
           </folding>
         </state>
       </provider>
