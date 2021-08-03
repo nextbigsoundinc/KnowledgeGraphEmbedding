@@ -649,8 +649,8 @@ class KGEModel(nn.Module):
         """
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
-        label_shape = torch.Size((true_labels.size(0), classes))
-        indices = torch.zeros(true_labels.size(0), 1).long()
+        label_shape = torch.Size(true_labels.size(0))
+        indices = torch.zeros(1).long()
         # print("indices=", indices)
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
