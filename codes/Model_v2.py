@@ -99,18 +99,18 @@ class ComplExDeep(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            # re_score = re_score - re_head  # 1024 * 256 * hid_dim
-            # im_score = im_score - im_head
-            re_score = re_score * re_head  # 1024 * 256 * hid_dim
-            im_score = im_score * im_head
+            re_score = re_score - re_head  # 1024 * 256 * hid_dim
+            im_score = im_score - im_head
+            # re_score = re_score * re_head  # 1024 * 256 * hid_dim
+            # im_score = im_score * im_head
             #score = re_head * re_score + im_head * im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            # re_score = re_score - re_tail
-            # im_score = im_score - im_tail
-            re_score = re_score * re_tail
-            im_score = im_score * im_tail
+            re_score = re_score - re_tail
+            im_score = im_score - im_tail
+            # re_score = re_score * re_tail
+            # im_score = im_score * im_tail
             #score = re_score * re_tail + im_score * im_tail
 
         # print('re_score.shape=', re_score.shape)
@@ -131,10 +131,6 @@ class ComplExDeep(nn.Module):
 class ConvELayer(nn.Module):
 
     def __init__(self,
-                 entity_embedding,
-                 img_entity_embedding,
-                 relation_embedding,
-                 img_relation_embedding,
                  embedding_dim,
                  nentity,
                  embedd_dim_fold=20,
@@ -145,21 +141,12 @@ class ConvELayer(nn.Module):
 
         super(ConvELayer, self).__init__()
         self.input_neurons = int(embedding_dim)
-        self.entity_embedding = entity_embedding
-        self.img_entity_embedding = img_entity_embedding
-        self.relation_embedding = relation_embedding
-        self.img_relation_embedding = img_relation_embedding
         self.nentity = nentity
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
         self.embedding_dim = embedding_dim
-        self.entity_embedding = entity_embedding
-        self.img_entity_embedding = img_entity_embedding
-        self.relation_embedding = relation_embedding
-        self.img_relation_embedding = img_relation_embedding
-
         self.emb_dim1 = embedding_dim // embedd_dim_fold  # this is from the original configuration in ConvE
         self.emb_dim2 = embedd_dim_fold
 
@@ -174,12 +161,6 @@ class ConvELayer(nn.Module):
         # self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
         # self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
         self.fc_score = torch.nn.Linear(256, 32)
-
-    def init(self):
-        xavier_normal_(self.entity_embedding.weight.data)
-        xavier_normal_(self.relation_embedding.weight.data)
-        xavier_normal_(self.img_entity_embedding.weight.data)
-        xavier_normal_(self.img_relation_embedding.weight.data)
 
     def forward(self, head, relation, tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -246,10 +227,10 @@ class ConvELayer(nn.Module):
         x = x.view(x.shape[0], 1, -1)
         #print("x expand x.shape=", x.shape)
         #print("re_entity.shape=", re_entity.shape)
-        re_score = re_entity * x
+        re_score = re_entity - x
         #print("re_score = re_entity * x=", re_score.shape)
         #print("im_entity.shape=", im_entity.shape)
-        im_score = im_entity * x
+        im_score = im_entity - x
         x = torch.stack([re_score, im_score], dim=0)
         x = x.norm(dim=0)
         #print("im_score = im_entity * x=", im_score.shape)
