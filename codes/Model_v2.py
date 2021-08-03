@@ -434,10 +434,10 @@ class KGEModel(nn.Module):
         )
 
         if model_name == 'RotatEDeep':
-            self.cocoe_layer = RotatEDeep(self.entity_dim)
+            self.rotate_deep_layer = RotatEDeep(self.entity_dim)
 
         elif model_name == 'ComplExDeep':
-            self.conve_layer = ComplExDeep(self.entity_dim)
+            self.complex_deep_layer = ComplExDeep(self.entity_dim)
 
         if model_name == 'pRotatE':
             self.modulus = nn.Parameter(torch.Tensor([[0.5 * self.embedding_range.item()]]))
@@ -552,11 +552,12 @@ class KGEModel(nn.Module):
         return score
 
     def RotatEDeep(self, head, relation, tail, mode):
-
         embedding_range = self.embedding_range.item()
+        score = self.rotate_deep_layer(head, relation, tail, mode, embedding_range)
+        return score
 
-
-
+    def ComplExDeep(self, head, relation, tail, mode):
+        score = self.complex_deep_layer(head, relation, tail, mode)
         return score
 
     def ConvE(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
