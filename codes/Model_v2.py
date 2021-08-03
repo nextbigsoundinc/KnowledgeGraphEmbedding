@@ -730,7 +730,8 @@ class KGEModel(nn.Module):
             confidence = 1.0 - smoothing
             target = torch.zeros(pred.size(0), dtype=torch.float64)
             target[0] = confidence
-            target[1:] = [smoothing] * (len(target) - 1)
+            for i in range(1, len(target)):
+                target[i] = smoothing
 
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
