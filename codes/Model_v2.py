@@ -715,7 +715,7 @@ class KGEModel(nn.Module):
         else:
             batch_size = positive_sample.size(0)
             pred = torch.cat([positive_score, negative_score], dim=0)
-            #print("pred=.shape", pred.shape)
+            print("pred.shape=", pred.shape)
             smoothing = 0.001
             confidence = 1.0 - smoothing
             target = torch.zeros(batch_size, pred.size(0), dtype=torch.float64)
