@@ -253,7 +253,7 @@ def main(args):
     all_true_triples = train_triples + valid_triples + test_triples
 
 
-    if args.model in {'RotatE', 'pRotatE', 'TransE', 'ComplEx', 'DistMult', 'ConvE', 'CoCoE'}:
+    if args.model in {'RotatEDeep', 'ComplExDeep', 'RotatE', 'pRotatE', 'TransE', 'ComplEx', 'DistMult', 'ConvE', 'CoCoE'}:
         kge_model = KGEModel(
         model_name=args.model,
         nentity=nentity,
