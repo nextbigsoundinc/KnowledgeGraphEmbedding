@@ -769,7 +769,7 @@ class KGEModel(nn.Module):
             # positive_score = F.logsigmoid(positive_score)
             positive_sample_loss = -positive_score.squeeze(dim=1)
 
-            loss = (positive_sample_loss + negative_sample_loss)/2
+            loss = positive_sample_loss + negative_sample_loss
 
             # batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
