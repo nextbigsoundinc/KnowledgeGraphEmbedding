@@ -48,7 +48,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="json" value="12" />
-          <entry key="py" value="18152" />
+          <entry key="py" value="18157" />
           <entry key="sh" value="74" />
           <entry key="txt" value="128" />
         </counts>
@@ -58,7 +58,7 @@
           <entry key="Bash" value="74" />
           <entry key="JSON" value="12" />
           <entry key="PLAIN_TEXT" value="128" />
-          <entry key="Python" value="18152" />
+          <entry key="Python" value="18157" />
         </counts>
       </usages-collector>
     </session>
@@ -80,13 +80,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="810" column="19" selection-start-line="810" selection-start-column="19" selection-end-line="810" selection-end-column="19" />
+            <state relative-caret-position="296">
+              <caret line="771" column="66" lean-forward="true" selection-start-line="771" selection-start-column="66" selection-end-line="771" selection-end-column="66" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1628112879000" expanded="true" signature="17821:17834" ph="..." />
-                <marker date="1628112879000" expanded="true" signature="22845:23122" ph="..." />
-                <marker date="1628112879000" expanded="true" signature="24493:24581" ph="..." />
+                <marker date="1628113865000" expanded="true" signature="17821:17834" ph="..." />
+                <marker date="1628113865000" expanded="true" signature="22845:23122" ph="..." />
+                <marker date="1628113865000" expanded="true" signature="24493:24581" ph="..." />
               </folding>
             </state>
           </provider>
@@ -433,20 +433,6 @@
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
     </task>
-    <task id="LOCAL-00494" summary="&#10;test">
-      <created>1628038834164</created>
-      <option name="number" value="00494" />
-      <option name="presentableId" value="LOCAL-00494" />
-      <option name="project" value="LOCAL" />
-      <updated>1628038834164</updated>
-    </task>
-    <task id="LOCAL-00495" summary="&#10;test">
-      <created>1628039392918</created>
-      <option name="number" value="00495" />
-      <option name="presentableId" value="LOCAL-00495" />
-      <option name="project" value="LOCAL" />
-      <updated>1628039392918</updated>
-    </task>
     <task id="LOCAL-00496" summary="&#10;test">
       <created>1628039471544</created>
       <option name="number" value="00496" />
@@ -776,7 +762,21 @@
       <option name="project" value="LOCAL" />
       <updated>1628112785496</updated>
     </task>
-    <option name="localTasksCounter" value="543" />
+    <task id="LOCAL-00543" summary="&#10;test">
+      <created>1628112885257</created>
+      <option name="number" value="00543" />
+      <option name="presentableId" value="LOCAL-00543" />
+      <option name="project" value="LOCAL" />
+      <updated>1628112885257</updated>
+    </task>
+    <task id="LOCAL-00544" summary="&#10;test">
+      <created>1628113069677</created>
+      <option name="number" value="00544" />
+      <option name="presentableId" value="LOCAL-00544" />
+      <option name="project" value="LOCAL" />
+      <updated>1628113069677</updated>
+    </task>
+    <option name="localTasksCounter" value="545" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1044,13 +1044,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="810" column="19" selection-start-line="810" selection-start-column="19" selection-end-line="810" selection-end-column="19" />
+        <state relative-caret-position="296">
+          <caret line="771" column="66" lean-forward="true" selection-start-line="771" selection-start-column="66" selection-end-line="771" selection-end-column="66" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1628112879000" expanded="true" signature="17821:17834" ph="..." />
-            <marker date="1628112879000" expanded="true" signature="22845:23122" ph="..." />
-            <marker date="1628112879000" expanded="true" signature="24493:24581" ph="..." />
+            <marker date="1628113865000" expanded="true" signature="17821:17834" ph="..." />
+            <marker date="1628113865000" expanded="true" signature="22845:23122" ph="..." />
+            <marker date="1628113865000" expanded="true" signature="24493:24581" ph="..." />
           </folding>
         </state>
       </provider>
