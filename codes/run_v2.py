@@ -123,16 +123,16 @@ def save_model(model, optimizer, save_variable_list, args):
         os.path.join(args.save_path, 'checkpoint')
     )
 
-    if args.model == 'ConvE':
-        entity_embedding = model.conve_layer.entity_embedding.weight.detach().cpu().numpy()
-        relation_embedding = model.conve_layer.relation_embedding.weight.detach().cpu().numpy()
-        np.save(os.path.join(args.save_path, 'entity_embedding'), entity_embedding)
-        np.save(os.path.join(args.save_path, 'relation_embedding'), relation_embedding)
-    else:
-        entity_embedding = model.entity_embedding.detach().cpu().numpy()
-        relation_embedding = model.relation_embedding.detach().cpu().numpy()
-        np.save(os.path.join(args.save_path, 'entity_embedding'), entity_embedding)
-        np.save(os.path.join(args.save_path, 'relation_embedding'), relation_embedding)
+    # if args.model == 'ConvE':
+    #     entity_embedding = model.conve_layer.entity_embedding.weight.detach().cpu().numpy()
+    #     relation_embedding = model.conve_layer.relation_embedding.weight.detach().cpu().numpy()
+    #     np.save(os.path.join(args.save_path, 'entity_embedding'), entity_embedding)
+    #     np.save(os.path.join(args.save_path, 'relation_embedding'), relation_embedding)
+    # else:
+    entity_embedding = model.entity_embedding.detach().cpu().numpy()
+    relation_embedding = model.relation_embedding.detach().cpu().numpy()
+    np.save(os.path.join(args.save_path, 'entity_embedding'), entity_embedding)
+    np.save(os.path.join(args.save_path, 'relation_embedding'), relation_embedding)
 
 def read_triple(file_path, entity2id, relation2id):
     '''
