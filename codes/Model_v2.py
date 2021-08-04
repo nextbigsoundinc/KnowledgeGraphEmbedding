@@ -706,7 +706,7 @@ class KGEModel(nn.Module):
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
             true_dist.fill_(smoothing / (classes - 1))
             true_dist.scatter_(1, indices, confidence)
-        return F.logsigmoid(true_dist)
+        return true_dist
 
 
     @staticmethod
@@ -773,8 +773,6 @@ class KGEModel(nn.Module):
 
         else:
             batch_size = positive_sample.size(0)
-            negative_score = F.logsigmoid(-negative_score)
-            positive_score = F.logsigmoid(positive_score)
             # print("positive_score.shape=", positive_score.shape)
             # print("negative_score.shape=", negative_score.shape)
             pred = torch.cat([positive_score, negative_score], dim=1)
