@@ -540,7 +540,9 @@ class KGEModel(nn.Module):
             'RotatE': self.RotatE,
             'pRotatE': self.pRotatE,
             'ConvE': self.ConvE,
-            'CoCoE': self.CoCoE
+            'CoCoE': self.CoCoE,
+            'RotatEDeep': self.RotatEDeep,
+            'ComplExDeep': self.ComplExDeep
         }
         
         if self.model_name in model_func:
