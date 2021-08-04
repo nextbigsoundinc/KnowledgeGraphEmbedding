@@ -773,6 +773,8 @@ class KGEModel(nn.Module):
 
             loss = positive_sample_loss + negative_sample_loss
 
+            print("loss?=", loss)
+
             # batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
             # # print("negative_score=", negative_score)
