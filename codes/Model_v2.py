@@ -732,7 +732,7 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
-        if model.model_name not in ['RotatEDeep', 'ComplExDeep']:
+        if model.model_name not in ['RotatEDeep', 'ComplExDeep', 'ConvE', 'CoCoE']:
 
             if args.negative_adversarial_sampling:
                 # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
