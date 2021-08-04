@@ -159,7 +159,7 @@ class RotatEDeep(nn.Module):
         score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score = score.norm(dim=0)
 
-        print('score.shape=', score.shape)
+        # print('score.shape=', score.shape)
 
         x = F.relu(self.hidden_drop(self.fc1(score)))
         x = self.fc2(x)
