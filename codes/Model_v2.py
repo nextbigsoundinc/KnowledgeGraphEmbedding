@@ -397,7 +397,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.BCEWithLogitsLoss()
+        self.loss = torch.nn.BCELoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -699,8 +699,8 @@ class KGEModel(nn.Module):
         """
         assert 0 <= smoothing < 1
         confidence = 1.0 - smoothing
-        label_shape = torch.Size((true_labels.size(0), 1))
-        indices = torch.zeros(1).long()
+        label_shape = torch.Size((true_labels.size(0), classes))
+        indices = torch.zeros(true_labels.size(0), dtype=torch.int64).unsqueeze(1)
         # print("indices=", indices)
         with torch.no_grad():
             true_dist = torch.empty(size=label_shape, device=true_labels.device)
@@ -781,6 +781,8 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                 target[batch][0] = 1.0
 
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.001)
+
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
 
@@ -789,8 +791,8 @@ class KGEModel(nn.Module):
             # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
-            loss = model.loss(pred, target)
+                smooth_target = target.cuda()
+            loss = model.loss(pred, smooth_target)
             #print("loss=", loss)
             loss.backward()
             log = {
