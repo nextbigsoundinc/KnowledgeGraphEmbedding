@@ -389,7 +389,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.BCELoss()
+        self.loss = SmoothCrossEntropyLoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -767,28 +767,30 @@ class KGEModel(nn.Module):
             }
 
         else:
+            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
+            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
             batch_size = positive_sample.size(0)
             # print("positive_score.shape=", positive_score.shape)
             # print("negative_score.shape=", negative_score.shape)
             pred = torch.cat([positive_score, negative_score], dim=1)
             # print("pred.shape=", pred.shape)
-            target = torch.zeros(batch_size, pred.size(1), dtype=torch.float32)
-            for batch in range(batch_size):
-                target[batch][0] = 1.0
-
-            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
+            target = torch.zeros(1, dtype=torch.int64)
+            # for batch in range(batch_size):
+            #     target[batch][0] = 1.0
             #
+            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
+            # #
             # print('pred=', pred.shape)
             # print('smooth_target=', smooth_target.shape)
             # for batch in range(batch_size):
 
             # target = F.logsigmoid(target)
-            # print("pred=", pred)
-            # print('targets=', target)
+            print("pred=", pred)
+            print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                smooth_target = smooth_target.cuda()
-            loss = model.loss(pred, smooth_target)
+                target = target.cuda()
+            loss = model.loss(pred, target)
             # print("loss=", loss)
             loss.backward()
             log = {
