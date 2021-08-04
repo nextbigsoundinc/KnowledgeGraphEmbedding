@@ -765,14 +765,14 @@ class KGEModel(nn.Module):
             }
 
         else:
-            negative_sample_loss = torch.log(torch.exp(negative_score).sum(dim=1))
+            negative_sample_loss = torch.log(torch.exp(negative_score).sum(dim=1)).mean()
             # positive_score = F.logsigmoid(positive_score)
-            positive_sample_loss = -positive_score.squeeze(dim=1)
-            print("negative_sample_loss=", negative_sample_loss)
-            print("positive_sample_loss=", positive_sample_loss)
+            positive_sample_loss = -positive_score.squeeze(dim=1).mean()
+            # print("negative_sample_loss=", negative_sample_loss)
+            # print("positive_sample_loss=", positive_sample_loss)
 
             loss = positive_sample_loss + negative_sample_loss
-            loss = loss.mean()
+
 
             print("loss?=", loss)
 
