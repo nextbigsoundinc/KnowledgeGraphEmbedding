@@ -181,14 +181,14 @@ class ConvELayer(nn.Module):
                  hidden_size=58368):
 
         super(ConvELayer, self).__init__()
-        self.input_neurons = int(embedding_dim)
+        self.input_neurons = int(embedding_dim) // 2
         self.nentity = nentity
         self.inp_drop = torch.nn.Dropout(input_drop)
         self.hidden_drop = torch.nn.Dropout(hidden_drop)
         self.feature_map_drop = torch.nn.Dropout2d(feat_drop)
         self.loss = torch.nn.BCEWithLogitsLoss()  # modify: cosine embedding loss / triplet loss
         self.embedding_dim = embedding_dim
-        self.emb_dim1 = embedding_dim // embedd_dim_fold  # this is from the original configuration in ConvE
+        self.emb_dim1 = (self.input_neurons // embedd_dim_fold)  # this is from the original configuration in ConvE
         self.emb_dim2 = embedd_dim_fold
 
         self.conv1 = torch.nn.Conv2d(1, 32, (3, 3), 1, 0, bias=True)
@@ -201,7 +201,7 @@ class ConvELayer(nn.Module):
         # self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
         # self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
         # self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_score = torch.nn.Linear(256, 32)
+        self.fc_score = torch.nn.Linear(self.input_neurons, 32)
 
     def forward(self, head, relation, tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -218,8 +218,8 @@ class ConvELayer(nn.Module):
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
-            re_score = re_score.view(re_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
-            im_score = im_score.view(im_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
+            re_score = re_score.view(re_score.shape[0], 1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(im_score.shape[0], 1, self.emb_dim2, self.emb_dim1)
             # score = re_head * re_score + im_head * im_score
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
@@ -232,8 +232,8 @@ class ConvELayer(nn.Module):
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
-            re_score = re_score.view(re_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
-            im_score = im_score.view(im_score.shape[0], -1, self.emb_dim2, self.emb_dim1)
+            re_score = re_score.view(re_score.shape[0], 1, self.emb_dim2, self.emb_dim1)
+            im_score = im_score.view(im_score.shape[0], 1, self.emb_dim2, self.emb_dim1)
             #score = re_score * re_tail + im_score * im_tail
             # print("re_score_shape=", re_score.shape)
             # print("im_score_shape=", im_score.shape)
