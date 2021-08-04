@@ -783,7 +783,8 @@ class KGEModel(nn.Module):
 
             smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
 
-            # print('target.shape=', target.shape)
+            print('pred=', pred.shape)
+            print('smooth_target=', smooth_target.shape)
             # for batch in range(batch_size):
 
             # target = F.logsigmoid(target)
