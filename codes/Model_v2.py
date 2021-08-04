@@ -765,27 +765,28 @@ class KGEModel(nn.Module):
             }
 
         else:
-            # negative_sample_loss = torch.log(torch.exp(negative_score).sum(dim=1)).mean()
+            negative_sample_loss = torch.log((torch.exp(negative_score).sum(dim=1)))
             # # positive_score = F.logsigmoid(positive_score)
-            # positive_sample_loss = -positive_score.squeeze(dim=1).mean()
-            # # print("negative_sample_loss=", negative_sample_loss)
-            # # print("positive_sample_loss=", positive_sample_loss)
+            positive_sample_loss = -positive_score.squeeze(dim=1)
+            print("negative_sample_loss=", negative_sample_loss)
+            print("positive_sample_loss=", positive_sample_loss)
             #
-            # loss = positive_sample_loss + negative_sample_loss
+            loss = positive_sample_loss + negative_sample_loss
+            loss = loss.mean()
 
 
             # print("loss?=", loss)
 
-            batch_size = positive_sample.size(0)
+            #batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
             # # print("negative_score=", negative_score)
-            pred = torch.cat([positive_score, negative_score], dim=1)
+            #pred = torch.cat([positive_score, negative_score], dim=1)
             # #print("pred=", pred)
-            target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
-            for batch in range(batch_size):
-                 target[batch][0] = 1.0
+            #target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
+            #for batch in range(batch_size):
+            #     target[batch][0] = 1.0
             # #
-            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
+            #smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
             # # #
             # # print('pred=', pred.shape)
             # # print('smooth_target=', smooth_target.shape)
@@ -794,23 +795,23 @@ class KGEModel(nn.Module):
             # # target = F.logsigmoid(target)
             # # print("pred=", pred)
             # # print('targets=', target)
-            if args.cuda:
-                pred = pred.cuda()
-                smooth_target = smooth_target.cuda()
-            loss = model.loss(pred, smooth_target)
+            # if args.cuda:
+            #     pred = pred.cuda()
+            #     smooth_target = smooth_target.cuda()
+            #loss = model.loss(pred, smooth_target)
 
-            regularization = args.regularization * (
-                    model.entity_embedding.norm(p=3) ** 3 +
-                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
-            )
-            loss = loss + regularization
-            regularization_log = {'regularization': regularization.item()}
-            # print("loss=", loss)
+            # regularization = args.regularization * (
+            #         model.entity_embedding.norm(p=3) ** 3 +
+            #         model.relation_embedding.norm(p=3).norm(p=3) ** 3
+            # )
+            # loss = loss + regularization
+            # regularization_log = {'regularization': regularization.item()}
+            # # print("loss=", loss)
             loss.backward()
             log = {
                 **regularization_log,
-                'positive_sample_loss': 0,
-                'negative_sample_loss': 0,
+                'positive_sample_loss': positive_sample_loss.mean(),
+                'negative_sample_loss': negative_sample_loss.mean(),
                 'loss': loss.item()
             }
 
