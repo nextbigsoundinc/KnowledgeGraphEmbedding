@@ -780,7 +780,6 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                 target[batch][0] = 1.0
 
-            logic_pred = F.logsigmoid(pred)
             smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
 
             # print('target.shape=', target.shape)
@@ -790,9 +789,9 @@ class KGEModel(nn.Module):
             # print("pred=", pred)
             # print('targets=', target)
             if args.cuda:
-                logic_pred = logic_pred.cuda()
+                pred = pred.cuda()
                 smooth_target = target.cuda()
-            loss = model.loss(logic_pred, smooth_target)
+            loss = model.loss(pred, smooth_target)
             #print("loss=", loss)
             loss.backward()
             log = {
