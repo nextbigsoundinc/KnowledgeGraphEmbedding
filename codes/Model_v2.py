@@ -131,7 +131,7 @@ class RotatEDeep(nn.Module):
         self.fc2 = torch.nn.Linear(256, 128)
         self.fc3 = torch.nn.Linear(128, 64)
 
-    def forward(self, head, relation,  tail, mode, embedding_range):
+    def forward(self, head, relation, tail, mode, embedding_range):
 
         pi = 3.14159265358979323846
 
@@ -553,12 +553,12 @@ class KGEModel(nn.Module):
         
         return score
 
-    def RotatEDeep(self, head, relation, tail, mode):
+    def RotatEDeep(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
         embedding_range = self.embedding_range.item()
         score = self.rotate_deep_layer(head, relation, tail, mode, embedding_range)
         return score
 
-    def ComplExDeep(self, head, relation, tail, mode):
+    def ComplExDeep(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
         score = self.complex_deep_layer(head, relation, tail, mode)
         return score
 
