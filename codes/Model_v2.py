@@ -727,17 +727,18 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
+        if args.negative_adversarial_sampling:
+            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+            negative_score = (
+                    F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                    * F.logsigmoid(-negative_score)).sum(dim=1)
+        else:
+            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
+
+        positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+
+
         if model.model_name not in ['RotatEDeep', 'ComplExDeep']:
-
-            if args.negative_adversarial_sampling:
-                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-                negative_score = (
-                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                        * F.logsigmoid(-negative_score)).sum(dim=1)
-            else:
-                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
 
             if args.uni_weight:
                 positive_sample_loss = - positive_score.mean()
