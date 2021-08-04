@@ -798,9 +798,17 @@ class KGEModel(nn.Module):
                 pred = pred.cuda()
                 target = target.cuda()
             loss = model.loss(pred, target)
+
+            regularization = args.regularization * (
+                    model.entity_embedding.norm(p=3) ** 3 +
+                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
+            )
+            loss = loss + regularization
+            regularization_log = {'regularization': regularization.item()}
             # print("loss=", loss)
             loss.backward()
             log = {
+                **regularization_log,
                 'positive_sample_loss': 0,
                 'negative_sample_loss': 0,
                 'loss': loss.item()
