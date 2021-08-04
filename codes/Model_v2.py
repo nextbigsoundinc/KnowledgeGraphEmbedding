@@ -395,7 +395,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.CrossEntropyLoss()
+        self.loss = torch.nn.BCEWithLogitsLoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -775,9 +775,9 @@ class KGEModel(nn.Module):
             # print("pred.shape=", pred.shape)
             smoothing = 0.001
             confidence = 1.0 - smoothing
-            target = torch.zeros(batch_size, dtype=torch.int64)
-            # for batch in range(batch_size):
-            #     target[batch][0] = 1.0
+            target = torch.zeros(batch_size, pred.size(1), dtype=torch.int64)
+            for batch in range(batch_size):
+                target[batch][0] = 1.0
 
             # print('target.shape=', target.shape)
             # for batch in range(batch_size):
