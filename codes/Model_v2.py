@@ -773,7 +773,7 @@ class KGEModel(nn.Module):
             print("positive_score=", positive_score)
             print("negative_score=", negative_score)
             pred = torch.cat([positive_score, negative_score], dim=1)
-            # print("pred.shape=", pred.shape)
+            print("pred=", pred)
             target = torch.zeros(1, dtype=torch.int64)
             # for batch in range(batch_size):
             #     target[batch][0] = 1.0
