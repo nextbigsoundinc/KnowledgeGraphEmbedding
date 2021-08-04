@@ -197,11 +197,12 @@ class ConvELayer(nn.Module):
         self.bn2 = torch.nn.BatchNorm1d(self.input_neurons)
         self.register_parameter('b', nn.Parameter(torch.zeros(self.input_neurons)))
         self.fc = torch.nn.Linear(hidden_size, self.input_neurons)
+        self.fc2 = torch.nn.Linear(self.input_neurons, 256)
         # self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
         # self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
         # self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
         # self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
-        self.fc_score = torch.nn.Linear(self.input_neurons, 32)
+        self.fc_score = torch.nn.Linear(256, 32)
 
     def forward(self, head, relation, tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -280,7 +281,7 @@ class ConvELayer(nn.Module):
         x = torch.stack([re_score, im_score], dim=0)
         x = x.norm(dim=0)
         print("im_score = im_entity * x=", im_score.shape)
-        score = F.relu(self.hidden_drop(self.fc(x)))
+        score = F.relu(self.hidden_drop(self.fc2(x)))
         # print("fc real reduction", re_score.shape)
         # im_score = F.relu(self.hidden_drop(self.fc_img_reduction(im_score)))
         # #print("fc img reduction", im_score.shape)
