@@ -785,7 +785,7 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                  target[batch][0] = 1.0
             # #
-            # # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
             # # #
             # # print('pred=', pred.shape)
             # # print('smooth_target=', smooth_target.shape)
@@ -796,8 +796,8 @@ class KGEModel(nn.Module):
             # # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
-            loss = model.loss(pred, target)
+                smooth_target = smooth_target.cuda()
+            loss = model.loss(pred, smooth_target)
 
             regularization = args.regularization * (
                     model.entity_embedding.norm(p=3) ** 3 +
