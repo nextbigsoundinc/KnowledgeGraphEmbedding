@@ -127,8 +127,9 @@ class RotatEDeep(nn.Module):
         self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
-        self.fc2 = torch.nn.Linear(256, 1)
+        self.fc1 = torch.nn.Linear(self.input_neurons, 512)
+        self.fc2 = torch.nn.Linear(512, 128)
+        self.fc3 = torch.nn.Linear(128, 1)
 
     def forward(self, head, relation, tail, mode):
 
@@ -161,7 +162,8 @@ class RotatEDeep(nn.Module):
         # print('score.shape=', score.shape)
 
         x = F.relu(self.hidden_drop(self.fc1(score)))
-        x = self.fc2(x)
+        x = F.relu(self.hidden_drop(self.fc2(x)))
+        x = self.fc3(x)
         score = x.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
