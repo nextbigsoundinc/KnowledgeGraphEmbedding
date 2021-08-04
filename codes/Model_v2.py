@@ -788,7 +788,7 @@ class KGEModel(nn.Module):
             if args.cuda:
                 pred = pred.cuda()
                 smooth_target = smooth_target.cuda()
-            loss = model.loss(pred, target)
+            loss = model.loss(pred, smooth_target)
             # print("loss=", loss)
             loss.backward()
             log = {
