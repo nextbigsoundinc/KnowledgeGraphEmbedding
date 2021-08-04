@@ -772,6 +772,7 @@ class KGEModel(nn.Module):
             print("positive_sample_loss=", positive_sample_loss)
 
             loss = positive_sample_loss + negative_sample_loss
+            loss = loss.mean()
 
             print("loss?=", loss)
 
