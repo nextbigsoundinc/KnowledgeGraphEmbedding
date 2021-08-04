@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -80,13 +79,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="776" column="57" lean-forward="true" selection-start-line="776" selection-start-column="57" selection-end-line="776" selection-end-column="57" />
+            <state relative-caret-position="208">
+              <caret line="708" column="24" selection-start-line="708" selection-start-column="24" selection-end-line="708" selection-end-column="24" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1628075040000" expanded="true" signature="18121:18134" ph="..." />
-                <marker date="1628075040000" expanded="true" signature="23026:23303" ph="..." />
-                <marker date="1628075040000" expanded="true" signature="24674:24762" ph="..." />
+                <marker date="1628075148000" expanded="true" signature="18121:18134" ph="..." />
+                <marker date="1628075148000" expanded="true" signature="23026:23303" ph="..." />
+                <marker date="1628075148000" expanded="true" signature="24674:24762" ph="..." />
               </folding>
             </state>
           </provider>
@@ -429,13 +428,6 @@
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
     </task>
-    <task id="LOCAL-00453" summary="revert">
-      <created>1627995823103</created>
-      <option name="number" value="00453" />
-      <option name="presentableId" value="LOCAL-00453" />
-      <option name="project" value="LOCAL" />
-      <updated>1627995823103</updated>
-    </task>
     <task id="LOCAL-00454" summary="revert">
       <created>1627995952113</created>
       <option name="number" value="00454" />
@@ -772,7 +764,14 @@
       <option name="project" value="LOCAL" />
       <updated>1628074940804</updated>
     </task>
-    <option name="localTasksCounter" value="502" />
+    <task id="LOCAL-00502" summary="&#10;test">
+      <created>1628075045909</created>
+      <option name="number" value="00502" />
+      <option name="presentableId" value="LOCAL-00502" />
+      <option name="project" value="LOCAL" />
+      <updated>1628075045909</updated>
+    </task>
+    <option name="localTasksCounter" value="503" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1040,13 +1039,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="776" column="57" lean-forward="true" selection-start-line="776" selection-start-column="57" selection-end-line="776" selection-end-column="57" />
+        <state relative-caret-position="208">
+          <caret line="708" column="24" selection-start-line="708" selection-start-column="24" selection-end-line="708" selection-end-column="24" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1628075040000" expanded="true" signature="18121:18134" ph="..." />
-            <marker date="1628075040000" expanded="true" signature="23026:23303" ph="..." />
-            <marker date="1628075040000" expanded="true" signature="24674:24762" ph="..." />
+            <marker date="1628075148000" expanded="true" signature="18121:18134" ph="..." />
+            <marker date="1628075148000" expanded="true" signature="23026:23303" ph="..." />
+            <marker date="1628075148000" expanded="true" signature="24674:24762" ph="..." />
           </folding>
         </state>
       </provider>
