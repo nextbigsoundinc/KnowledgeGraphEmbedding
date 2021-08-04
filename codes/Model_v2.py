@@ -801,8 +801,8 @@ class KGEModel(nn.Module):
             # print("loss=", loss)
             loss.backward()
             log = {
-                'positive_sample_loss': positive_sample_loss,
-                'negative_sample_loss': negative_sample_loss,
+                'positive_sample_loss': 0,
+                'negative_sample_loss': 0,
                 'loss': loss.item()
             }
 
