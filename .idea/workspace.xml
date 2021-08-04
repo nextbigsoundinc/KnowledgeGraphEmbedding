@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/codes/Model_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/Model_v2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -79,13 +80,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="734" column="80" selection-start-line="734" selection-start-column="80" selection-end-line="734" selection-end-column="80" />
+            <state relative-caret-position="689">
+              <caret line="925" lean-forward="true" selection-start-line="925" selection-end-line="925" />
               <folding>
                 <element signature="e#20#58#0" expanded="true" />
-                <marker date="1628080604000" expanded="true" signature="18225:18238" ph="..." />
-                <marker date="1628080604000" expanded="true" signature="23249:23526" ph="..." />
-                <marker date="1628080604000" expanded="true" signature="24897:24985" ph="..." />
+                <marker date="1628081932000" expanded="true" signature="17811:17824" ph="..." />
+                <marker date="1628081932000" expanded="true" signature="22835:23112" ph="..." />
+                <marker date="1628081932000" expanded="true" signature="24483:24571" ph="..." />
               </folding>
             </state>
           </provider>
@@ -230,11 +231,11 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="1701" />
-    <option name="y" value="-31" />
-    <option name="width" value="1440" />
-    <option name="height" value="796" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="x" value="1440" />
+    <option name="y" value="-92" />
+    <option name="width" value="1200" />
+    <option name="height" value="803" />
   </component>
   <component name="ProjectId" id="1ujRbpHA1WCfWKkgSAaMtB4lpOK" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -427,27 +428,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00470" summary="revert">
-      <created>1628007047733</created>
-      <option name="number" value="00470" />
-      <option name="presentableId" value="LOCAL-00470" />
-      <option name="project" value="LOCAL" />
-      <updated>1628007047733</updated>
-    </task>
-    <task id="LOCAL-00471" summary="revert">
-      <created>1628007072803</created>
-      <option name="number" value="00471" />
-      <option name="presentableId" value="LOCAL-00471" />
-      <option name="project" value="LOCAL" />
-      <updated>1628007072803</updated>
-    </task>
-    <task id="LOCAL-00472" summary="revert">
-      <created>1628010467345</created>
-      <option name="number" value="00472" />
-      <option name="presentableId" value="LOCAL-00472" />
-      <option name="project" value="LOCAL" />
-      <updated>1628010467345</updated>
     </task>
     <task id="LOCAL-00473" summary="revert">
       <created>1628010522892</created>
@@ -771,22 +751,43 @@
       <option name="project" value="LOCAL" />
       <updated>1628080405180</updated>
     </task>
-    <option name="localTasksCounter" value="519" />
+    <task id="LOCAL-00519" summary="&#10;test">
+      <created>1628080615664</created>
+      <option name="number" value="00519" />
+      <option name="presentableId" value="LOCAL-00519" />
+      <option name="project" value="LOCAL" />
+      <updated>1628080615664</updated>
+    </task>
+    <task id="LOCAL-00520" summary="&#10;test">
+      <created>1628080711465</created>
+      <option name="number" value="00520" />
+      <option name="presentableId" value="LOCAL-00520" />
+      <option name="project" value="LOCAL" />
+      <updated>1628080711465</updated>
+    </task>
+    <task id="LOCAL-00521" summary="&#10;test">
+      <created>1628081239796</created>
+      <option name="number" value="00521" />
+      <option name="presentableId" value="LOCAL-00521" />
+      <option name="project" value="LOCAL" />
+      <updated>1628081239796</updated>
+    </task>
+    <option name="localTasksCounter" value="522" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1701" y="-31" width="1440" height="796" extended-state="0" />
+    <frame x="1440" y="-180" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project Explorer" />
       <window_info id="DB Browser" />
       <window_info id="Job Explorer" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1864139" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Console" />
       <window_info anchor="bottom" id="DB Execution Console" />
-      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.029829545" />
+      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.02079208" />
       <window_info anchor="bottom" id="Python Console" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -1039,13 +1040,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/Model_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="734" column="80" selection-start-line="734" selection-start-column="80" selection-end-line="734" selection-end-column="80" />
+        <state relative-caret-position="689">
+          <caret line="925" lean-forward="true" selection-start-line="925" selection-end-line="925" />
           <folding>
             <element signature="e#20#58#0" expanded="true" />
-            <marker date="1628080604000" expanded="true" signature="18225:18238" ph="..." />
-            <marker date="1628080604000" expanded="true" signature="23249:23526" ph="..." />
-            <marker date="1628080604000" expanded="true" signature="24897:24985" ph="..." />
+            <marker date="1628081932000" expanded="true" signature="17811:17824" ph="..." />
+            <marker date="1628081932000" expanded="true" signature="22835:23112" ph="..." />
+            <marker date="1628081932000" expanded="true" signature="24483:24571" ph="..." />
           </folding>
         </state>
       </provider>

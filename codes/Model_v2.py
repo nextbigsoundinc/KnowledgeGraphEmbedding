@@ -137,13 +137,6 @@ class RotatEDeep(nn.Module):
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)  # both 1024 * 1 * hid_dim
         re_relation, im_relation = torch.chunk(relation, 2, dim=2)
 
-        # print('re_head.shape=', re_head.shape)
-        # print('im_head.shape=', im_head.shape)
-        # print('re_relation.shape=', re_relation.shape)
-        # print('im_relation.shape=', im_relation.shape)
-        # print('re_tail.shape=', re_tail.shape)
-        # print('im_tail.shape=', im_tail.shape)
-
         if mode == 'head-batch':
             re_score = re_relation * re_tail + im_relation * im_tail
             im_score = re_relation * im_tail - im_relation * re_tail
@@ -159,13 +152,10 @@ class RotatEDeep(nn.Module):
         score = torch.stack([re_score, im_score], dim=0)  # # 2 * 1024 * 256 * hid_dim
         score = score.norm(dim=0)
 
-        # print('score.shape=', score.shape)
-
         x = F.relu(self.hidden_drop(self.fc1(score)))
         x = F.relu(self.hidden_drop(self.fc2(x)))
         x = self.fc3(x)
         score = x.sum(dim=2)
-        # print('score1.shape=', score1.shape)
         return score
 
 
@@ -399,7 +389,7 @@ class KGEModel(nn.Module):
         self.nrelation = nrelation
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
-        self.loss = torch.nn.BCEWithLogitsLoss()
+        self.loss = torch.nn.BCELoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -786,18 +776,18 @@ class KGEModel(nn.Module):
             for batch in range(batch_size):
                 target[batch][0] = 1.0
 
-            # smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
+            smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
             #
             # print('pred=', pred.shape)
             # print('smooth_target=', smooth_target.shape)
             # for batch in range(batch_size):
 
             # target = F.logsigmoid(target)
-            print("pred=", pred)
-            print('targets=', target)
+            # print("pred=", pred)
+            # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
-                target = target.cuda()
+                smooth_target = smooth_target.cuda()
             loss = model.loss(pred, target)
             # print("loss=", loss)
             loss.backward()
