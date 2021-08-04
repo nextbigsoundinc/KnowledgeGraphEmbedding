@@ -127,23 +127,15 @@ class RotatEDeep(nn.Module):
         self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc1 = torch.nn.Linear(self.input_neurons, 256)
-        self.fc2 = torch.nn.Linear(256, 128)
-        self.fc3 = torch.nn.Linear(128, 64)
+        self.fc1 = torch.nn.Linear(self.input_neurons, 512)
+        self.fc2 = torch.nn.Linear(512, 256)
+        self.fc3 = torch.nn.Linear(256, 64)
 
     def forward(self, head, relation, tail, mode, embedding_range):
 
-        pi = 3.14159265358979323846
-
         re_head, im_head = torch.chunk(head, 2, dim=2)  # both 1024 * 256 * hid_dim
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)  # both 1024 * 1 * hid_dim
-
-        # Make phases of relations uniformly distributed in [-pi, pi]
-
-        phase_relation = relation / embedding_range / pi
-
-        re_relation = torch.cos(phase_relation)  # 1024 * 1 * hid_dim
-        im_relation = torch.sin(phase_relation)  # 1024 * 1 * hid_dim
+        re_relation, im_relation = torch.chunk(relation, 2, dim=2)
 
         # print('re_head.shape=', re_head.shape)
         # print('im_head.shape=', im_head.shape)
@@ -554,8 +546,7 @@ class KGEModel(nn.Module):
         return score
 
     def RotatEDeep(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
-        embedding_range = self.embedding_range.item()
-        score = self.rotate_deep_layer(head, relation, tail, mode, embedding_range)
+        score = self.rotate_deep_layer(head, relation, tail, mode)
         return score
 
     def ComplExDeep(self, head, relation, tail, mode, batch_size=0, negative_sample_size=0):
