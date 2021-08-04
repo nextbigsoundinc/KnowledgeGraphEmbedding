@@ -770,9 +770,9 @@ class KGEModel(nn.Module):
             negative_score = F.logsigmoid(-negative_score).mean(dim=1)
             positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
             batch_size = positive_sample.size(0)
-            # print("positive_score.shape=", positive_score.shape)
-            # print("negative_score.shape=", negative_score.shape)
-            pred = torch.cat([positive_score, negative_score], dim=1)
+            print("positive_score.shape=", positive_score.shape)
+            print("negative_score.shape=", negative_score.shape)
+            pred = torch.cat([positive_score, negative_score], dim=0)
             # print("pred.shape=", pred.shape)
             target = torch.zeros(1, dtype=torch.int64)
             # for batch in range(batch_size):
