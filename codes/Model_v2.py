@@ -131,7 +131,7 @@ class RotatEDeep(nn.Module):
         self.fc2 = torch.nn.Linear(512, 256)
         self.fc3 = torch.nn.Linear(256, 64)
 
-    def forward(self, head, relation, tail, mode, embedding_range):
+    def forward(self, head, relation, tail, mode):
 
         re_head, im_head = torch.chunk(head, 2, dim=2)  # both 1024 * 256 * hid_dim
         re_tail, im_tail = torch.chunk(tail, 2, dim=2)  # both 1024 * 1 * hid_dim
