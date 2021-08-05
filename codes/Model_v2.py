@@ -722,60 +722,39 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
-        if model.model_name not in ['RotatEDeep','ComplExDeep', 'ConvE', 'CoCoE']:
-
-            if args.negative_adversarial_sampling:
-                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-                negative_score = (
-                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                        * F.logsigmoid(-negative_score)).sum(dim=1)
-            else:
-                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
-
-            if args.uni_weight:
-                positive_sample_loss = - positive_score.mean()
-                negative_sample_loss = - negative_score.mean()
-            else:
-                positive_sample_loss = - (
-                            subsampling_weight * positive_score).sum() / subsampling_weight.sum()
-                negative_sample_loss = - (
-                            subsampling_weight * negative_score).sum() / subsampling_weight.sum()
-
-            loss = (positive_sample_loss + negative_sample_loss) / 2
-
-            if args.regularization != 0.0:
-                # Use L3 regularization for ComplEx and DistMult
-                regularization = args.regularization * (
-                        model.entity_embedding.norm(p=3) ** 3 +
-                        model.relation_embedding.norm(p=3).norm(p=3) ** 3
-                )
-                loss = loss + regularization
-                regularization_log = {'regularization': regularization.item()}
-            else:
-                regularization_log = {}
-
-            loss.backward()
-            log = {
-                **regularization_log,
-                'positive_sample_loss': positive_sample_loss.item(),
-                'negative_sample_loss': negative_sample_loss.item(),
-                'loss': loss.item()
-            }
-
+        if args.negative_adversarial_sampling:
+            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+            negative_score1 = (
+                    F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                    * F.logsigmoid(-negative_score)).sum(dim=1)
         else:
-            # negative_sample_loss = torch.log((torch.exp(negative_score).sum(dim=-1)))
-            # # # positive_score = F.logsigmoid(positive_score)
-            # positive_sample_loss = -positive_score.squeeze(dim=-1)
-            # # print("negative_sample_loss=", negative_sample_loss)
-            # # print("positive_sample_loss=", positive_sample_loss)
-            # #
-            # loss = F.normalize(positive_sample_loss, dim=0).sum() + F.normalize(negative_sample_loss, dim=0).sum()
+            negative_score1 = F.logsigmoid(-negative_score).mean(dim=1)
 
+        positive_score1 = F.logsigmoid(positive_score).squeeze(dim=1)
 
-            # print("loss?=", loss)
+        if args.uni_weight:
+            positive_sample_loss = - positive_score1.mean()
+            negative_sample_loss = - negative_score1.mean()
+        else:
+            positive_sample_loss = - (
+                        subsampling_weight * positive_score1).sum() / subsampling_weight.sum()
+            negative_sample_loss = - (
+                        subsampling_weight * negative_score1).sum() / subsampling_weight.sum()
 
+        sample_loss = (positive_sample_loss + negative_sample_loss) / 2
+
+        if args.regularization != 0.0:
+            # Use L3 regularization for ComplEx and DistMult
+            regularization = args.regularization * (
+                    model.entity_embedding.norm(p=3) ** 3 +
+                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
+            )
+            sample_loss = sample_loss + regularization
+            regularization_log = {'regularization': regularization.item()}
+        else:
+            regularization_log = {}
+
+        if model.model_name in ['RotatEDeep', 'ComplExDeep', 'ConvE', 'CoCoE']:
             batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
             # # print("negative_score=", negative_score)
@@ -784,20 +763,12 @@ class KGEModel(nn.Module):
             target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
             for batch in range(batch_size):
                 target[batch][0] = 1.0
-            #
-            #smooth_target = KGEModel.smooth_one_hot(target, pred.size(1), smoothing=0.01)
-            # # #
-            # # print('pred=', pred.shape)
-            # # print('smooth_target=', smooth_target.shape)
-            # # for batch in range(batch_size):
-            #
-            # # target = F.logsigmoid(target)
-            # # print("pred=", pred)
-            # # print('targets=', target)
             if args.cuda:
                 pred = pred.cuda()
                 target = target.cuda()
-            loss = model.loss(pred, target)
+            sample_loss_contribution = 0.2
+            bce_loss_contribution = 1.0 - sample_loss_contribution
+            loss = (bce_loss_contribution * model.loss(pred, target)) + (sample_loss_contribution * sample_loss)
 
             # regularization = args.regularization * (
             #         model.entity_embedding.norm(p=3) ** 3 +
@@ -806,18 +777,18 @@ class KGEModel(nn.Module):
             # loss = loss + regularization
             # regularization_log = {'regularization': regularization.item()}
             # # print("loss=", loss)
+        else:
+            loss = sample_loss
 
-            loss.backward()
 
-            negative_score = F.logsigmoid(-negative_score).mean(dim=1)
-            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
-            positive_sample_loss = - positive_score.mean()
-            negative_sample_loss = - negative_score.mean()
-            log = {
-                'positive_sample_loss': positive_sample_loss.item(),
-                'negative_sample_loss': negative_sample_loss.item(),
-                'loss': loss.item()
-            }
+        loss.backward()
+
+        log = {
+            **regularization_log,
+            'positive_sample_loss': positive_sample_loss.item(),
+            'negative_sample_loss': negative_sample_loss.item(),
+            'loss': loss.item()
+        }
 
         optimizer.step()
 
