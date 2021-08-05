@@ -771,7 +771,7 @@ class KGEModel(nn.Module):
             # print("negative_sample_loss=", negative_sample_loss)
             # print("positive_sample_loss=", positive_sample_loss)
             #
-            loss = F.normalize(positive_sample_loss).sum() + F.normalize(negative_sample_loss).sum()
+            loss = F.normalize(positive_sample_loss, dim=0).sum() + F.normalize(negative_sample_loss, dim=0).sum()
 
 
             # print("loss?=", loss)
