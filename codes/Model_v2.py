@@ -77,7 +77,7 @@ class ComplExDeep(nn.Module):
                  input_neurons):
 
         super(ComplExDeep, self).__init__()
-        self.input_neurons = int(input_neurons)
+        self.input_neurons = int(input_neurons * 0.5)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
         self.fc_combine = torch.nn.Bilinear(self.input_neurons, self.input_neurons, 32)
