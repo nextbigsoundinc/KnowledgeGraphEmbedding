@@ -408,7 +408,7 @@ def main(args):
                     # ,
                     # 'warm_up_steps': warm_up_steps
                 }
-                save_model(kge_model, optimizer, save_variable_list, args)
+                #save_model(kge_model, optimizer, save_variable_list, args)
                 
             if step % args.log_steps == 0:
                 metrics = {}
@@ -428,7 +428,7 @@ def main(args):
             # ,
             # 'warm_up_steps': warm_up_steps
         }
-        save_model(kge_model, optimizer, save_variable_list, args)
+        #save_model(kge_model, optimizer, save_variable_list, args)
         
     if args.do_valid:
         logging.info('Evaluating on Valid Dataset...')
