@@ -80,9 +80,9 @@ class ComplExDeep(nn.Module):
         self.input_neurons = int(input_neurons)
         self.hidden_drop = torch.nn.Dropout(0.5)
         self.input_drop = torch.nn.Dropout(0.5)
-        self.fc1 = torch.nn.Linear(self.input_neurons, 512)
-        self.fc2 = torch.nn.Linear(512, 128)
-        self.fc3 = torch.nn.Linear(128, 1)
+        self.fc_combine = torch.nn.Bilinear(self.input_neurons, self.input_neurons, 32)
+        self.fc1 = torch.nn.Linear(32, 16)
+        self.fc2 = torch.nn.Linear(16, 1)
 
     def forward(self, head, relation,  tail, mode):
         re_head, im_head = torch.chunk(head, 2, dim=2)
@@ -109,12 +109,12 @@ class ComplExDeep(nn.Module):
             im_score = im_score * im_tail
             # score = re_score + im_score
 
-        stacked_inputs = torch.cat([re_score, im_score], dim=-1)
+        #stacked_inputs = torch.cat([re_score, im_score], dim=-1)
 
-        x = F.relu(self.hidden_drop(self.fc1(stacked_inputs)))
+        x = F.relu(self.hidden_drop(self.fc_combine(re_score, im_score)))
         x = F.relu(self.hidden_drop(self.fc2(x)))
-        score = self.fc3(x)
-        # #x = self.fc3(x)
+        x = self.fc1(x)
+        score = self.fc2(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
         return score
