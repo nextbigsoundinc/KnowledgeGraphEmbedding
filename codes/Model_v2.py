@@ -768,6 +768,7 @@ class KGEModel(nn.Module):
                 'negative_sample_loss': negative_sample_loss.item(),
                 'loss': loss.item()
             }
+
         else:
             batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
