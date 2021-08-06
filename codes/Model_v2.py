@@ -190,10 +190,10 @@ class ConvELayer(nn.Module):
         self.register_parameter('b', nn.Parameter(torch.zeros(self.input_neurons)))
         self.fc = torch.nn.Linear(hidden_size, self.input_neurons)
         self.fc2 = torch.nn.Linear(self.input_neurons, 256)
-        # self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
-        # self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
-        # self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
-        # self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_real_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_img_reduction = torch.nn.Linear(self.input_neurons, 256)
+        self.fc_combine = torch.nn.Bilinear(256, 256, self.input_neurons)
+        self.fc_combine_reduce = torch.nn.Linear(self.input_neurons, 256)
         self.fc_score = torch.nn.Linear(256, 32)
 
     def forward(self, head, relation, tail, mode):
@@ -264,16 +264,18 @@ class ConvELayer(nn.Module):
         # x = torch.mm(x, self.entity_embedding.weight.transpose(1, 0))  # len * 200  @ (200 * # ent)  => len *  # ent
         x += self.b.expand_as(x)
         x = x.view(x.shape[0], 1, -1)
+        x = self.fc2(x)
+
+        re_score = self.fc_real_reduction(re_entity)
         #print("x expand x.shape=", x.shape)
         #print("re_entity.shape=", re_entity.shape)
-        re_score = re_entity - x
         #print("re_score = re_entity * x=", re_score.shape)
         #print("im_entity.shape=", im_entity.shape)
-        im_score = im_entity - x
-        x = torch.stack([re_score, im_score], dim=0)
-        x = x.norm(dim=0)
+        im_score = self.fc_img_reduction(im_entity)
+        y = torch.stack([re_score, im_score], dim=0)
+        y = y.norm(dim=0)
         #print("im_score = im_entity * x=", im_score.shape)
-        score = F.relu(self.hidden_drop(self.fc2(x)))
+        # score = F.relu(self.hidden_drop(self.fc2(x)))
         # print("fc real reduction", re_score.shape)
         # im_score = F.relu(self.hidden_drop(self.fc_img_reduction(im_score)))
         # #print("fc img reduction", im_score.shape)
@@ -724,39 +726,49 @@ class KGEModel(nn.Module):
         negative_score = model((positive_sample, negative_sample), mode=mode)
         positive_score = model(positive_sample)
 
-        if args.negative_adversarial_sampling:
-            # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
-            negative_score1 = (
-                    F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
-                    * F.logsigmoid(-negative_score)).sum(dim=1)
+        if model.model_name not in ['RotatEDeep', 'ComplExDeep', 'ConvE', 'CoCoE']:
+
+            if args.negative_adversarial_sampling:
+                # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
+                negative_score = (
+                        F.softmax(negative_score * args.adversarial_temperature, dim=1).detach()
+                        * F.logsigmoid(-negative_score)).sum(dim=1)
+            else:
+                negative_score = F.logsigmoid(-negative_score).mean(dim=1)
+
+            positive_score = F.logsigmoid(positive_score).squeeze(dim=1)
+
+            if args.uni_weight:
+                positive_sample_loss = - positive_score.mean()
+                negative_sample_loss = - negative_score.mean()
+            else:
+                positive_sample_loss = - (
+                            subsampling_weight * positive_score).sum() / subsampling_weight.sum()
+                negative_sample_loss = - (
+                            subsampling_weight * negative_score).sum() / subsampling_weight.sum()
+
+            loss = (positive_sample_loss + negative_sample_loss) / 2
+
+            if args.regularization != 0.0:
+                # Use L3 regularization for ComplEx and DistMult
+                regularization = args.regularization * (
+                        model.entity_embedding.norm(p=3) ** 3 +
+                        model.relation_embedding.norm(p=3).norm(p=3) ** 3
+                )
+                loss = loss + regularization
+                regularization_log = {'regularization': regularization.item()}
+            else:
+                regularization_log = {}
+
+            loss.backward()
+
+            log = {
+                **regularization_log,
+                'positive_sample_loss': positive_sample_loss.item(),
+                'negative_sample_loss': negative_sample_loss.item(),
+                'loss': loss.item()
+            }
         else:
-            negative_score1 = F.logsigmoid(-negative_score).mean(dim=1)
-
-        positive_score1 = F.logsigmoid(positive_score).squeeze(dim=1)
-
-        if args.uni_weight:
-            positive_sample_loss = - positive_score1.mean()
-            negative_sample_loss = - negative_score1.mean()
-        else:
-            positive_sample_loss = - (
-                        subsampling_weight * positive_score1).sum() / subsampling_weight.sum()
-            negative_sample_loss = - (
-                        subsampling_weight * negative_score1).sum() / subsampling_weight.sum()
-
-        sample_loss = (positive_sample_loss + negative_sample_loss) / 2
-
-        if args.regularization != 0.0:
-            # Use L3 regularization for ComplEx and DistMult
-            regularization = args.regularization * (
-                    model.entity_embedding.norm(p=3) ** 3 +
-                    model.relation_embedding.norm(p=3).norm(p=3) ** 3
-            )
-            sample_loss = sample_loss + regularization
-            regularization_log = {'regularization': regularization.item()}
-        else:
-            regularization_log = {}
-
-        if model.model_name in ['RotatEDeep', 'ComplExDeep', 'ConvE', 'CoCoE']:
             batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
             # # print("negative_score=", negative_score)
@@ -768,29 +780,15 @@ class KGEModel(nn.Module):
             if args.cuda:
                 pred = pred.cuda()
                 target = target.cuda()
-            sample_loss_contribution = 0.2
-            bce_loss_contribution = 1.0 - sample_loss_contribution
-            loss = (bce_loss_contribution * model.loss(pred, target)) + (sample_loss_contribution * sample_loss)
+            loss = model.loss(pred, target)
 
-            # regularization = args.regularization * (
-            #         model.entity_embedding.norm(p=3) ** 3 +
-            #         model.relation_embedding.norm(p=3).norm(p=3) ** 3
-            # )
-            # loss = loss + regularization
-            # regularization_log = {'regularization': regularization.item()}
-            # # print("loss=", loss)
-        else:
-            loss = sample_loss
+            loss.backward()
 
-
-        loss.backward()
-
-        log = {
-            **regularization_log,
-            'positive_sample_loss': positive_sample_loss.item(),
-            'negative_sample_loss': negative_sample_loss.item(),
-            'loss': loss.item()
-        }
+            log = {
+                'positive_sample_loss': 0,
+                'negative_sample_loss': 0,
+                'loss': loss.item()
+            }
 
         optimizer.step()
 
