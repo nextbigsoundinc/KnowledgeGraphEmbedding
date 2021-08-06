@@ -112,8 +112,7 @@ class ComplExDeep(nn.Module):
         #stacked_inputs = torch.cat([re_score, im_score], dim=-1)
 
         x = F.relu(self.hidden_drop(self.fc_combine(re_score, im_score)))
-        x = F.relu(self.hidden_drop(self.fc2(x)))
-        x = self.fc1(x)
+        x = F.relu(self.hidden_drop(self.fc1(x)))
         score = self.fc2(x)
         score = score.sum(dim=2)
         # print('score1.shape=', score1.shape)
