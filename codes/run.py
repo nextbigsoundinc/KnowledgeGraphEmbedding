@@ -215,13 +215,13 @@ def main(args):
         entity2id = dict()
         for line in fin:
             eid, entity = line.strip().split('\t')
-            entity2id[entity] = int(eid)
+            entity2id[entity.strip()] = int(eid.strip())
 
     with open(os.path.join(args.data_path, 'relations.dict')) as fin:
         relation2id = dict()
         for line in fin:
             rid, relation = line.strip().split('\t')
-            relation2id[relation] = int(rid)
+            relation2id[relation.strip()] = int(rid.strip())
 
     # print('\n\n\n b  \n\n\n')
 
