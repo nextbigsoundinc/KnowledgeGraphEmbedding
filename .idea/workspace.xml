@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="&#10;test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codes/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/run.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,9 +96,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-422">
-              <caret lean-forward="true" />
-            </state>
+            <state relative-caret-position="-422" />
           </provider>
         </entry>
       </file>
@@ -107,7 +104,7 @@
         <entry file="file://$PROJECT_DIR$/best_config.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="75">
-              <caret line="5" column="71" lean-forward="true" selection-start-line="5" selection-end-line="5" selection-end-column="71" />
+              <caret line="5" column="71" selection-start-line="5" selection-end-line="5" selection-end-column="71" />
             </state>
           </provider>
         </entry>
@@ -115,8 +112,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="224" lean-forward="true" selection-start-line="224" selection-end-line="224" />
+            <state relative-caret-position="3021">
+              <caret line="227" selection-start-line="227" selection-end-line="227" />
             </state>
           </provider>
         </entry>
@@ -202,11 +199,11 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="1687" />
-    <option name="y" value="-127" />
-    <option name="width" value="1440" />
-    <option name="height" value="796" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="x" value="1452" />
+    <option name="y" value="-10" />
+    <option name="width" value="1200" />
+    <option name="height" value="803" />
   </component>
   <component name="ProjectId" id="1ujRbpHA1WCfWKkgSAaMtB4lpOK" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -408,20 +405,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00513" summary="&#10;test">
-      <created>1628076779534</created>
-      <option name="number" value="00513" />
-      <option name="presentableId" value="LOCAL-00513" />
-      <option name="project" value="LOCAL" />
-      <updated>1628076779534</updated>
-    </task>
-    <task id="LOCAL-00514" summary="&#10;test">
-      <created>1628077002569</created>
-      <option name="number" value="00514" />
-      <option name="presentableId" value="LOCAL-00514" />
-      <option name="project" value="LOCAL" />
-      <updated>1628077002569</updated>
     </task>
     <task id="LOCAL-00515" summary="&#10;test">
       <created>1628080053485</created>
@@ -752,22 +735,36 @@
       <option name="project" value="LOCAL" />
       <updated>1628542609769</updated>
     </task>
-    <option name="localTasksCounter" value="562" />
+    <task id="LOCAL-00562" summary="&#10;test">
+      <created>1628543695979</created>
+      <option name="number" value="00562" />
+      <option name="presentableId" value="LOCAL-00562" />
+      <option name="project" value="LOCAL" />
+      <updated>1628543695979</updated>
+    </task>
+    <task id="LOCAL-00563" summary="&#10;test">
+      <created>1628548996105</created>
+      <option name="number" value="00563" />
+      <option name="presentableId" value="LOCAL-00563" />
+      <option name="project" value="LOCAL" />
+      <updated>1628548996105</updated>
+    </task>
+    <option name="localTasksCounter" value="564" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1687" y="-127" width="1440" height="796" extended-state="0" />
+    <frame x="1440" y="-180" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project Explorer" />
       <window_info id="DB Browser" />
       <window_info id="Job Explorer" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1864139" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Console" />
       <window_info anchor="bottom" id="DB Execution Console" />
-      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.029829545" />
+      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.02079208" />
       <window_info anchor="bottom" id="Python Console" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -1052,22 +1049,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/run.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-422">
-          <caret lean-forward="true" />
-        </state>
+        <state relative-caret-position="-422" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/best_config.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="5" column="71" lean-forward="true" selection-start-line="5" selection-end-line="5" selection-end-column="71" />
+          <caret line="5" column="71" selection-start-line="5" selection-end-line="5" selection-end-column="71" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="224" lean-forward="true" selection-start-line="224" selection-end-line="224" />
+        <state relative-caret-position="3021">
+          <caret line="227" selection-start-line="227" selection-end-line="227" />
         </state>
       </provider>
     </entry>
