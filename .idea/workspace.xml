@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="&#10;test">
+    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/creatornet/entities.dict_part-00000.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/creatornet/relations.dict_part-00000.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/creatornet/test.txt_part-00000.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/creatornet/train.txt_part-00000.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/creatornet/valid.txt_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/entities.dict_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/relations.dict_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/test.txt_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/train.txt_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/valid.txt_part-00000.gz" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,12 +244,6 @@
             <path>
               <item name="KnowledgeGraphEmbedding" type="b2602c69:ProjectViewProjectNode" />
               <item name="KnowledgeGraphEmbedding" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="wn18" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="KnowledgeGraphEmbedding" type="b2602c69:ProjectViewProjectNode" />
-              <item name="KnowledgeGraphEmbedding" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -411,20 +405,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00520" summary="&#10;test">
-      <created>1628080711465</created>
-      <option name="number" value="00520" />
-      <option name="presentableId" value="LOCAL-00520" />
-      <option name="project" value="LOCAL" />
-      <updated>1628080711465</updated>
-    </task>
-    <task id="LOCAL-00521" summary="&#10;test">
-      <created>1628081239796</created>
-      <option name="number" value="00521" />
-      <option name="presentableId" value="LOCAL-00521" />
-      <option name="project" value="LOCAL" />
-      <updated>1628081239796</updated>
     </task>
     <task id="LOCAL-00522" summary="&#10;test">
       <created>1628081940311</created>
@@ -755,7 +735,21 @@
       <option name="project" value="LOCAL" />
       <updated>1628606412776</updated>
     </task>
-    <option name="localTasksCounter" value="569" />
+    <task id="LOCAL-00569" summary="&#10;test">
+      <created>1628607349705</created>
+      <option name="number" value="00569" />
+      <option name="presentableId" value="LOCAL-00569" />
+      <option name="project" value="LOCAL" />
+      <updated>1628607349705</updated>
+    </task>
+    <task id="LOCAL-00570" summary="test">
+      <created>1628607493475</created>
+      <option name="number" value="00570" />
+      <option name="presentableId" value="LOCAL-00570" />
+      <option name="project" value="LOCAL" />
+      <updated>1628607493475</updated>
+    </task>
+    <option name="localTasksCounter" value="571" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -826,7 +820,8 @@
     <MESSAGE value="modify" />
     <MESSAGE value="revert" />
     <MESSAGE value="&#10;test" />
-    <option name="LAST_COMMIT_MESSAGE" value="&#10;test" />
+    <MESSAGE value="test" />
+    <option name="LAST_COMMIT_MESSAGE" value="test" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/KnowledgeGraphEmbedding$play.coverage" NAME="play Coverage Results" MODIFIED="1626292098514" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/codes" />
