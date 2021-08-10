@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="" />
+    <list default="true" id="c540150e-0840-49f9-a9aa-0b84266c40d0" name="Default Changelist" comment="&#10;test">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/creatornet/entities.dict_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/creatornet/relations.dict_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/creatornet/test.txt_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/creatornet/train.txt_part-00000.gz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/creatornet/valid.txt_part-00000.gz" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -110,8 +117,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codes/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="651">
-              <caret line="69" column="45" selection-start-line="69" selection-start-column="45" selection-end-line="69" selection-end-column="45" />
+            <state relative-caret-position="510">
+              <caret line="89" column="4" selection-start-line="89" selection-start-column="4" selection-end-line="89" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -197,11 +204,11 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="1452" />
-    <option name="y" value="-10" />
-    <option name="width" value="1200" />
-    <option name="height" value="803" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="1686" />
+    <option name="y" value="-127" />
+    <option name="width" value="1440" />
+    <option name="height" value="796" />
   </component>
   <component name="ProjectId" id="1ujRbpHA1WCfWKkgSAaMtB4lpOK" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -292,6 +299,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$/data/creatornet" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -403,34 +411,6 @@
       <option name="presentableId" value="Default" />
       <updated>1625177086938</updated>
       <workItem from="1625177091038" duration="148657000" />
-    </task>
-    <task id="LOCAL-00516" summary="&#10;test">
-      <created>1628080242589</created>
-      <option name="number" value="00516" />
-      <option name="presentableId" value="LOCAL-00516" />
-      <option name="project" value="LOCAL" />
-      <updated>1628080242590</updated>
-    </task>
-    <task id="LOCAL-00517" summary="&#10;test">
-      <created>1628080279476</created>
-      <option name="number" value="00517" />
-      <option name="presentableId" value="LOCAL-00517" />
-      <option name="project" value="LOCAL" />
-      <updated>1628080279476</updated>
-    </task>
-    <task id="LOCAL-00518" summary="&#10;test">
-      <created>1628080405180</created>
-      <option name="number" value="00518" />
-      <option name="presentableId" value="LOCAL-00518" />
-      <option name="project" value="LOCAL" />
-      <updated>1628080405180</updated>
-    </task>
-    <task id="LOCAL-00519" summary="&#10;test">
-      <created>1628080615664</created>
-      <option name="number" value="00519" />
-      <option name="presentableId" value="LOCAL-00519" />
-      <option name="project" value="LOCAL" />
-      <updated>1628080615664</updated>
     </task>
     <task id="LOCAL-00520" summary="&#10;test">
       <created>1628080711465</created>
@@ -747,21 +727,49 @@
       <option name="project" value="LOCAL" />
       <updated>1628549472538</updated>
     </task>
-    <option name="localTasksCounter" value="565" />
+    <task id="LOCAL-00565" summary="&#10;test">
+      <created>1628551566947</created>
+      <option name="number" value="00565" />
+      <option name="presentableId" value="LOCAL-00565" />
+      <option name="project" value="LOCAL" />
+      <updated>1628551566947</updated>
+    </task>
+    <task id="LOCAL-00566" summary="&#10;test">
+      <created>1628551652579</created>
+      <option name="number" value="00566" />
+      <option name="presentableId" value="LOCAL-00566" />
+      <option name="project" value="LOCAL" />
+      <updated>1628551652579</updated>
+    </task>
+    <task id="LOCAL-00567" summary="&#10;test">
+      <created>1628551723949</created>
+      <option name="number" value="00567" />
+      <option name="presentableId" value="LOCAL-00567" />
+      <option name="project" value="LOCAL" />
+      <updated>1628551723949</updated>
+    </task>
+    <task id="LOCAL-00568" summary="&#10;test">
+      <created>1628606412774</created>
+      <option name="number" value="00568" />
+      <option name="presentableId" value="LOCAL-00568" />
+      <option name="project" value="LOCAL" />
+      <updated>1628606412776</updated>
+    </task>
+    <option name="localTasksCounter" value="569" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="-180" width="1920" height="1080" extended-state="0" />
+    <frame x="1686" y="-127" width="1440" height="796" extended-state="0" />
     <layout>
       <window_info id="Project Explorer" />
       <window_info id="DB Browser" />
       <window_info id="Job Explorer" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1864139" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Console" />
       <window_info anchor="bottom" id="DB Execution Console" />
-      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.02079208" />
+      <window_info anchor="bottom" id="Version Control" visible="true" weight="0.029829545" />
       <window_info anchor="bottom" id="Python Console" />
       <window_info anchor="bottom" id="Terminal" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -1058,8 +1066,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codes/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="651">
-          <caret line="69" column="45" selection-start-line="69" selection-start-column="45" selection-end-line="69" selection-end-column="45" />
+        <state relative-caret-position="510">
+          <caret line="89" column="4" selection-start-line="89" selection-start-column="4" selection-end-line="89" selection-end-column="4" />
         </state>
       </provider>
     </entry>
