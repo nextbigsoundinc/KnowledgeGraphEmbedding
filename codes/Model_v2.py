@@ -706,8 +706,28 @@ class KGEModel(nn.Module):
             true_dist.scatter_(1, indices, confidence)
         return true_dist
 
+    def unified_negative_sampling_loss(self, args, positive_score, negative_score, model, subsampling_weight):
+
+
     @staticmethod
-    def unified_negative_sampling_loss(args, positive_score, negative_score, model, subsampling_weight):
+    def train_step(model, optimizer, train_iterator, args):
+        '''
+        A single train step. Apply back-propation and return the loss
+        '''
+
+        model.train()
+        optimizer.zero_grad()
+        positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
+
+        if args.cuda:
+            positive_sample = positive_sample.cuda()
+            negative_sample = negative_sample.cuda()
+            subsampling_weight = subsampling_weight.cuda()
+
+        negative_score = model((positive_sample, negative_sample), mode=mode)
+        positive_score = model(positive_sample)
+
+
         if args.negative_adversarial_sampling:
             # In self-adversarial sampling, we do not apply back-propagation on the sampling weight
             negative_score = (
@@ -740,67 +760,36 @@ class KGEModel(nn.Module):
         else:
             regularization_log = {}
 
-        return loss, regularization_log, positive_sample_loss, negative_sample_loss
+        loss.backward()
 
-    @staticmethod
-    def train_step(model, optimizer, train_iterator, args):
-        '''
-        A single train step. Apply back-propation and return the loss
-        '''
+        log = {
+            **regularization_log,
+            'positive_sample_loss': positive_sample_loss.item(),
+            'negative_sample_loss': negative_sample_loss.item(),
+            'loss': loss.item()
+        }
 
-        model.train()
-        optimizer.zero_grad()
-        positive_sample, negative_sample, subsampling_weight, mode = next(train_iterator)
-
-        if args.cuda:
-            positive_sample = positive_sample.cuda()
-            negative_sample = negative_sample.cuda()
-            subsampling_weight = subsampling_weight.cuda()
-
-        negative_score = model((positive_sample, negative_sample), mode=mode)
-        positive_score = model(positive_sample)
-
-        if model.model_name not in ['RotatEDeep', 'ComplExDeep', 'ConvE', 'CoCoE']:
-
-            loss, regularization_log, positive_sample_loss, negative_sample_loss = \
-                KGEModel.unified_negative_sampling_loss(
-                    args, positive_score, negative_score, model, subsampling_weight)
-            loss.backward()
-
-            log = {
-                **regularization_log,
-                'positive_sample_loss': positive_sample_loss.item(),
-                'negative_sample_loss': negative_sample_loss.item(),
-                'loss': loss.item()
-            }
-
-        else:
-            batch_size = positive_sample.size(0)
-            # # print("positive_score=", positive_score)
-            # # print("negative_score=", negative_score)
-            pred = torch.cat([positive_score, negative_score], dim=1)
-            # #print("pred=", pred)
-            target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
-            for batch in range(batch_size):
-                target[batch][0] = 1.0
-            if args.cuda:
-                pred = pred.cuda()
-                target = target.cuda()
-            bce_loss = model.loss(pred, target)
-
-            uns_loss, regularization_log, positive_sample_loss, negative_sample_loss = \
-                KGEModel.unified_negative_sampling_loss(
-                    args, positive_score, negative_score, model, subsampling_weight)
-
-            loss = 0.8*bce_loss + 0.2*uns_loss
-
-            loss.backward()
-
-            log = {
-                'positive_sample_loss': 0,
-                'negative_sample_loss': 0,
-                'loss': loss.item()
-            }
+        # else:
+        #     batch_size = positive_sample.size(0)
+        #     # # print("positive_score=", positive_score)
+        #     # # print("negative_score=", negative_score)
+        #     pred = torch.cat([positive_score, negative_score], dim=1)
+        #     # #print("pred=", pred)
+        #     target = torch.zeros(batch_size, pred.size(1), dtype=torch.float64)
+        #     for batch in range(batch_size):
+        #         target[batch][0] = 1.0
+        #     if args.cuda:
+        #         pred = pred.cuda()
+        #         target = target.cuda()
+        #     loss = model.loss(pred, target)
+        #
+        #     loss.backward()
+        #
+        #     log = {
+        #         'positive_sample_loss': 0,
+        #         'negative_sample_loss': 0,
+        #         'loss': loss.item()
+        #     }
 
         optimizer.step()
 
