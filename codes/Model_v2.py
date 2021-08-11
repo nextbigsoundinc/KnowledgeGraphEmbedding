@@ -706,8 +706,6 @@ class KGEModel(nn.Module):
             true_dist.scatter_(1, indices, confidence)
         return true_dist
 
-    def unified_negative_sampling_loss(self, args, positive_score, negative_score, model, subsampling_weight):
-
 
     @staticmethod
     def train_step(model, optimizer, train_iterator, args):
