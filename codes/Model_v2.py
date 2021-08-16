@@ -796,7 +796,7 @@ class KGEModel(nn.Module):
             # # print("negative_score=", negative_score)
             pred = torch.cat([positive_score, negative_score], dim=1)
             # #print("pred=", pred)
-            target = torch.zeros(pred.size(0), dtype=torch.int64)
+            target = torch.zeros(batch_size, pred.size(1), dtype=torch.int64)
 
             if args.cuda:
                 pred = pred.cuda()
