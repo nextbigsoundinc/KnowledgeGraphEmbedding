@@ -101,13 +101,13 @@ class ComplExDeep(nn.Module):
             im_score = re_relation * im_tail - im_relation * re_tail
             re_score = re_head * re_score
             im_score = im_head * im_score
-            # score = re_score + im_score
+            #score = re_score + im_score
         else:
             re_score = re_head * re_relation - im_head * im_relation
             im_score = re_head * im_relation + im_head * re_relation
             re_score = re_score * re_tail
             im_score = im_score * im_tail
-            # score = re_score + im_score
+            #score = re_score + im_score
 
         #stacked_inputs = torch.cat([re_score, im_score], dim=-1)
 
@@ -393,6 +393,7 @@ class KGEModel(nn.Module):
         self.hidden_dim = hidden_dim
         self.epsilon = 2.0
         self.loss = torch.nn.BCEWithLogitsLoss()
+        self.loss2 = SmoothCrossEntropyLoss()
         
         self.gamma = nn.Parameter(
             torch.Tensor([gamma]), 
@@ -767,7 +768,7 @@ class KGEModel(nn.Module):
                 'loss': loss.item()
             }
 
-        else:
+        elif model.model_name in ['RotatEDeep']:
             batch_size = positive_sample.size(0)
             # # print("positive_score=", positive_score)
             # # print("negative_score=", negative_score)
@@ -780,6 +781,27 @@ class KGEModel(nn.Module):
                 pred = pred.cuda()
                 target = target.cuda()
             loss = model.loss(pred, target)
+
+            loss.backward()
+
+            log = {
+                'positive_sample_loss': 0,
+                'negative_sample_loss': 0,
+                'loss': loss.item()
+            }
+
+        elif model.model_name in ['ComplExDeep']:
+            batch_size = positive_sample.size(0)
+            # # print("positive_score=", positive_score)
+            # # print("negative_score=", negative_score)
+            pred = torch.cat([positive_score, negative_score], dim=1)
+            # #print("pred=", pred)
+            target = torch.zeros(pred.size(0), dtype=torch.int64)
+
+            if args.cuda:
+                pred = pred.cuda()
+                target = target.cuda()
+            loss = model.loss2(target, pred.size(1))
 
             loss.backward()
 
